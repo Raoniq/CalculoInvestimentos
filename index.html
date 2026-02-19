@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Investimentos — Ações e renda fixa</title>
+<title>Simulador de Investimentos — Longo Prazo</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,900;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -440,6 +440,24 @@ body {
 .rank-rate { font-size: 9px; color: var(--muted); margin-bottom: 8px; }
 .rank-fv { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; line-height: 1; }
 .rank-fv small { font-size: 11px; font-weight: 300; margin-right: 2px; }
+.rank-net {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: 4px;
+  padding-top: 5px;
+  border-top: 1px solid var(--border);
+}
+.rank-net-val {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+}
+.rank-net-label {
+  font-size: 8px;
+  color: var(--border2);
+  letter-spacing: 0.5px;
+}
 .rank-detail { display: flex; gap: 10px; margin-top: 7px; flex-wrap: wrap; }
 .rank-stat { display: flex; flex-direction: column; gap: 2px; }
 .rank-stat-label { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
@@ -507,7 +525,7 @@ body {
 <!-- ── HEADER ── -->
 <div class="header">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-    <div class="header-eyebrow" style="margin-bottom:0;">Simulador de Patrimônio · Ações e renda fixa</div>
+    <div class="header-eyebrow" style="margin-bottom:0;">Simulador de Patrimônio · Longo Prazo</div>
     <button id="themeToggleBtn" onclick="toggleTheme()" style="
       background: var(--card);
       border: 1px solid var(--border);
@@ -530,8 +548,8 @@ body {
   </div>
   <h1><span id="h1Inicial">R$ 20k</span> inicial + <span id="h1Aporte">R$ 2k</span>/<em>mês</em></h1>
   <p class="header-sub">
-    Tesouro IPCA+ · LCI/LCA · CDB · Ações (ITUB3, PETR4…)<br>
-    Todos os parâmetros configuráveis.
+    Tesouro IPCA+7,21% · LCI/LCA · CDB · Ações (ITUB4, ABCB4…)<br>
+    Todos os parâmetros configuráveis. Clique na legenda para ocultar séries.
   </p>
 </div>
 
@@ -546,7 +564,7 @@ body {
   <div class="input-group">
     <label>Aporte Mensal</label>
     <input type="number" id="aporte" value="2000" min="0" step="100">
-    <span class="input-note">100% reinvestido</span>
+    <span class="input-note" id="aporteNote">100% reinvestido</span>
   </div>
   <div class="input-group">
     <label>Selic % a.a.</label>
@@ -647,10 +665,14 @@ body {
 
   <div class="sidebar">
     <div class="section-label" style="margin-bottom:14px;">Ranking no horizonte</div>
-    <div class="milestone-tabs">
-      <button class="tab-btn active" data-years="10">10 anos</button>
-      <button class="tab-btn" data-years="15">15 anos</button>
-      <button class="tab-btn" data-years="20">20 anos</button>
+    <div class="milestone-tabs" style="flex-wrap:wrap;">
+      <button class="tab-btn" data-months="6">6m</button>
+      <button class="tab-btn" data-months="12">1a</button>
+      <button class="tab-btn" data-months="24">2a</button>
+      <button class="tab-btn" data-months="60">5a</button>
+      <button class="tab-btn active" data-months="120">10a</button>
+      <button class="tab-btn" data-months="180">15a</button>
+      <button class="tab-btn" data-months="240">20a</button>
     </div>
     <div class="ranking" id="rankingList"></div>
   </div>
@@ -691,7 +713,7 @@ body {
 <div class="footer">
   <span>Simulação educacional — não é recomendação de investimento. Rentabilidade passada não garante retorno futuro.</span>
   <span style="display:flex;gap:24px;align-items:center;">
-    <span style="color:var(--muted);font-size:11px;">Raoni Queiroz - Todos os direitos reservados.</span>
+    <span style="color:var(--muted);font-size:11px;">Raoni Queiroz</span>
     <span>fev/2026</span>
   </span>
 </div>
@@ -700,7 +722,7 @@ body {
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let activeYears = 10;
+let activeMonths = 120;
 let chart = null;
 let hiddenSeries = new Set();
 let reinvestDivs = true;
@@ -879,9 +901,31 @@ function netAnnualRate(inv, p) {
   }
 }
 
-// ═══════════════════════════════════════════
-// SIMULATION
-// ═══════════════════════════════════════════
+// ── Gross rate (no IR deducted) ──
+function grossAnnualRate(inv, p) {
+  switch (inv.type) {
+    case 'tesouro': return 1.0721 * (1 + p.ipca / 100) - 1;
+    case 'lci':     return p.lciGross / 100;
+    case 'cdb':     return p.cdbGross / 100;
+    case 'stock':
+      if (reinvestDivs) return (1 + p.dy / 100) * (1 + inv.priceGrowth) - 1;
+      return inv.priceGrowth;
+    default: return 0;
+  }
+}
+
+// ── IR rate applicable on gains ──
+function irRateForType(inv, p) {
+  switch (inv.type) {
+    case 'tesouro': return 0.15;
+    case 'lci':     return p.lciIR / 100;
+    case 'cdb':     return p.cdbIR / 100;
+    // Ações: dividendos isentos. Ganho de capital ~15% sobre valorização de preço.
+    // Aproximação: 15% apenas sobre a parcela de preço do ganho total.
+    case 'stock':   return 0.15;
+    default: return 0;
+  }
+}
 
 // Generic monthly compound with contributions
 function simFixed(annualRate, inicial, aporte, months) {
@@ -890,8 +934,10 @@ function simFixed(annualRate, inicial, aporte, months) {
   let bal = inicial;
   for (let m = 1; m <= months; m++) {
     bal = bal * (1 + r) + aporte;
-    if (m % 12 === 0) out.push(Math.round(bal));
+    if (m % 12 === 0 || m === months) out.push(Math.round(bal));
   }
+  // dedupe last entry if months is exact multiple of 12
+  if (months % 12 === 0 && out.length > months / 12) out.pop();
   return out;
 }
 
@@ -908,8 +954,9 @@ function simStockNoReinvest(dyRate, priceGrowth, inicial, aporte, months) {
   for (let m = 1; m <= months; m++) {
     cashDivs += stock * rDY;          // dividends earned this month
     stock = stock * (1 + rPrice) + aporte; // price grows, contribution added
-    if (m % 12 === 0) out.push(Math.round(stock + cashDivs));
+    if (m % 12 === 0 || m === months) out.push(Math.round(stock + cashDivs));
   }
+  if (months % 12 === 0 && out.length > months / 12) out.pop();
   return out;
 }
 
@@ -1063,7 +1110,7 @@ function buildLegend() {
 // ═══════════════════════════════════════════
 function buildRanking() {
   const p = getParams();
-  const months = activeYears * 12;
+  const months = activeMonths;
   const totalInvested = p.inicial + p.aporte * months;
 
   const results = INVESTMENTS.map(inv => {
@@ -1071,7 +1118,35 @@ function buildRanking() {
     const fv = data[data.length - 1];
     const gain = fv - totalInvested;
     const rate = netAnnualRate(inv, p) * 100;
-    return { inv, fv, gain, rate };
+
+    // Gross FV (before IR) for tax calculation
+    const gRate = grossAnnualRate(inv, p);
+    const grossData = simFixed(gRate, p.inicial, p.aporte, months);
+    const fvGross = grossData[grossData.length - 1];
+    const grossGain = fvGross - totalInvested;
+    const irRate = irRateForType(inv, p);
+
+    let netPocket, irLabel;
+    if (inv.type === 'stock') {
+      // Dividends exempt; 15% on price-appreciation gain only
+      const priceGainFrac = inv.priceGrowth / (reinvestDivs
+        ? (1 + p.dy / 100) * (1 + inv.priceGrowth) - 1
+        : inv.priceGrowth);
+      const taxableGain = grossGain * Math.min(priceGainFrac, 1);
+      const irAmount = irRate * taxableGain;
+      netPocket = fvGross - irAmount;
+      irLabel = reinvestDivs
+        ? `IR 15% s/ ganho de preço (~${(priceGainFrac * 100).toFixed(0)}% do ganho)`
+        : 'dividendos isentos · IR 15% s/ preço';
+    } else {
+      const irAmount = irRate * Math.max(grossGain, 0);
+      netPocket = fvGross - irAmount;
+      irLabel = irRate === 0
+        ? 'isento de IR'
+        : `IR ${(irRate * 100).toFixed(1)}% s/ ganho`;
+    }
+
+    return { inv, fv, gain, rate, fvGross, netPocket, irLabel };
   });
   results.sort((a, b) => b.fv - a.fv);
 
@@ -1097,6 +1172,10 @@ function buildRanking() {
       </div>
       <div class="rank-rate">${rateLabel}</div>
       <div class="rank-fv" style="color:${r.inv.color}"><small>R$</small>${fmtFV(r.fv)}</div>
+      <div class="rank-net">
+        <span class="rank-net-val">no bolso: ${fmtBRL(r.netPocket)}</span>
+        <span class="rank-net-label">${r.irLabel}</span>
+      </div>
       <div class="rank-detail">
         <div class="rank-stat">
           <span class="rank-stat-label">Ganho</span>
@@ -1172,14 +1251,17 @@ const divDesc     = document.getElementById('divDescription');
 
 toggleInput.addEventListener('change', () => {
   reinvestDivs = toggleInput.checked;
+  const aporteNote = document.getElementById('aporteNote');
   if (reinvestDivs) {
     toggleText.textContent = 'Reinvestindo dividendos';
     toggleText.classList.add('on');
     divDesc.innerHTML = '<span class="tag-on">✦ Ativado:</span> dividendos compram mais ações que geram mais dividendos — efeito bola de neve. Portfólio cresce pelo total return (preço + DY).';
+    aporteNote.textContent = '100% reinvestido';
   } else {
     toggleText.textContent = 'Sacando dividendos';
     toggleText.classList.remove('on');
     divDesc.innerHTML = '<span class="tag-off">✦ Desativado:</span> portfólio cresce apenas pela valorização do preço. Dividendos acumulam como caixa separado (sem rendimento adicional).';
+    aporteNote.textContent = 'dividendos não reinvestidos';
   }
   buildAll();
 });
@@ -1189,7 +1271,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    activeYears = parseInt(btn.dataset.years);
+    activeMonths = parseInt(btn.dataset.months);
     buildRanking();
   });
 });
