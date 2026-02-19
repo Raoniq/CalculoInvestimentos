@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,900;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-/* ── DARK THEME (padrão) ── */
+/* ── DARK THEME (default) ── */
 :root {
   --bg: #070809;
   --panel: #0d0f12;
@@ -68,7 +68,7 @@
   --teal-faint: rgba(14,148,136,0.08);
 }}
 
-/* ── FORCE LIGHT via atributo do Edge ── */
+/* ── FORCE LIGHT via data attribute ── */
 :root[data-theme="light"] {
   --bg: #f8f9fb;
   --panel: #f0f2f5;
@@ -98,7 +98,7 @@
   --teal-faint: rgba(14,148,136,0.08);
 }
 
-/* ── FORCE DARK via atributo do Edge ── */
+/* ── FORCE DARK via data attribute ── */
 :root[data-theme="dark"] {
   --bg: #070809;
   --panel: #0d0f12;
@@ -227,6 +227,28 @@ body {
 .input-group input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .input-group input[type=number]:focus { color: var(--green); }
 .input-note { font-size: 9px; color: var(--muted); }
+
+/* MODE PILLS (Pré / Pós) */
+.mode-pill {
+  font-size: 8px;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.mode-pill:hover { border-color: var(--border2); color: var(--text); }
+.mode-pill.active { background: var(--blue-faint); border-color: var(--blue); color: var(--blue); }
+
+/* RATE RESULT HINT */
+.rate-result {
+  color: var(--blue) !important;
+  font-size: 10px !important;
+}
 
 /* IR PILLS */
 .ir-pills {
@@ -527,6 +549,16 @@ body {
     <span class="input-note">100% reinvestido</span>
   </div>
   <div class="input-group">
+    <label>Selic % a.a.</label>
+    <input type="number" id="selic" value="15.0" min="0" max="30" step="0.25">
+    <span class="input-note">atual: 15% · base do CDI</span>
+  </div>
+  <div class="input-group">
+    <label>Tesouro IPCA+ real %</label>
+    <input type="number" id="tesouRoReal" value="7.21" min="0" max="20" step="0.01">
+    <span class="input-note">ex: 7,21% (2045+) · 7,18% (2040+)</span>
+  </div>
+  <div class="input-group">
     <label>IPCA % a.a.</label>
     <input type="number" id="ipca" value="5.0" min="0" max="30" step="0.5">
     <span class="input-note">projeção anual</span>
@@ -541,20 +573,38 @@ body {
 <!-- ── INPUTS: RENDA FIXA ── -->
 <div class="inputs-section-label">Renda Fixa — Taxas e Impostos</div>
 <div class="inputs-bar">
-  <div class="input-group">
-    <label>Taxa LCI/LCA %</label>
-    <input type="number" id="lciRate" value="14.0" min="0" max="30" step="0.5">
-    <span class="input-note">prefixado bruto a.a.</span>
+
+  <!-- LCI/LCA -->
+  <div class="input-group" style="min-width:180px;">
+    <label style="display:flex;align-items:center;justify-content:space-between;">
+      <span>LCI/LCA</span>
+      <span style="display:flex;gap:3px;">
+        <button class="mode-pill active" id="lciModePre" onclick="setMode('lci','pre')">Pré</button>
+        <button class="mode-pill" id="lciModePos" onclick="setMode('lci','pos')">Pós · %CDI</button>
+      </span>
+    </label>
+    <input type="number" id="lciRate" value="14.0" min="0" max="200" step="0.5">
+    <span class="input-note" id="lciRateNote">bruto prefixado a.a.</span>
+    <span class="input-note rate-result" id="lciResult" style="display:none;"></span>
   </div>
-  <div class="input-group">
+  <div class="input-group" style="min-width:130px;">
     <label>IR LCI/LCA %</label>
     <input type="number" id="lciIR" value="0" min="0" max="25" step="2.5">
     <span class="input-note">0% isento · mude se tributar</span>
   </div>
-  <div class="input-group">
-    <label>Taxa CDB %</label>
-    <input type="number" id="cdbRate" value="13.5" min="0" max="30" step="0.5">
-    <span class="input-note">prefixado bruto a.a.</span>
+
+  <!-- CDB -->
+  <div class="input-group" style="min-width:180px;">
+    <label style="display:flex;align-items:center;justify-content:space-between;">
+      <span>CDB</span>
+      <span style="display:flex;gap:3px;">
+        <button class="mode-pill active" id="cdbModePre" onclick="setMode('cdb','pre')">Pré</button>
+        <button class="mode-pill" id="cdbModePos" onclick="setMode('cdb','pos')">Pós · %CDI</button>
+      </span>
+    </label>
+    <input type="number" id="cdbRate" value="13.5" min="0" max="200" step="0.5">
+    <span class="input-note" id="cdbRateNote">bruto prefixado a.a.</span>
+    <span class="input-note rate-result" id="cdbResult" style="display:none;"></span>
   </div>
   <div class="input-group" style="min-width:220px; flex: 2;">
     <label>IR CDB — prazo do resgate</label>
@@ -566,6 +616,7 @@ body {
     </div>
     <span class="input-note">alíquota regressiva — LP padrão (acima de 2 anos)</span>
   </div>
+
 </div>
 
 <!-- ── DIVIDEND REINVEST TOGGLE ── -->
@@ -608,9 +659,12 @@ body {
 <!-- ── CAVEATS ── -->
 <div class="caveats">
   <div class="caveat-card">
-    <div class="caveat-badge green">✦ Tesouro IPCA+7,21%</div>
+    <div class="caveat-badge green">✦ Tesouro IPCA+ <span id="caveatTesRate">7,21%</span></div>
     <div class="caveat-title">Âncora de longo prazo</div>
-    <div class="caveat-body">Taxa real mais alta dos últimos ~15 anos. Garantia soberana. Trava IPCA+7,21% por décadas. IR 15% (LP) somente no resgate. No vencimento, retorno é certo.</div>
+    <div class="caveat-body">
+      Taxa real configurável acima. Ex: 2045+ ≈ IPCA+7,21% · 2040+ ≈ IPCA+7,18% · 2035+ taxa menor.
+      Garantia soberana. IR 15% (LP) somente no resgate ou vencimento. No vencimento, retorno é certo.
+    </div>
   </div>
   <div class="caveat-card">
     <div class="caveat-badge yellow">⚠ LCI/LCA</div>
@@ -648,6 +702,8 @@ let chart = null;
 let hiddenSeries = new Set();
 let reinvestDivs = true;
 let cdbIRpct = 15;
+let lciMode = 'pre'; // 'pre' or 'pos'
+let cdbMode = 'pre'; // 'pre' or 'pos'
 
 // ═══════════════════════════════════════════
 // INVESTMENTS
@@ -655,12 +711,12 @@ let cdbIRpct = 15;
 const INVESTMENTS = [
   {
     id: 'tesouro',
-    name: 'Tesouro IPCA+7,21%',
+    name: 'Tesouro IPCA+ (configurável)',
     shortName: 'Tesouro IPCA+',
     type: 'tesouro',
     color: '#3dd68c',
     risk: 'Muito Baixo', riskClass: 'pos',
-    note: 'Garantia soberana · IR 15% LP · trava 20+ anos'
+    note: 'Garantia soberana · IR 15% LP · taxa real configurável acima'
   },
   {
     id: 'lci',
@@ -716,16 +772,81 @@ const INVESTMENTS = [
 // PARAMS
 // ═══════════════════════════════════════════
 function getParams() {
+  const selic    = parseFloat(document.getElementById('selic').value)       || 15.0;
+  const tesReal  = parseFloat(document.getElementById('tesouRoReal').value) || 7.21;
+  const lciRaw   = parseFloat(document.getElementById('lciRate').value)     || 14.0;
+  const cdbRaw   = parseFloat(document.getElementById('cdbRate').value)     || 13.5;
+
+  // Pós-fixado: input is % of CDI ≈ Selic (e.g. 100 = 100% × 15% = 15%)
+  const lciGross = lciMode === 'pos' ? (lciRaw / 100) * selic : lciRaw;
+  const cdbGross = cdbMode === 'pos' ? (cdbRaw / 100) * selic : cdbRaw;
+
   return {
-    inicial: parseFloat(document.getElementById('inicial').value) || 20000,
-    aporte:  parseFloat(document.getElementById('aporte').value)  || 2000,
+    inicial: parseFloat(document.getElementById('inicial').value) || 10000,
+    aporte:  parseFloat(document.getElementById('aporte').value)  || 1000,
+    selic,
+    tesReal,
     ipca:    parseFloat(document.getElementById('ipca').value)    || 5.0,
     dy:      parseFloat(document.getElementById('dy').value)      || 6.5,
-    lciRate: parseFloat(document.getElementById('lciRate').value) || 14.0,
+    lciGross,
     lciIR:   parseFloat(document.getElementById('lciIR').value)   || 0,
-    cdbRate: parseFloat(document.getElementById('cdbRate').value) || 13.5,
+    cdbGross,
     cdbIR:   cdbIRpct
   };
+}
+
+// ── Rate hint labels (shown below inputs) ──
+function updateRateHints() {
+  const selic    = parseFloat(document.getElementById('selic').value)       || 15.0;
+  const tesReal  = parseFloat(document.getElementById('tesouRoReal').value) || 7.21;
+  const lciRaw   = parseFloat(document.getElementById('lciRate').value)     || 14.0;
+  const cdbRaw   = parseFloat(document.getElementById('cdbRate').value)     || 13.5;
+
+  // Update tesouro caveat badge
+  const caveatRate = document.getElementById('caveatTesRate');
+  if (caveatRate) caveatRate.textContent = tesReal.toFixed(2).replace('.', ',') + '%';
+
+  const lciNote   = document.getElementById('lciRateNote');
+  const lciResult = document.getElementById('lciResult');
+  const cdbNote   = document.getElementById('cdbRateNote');
+  const cdbResult = document.getElementById('cdbResult');
+
+  if (lciMode === 'pos') {
+    const gross = (lciRaw / 100) * selic;
+    lciNote.textContent = '% do CDI';
+    lciResult.style.display = 'block';
+    lciResult.textContent   = `= ${gross.toFixed(2)}% bruto a.a. (Selic ${selic}%)`;
+  } else {
+    lciNote.textContent     = 'bruto prefixado a.a.';
+    lciResult.style.display = 'none';
+  }
+
+  if (cdbMode === 'pos') {
+    const gross = (cdbRaw / 100) * selic;
+    cdbNote.textContent = '% do CDI';
+    cdbResult.style.display = 'block';
+    cdbResult.textContent   = `= ${gross.toFixed(2)}% bruto a.a. (Selic ${selic}%)`;
+  } else {
+    cdbNote.textContent     = 'bruto prefixado a.a.';
+    cdbResult.style.display = 'none';
+  }
+}
+
+// ── Mode toggle (Pré / Pós) ──
+function setMode(instrument, mode) {
+  if (instrument === 'lci') {
+    lciMode = mode;
+    document.getElementById('lciModePre').classList.toggle('active', mode === 'pre');
+    document.getElementById('lciModePos').classList.toggle('active', mode === 'pos');
+    // Switch placeholder: pré=14%, pós=93 (≈93% CDI ≈14% when Selic=15%)
+    document.getElementById('lciRate').value = mode === 'pos' ? '93' : '14.0';
+  } else {
+    cdbMode = mode;
+    document.getElementById('cdbModePre').classList.toggle('active', mode === 'pre');
+    document.getElementById('cdbModePos').classList.toggle('active', mode === 'pos');
+    document.getElementById('cdbRate').value = mode === 'pos' ? '90' : '13.5';
+  }
+  buildAll();
 }
 
 // ═══════════════════════════════════════════
@@ -734,22 +855,22 @@ function getParams() {
 function netAnnualRate(inv, p) {
   switch (inv.type) {
     case 'tesouro': {
-      // nominal bruto = (1 + 0.0721) * (1 + ipca) - 1, IR 15% approximated on gains
-      const bruto = 1.0721 * (1 + p.ipca / 100) - 1;
+      const fatorReal = 1 + p.tesReal / 100;
+      const bruto = fatorReal * (1 + p.ipca / 100) - 1;
       return bruto * 0.85;
     }
     case 'lci': {
-      const bruto = p.lciRate / 100;
+      const bruto = p.lciGross / 100;
       if (p.lciIR === 0) return bruto;
       return bruto * (1 - p.lciIR / 100);
     }
     case 'cdb':
-      return (p.cdbRate / 100) * (1 - p.cdbIR / 100);
+      return (p.cdbGross / 100) * (1 - p.cdbIR / 100);
     case 'stock':
       if (reinvestDivs) {
         return (1 + p.dy / 100) * (1 + inv.priceGrowth) - 1;
       } else {
-        return inv.priceGrowth; // only price for the portfolio display
+        return inv.priceGrowth;
       }
     default: return 0;
   }
@@ -875,7 +996,10 @@ function buildChart() {
               if (item.dataset.hidden) return null;
               const inv = INVESTMENTS[item.datasetIndex];
               const noReinv = inv.type === 'stock' && !reinvestDivs ? ' (s/reinv)' : '';
-              return `  ${inv.shortName}${noReinv}: ${fmtBRL(item.raw)}`;
+              const name = inv.type === 'tesouro'
+                ? `Tesouro IPCA+${p.tesReal.toFixed(2).replace('.',',')}%`
+                : inv.shortName;
+              return `  ${name}${noReinv}: ${fmtBRL(item.raw)}`;
             }
           }
         }
@@ -958,12 +1082,15 @@ function buildRanking() {
     const gainX = (r.fv / totalInvested).toFixed(1);
     const noReinv = r.inv.type === 'stock' && !reinvestDivs;
     const rateLabel = noReinv ? `${r.rate.toFixed(1)}% preço · DY em caixa` : `${r.rate.toFixed(1)}% a.a. líq.`;
+    const displayName = r.inv.type === 'tesouro'
+      ? `Tesouro IPCA+${p.tesReal.toFixed(2).replace('.',',')}%`
+      : r.inv.shortName;
 
     card.innerHTML = `
       <div class="rank-pos">${pos}</div>
       <div class="rank-name">
         <div class="rank-dot" style="background:${r.inv.color}"></div>
-        ${r.inv.shortName}${noReinv ? '<span style="color:var(--orange);font-size:8px;margin-left:4px">s/reinv.</span>' : ''}
+        ${displayName}${noReinv ? '<span style="color:var(--orange);font-size:8px;margin-left:4px">s/reinv.</span>' : ''}
       </div>
       <div class="rank-rate">${rateLabel}</div>
       <div class="rank-fv" style="color:${r.inv.color}"><small>R$</small>${fmtFV(r.fv)}</div>
@@ -998,6 +1125,7 @@ function buildRanking() {
 // BUILD ALL
 // ═══════════════════════════════════════════
 function buildAll() {
+  updateRateHints();
   buildChart();
   buildLegend();
   buildRanking();
@@ -1079,9 +1207,9 @@ function toggleTheme() {
   applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
 }
 
-// Pegar o atributo padrão do sistema
+// Listen for OS theme changes
 window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
-  // Só alterar se o usuário não tiver feito manualmente
+  // Only auto-switch if user hasn't manually picked
   if (!document.documentElement.hasAttribute('data-theme')) {
     applyTheme(e.matches ? 'light' : 'dark');
   }
@@ -1090,7 +1218,7 @@ window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e 
 // ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
-applyTheme(getSystemTheme());
+applyTheme('light');
 buildAll();
 </script>
 </body>
