@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Investimentos — Longo Prazo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,900;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ── DARK THEME (default) ── */
+:root {
+  --bg: #070809;
+  --panel: #0d0f12;
+  --card: #111418;
+  --border: #1c2028;
+  --border2: #252a33;
+  --text: #dde2ea;
+  --muted: #556070;
+  --footer-text: #252e3a;
+  --chart-grid: #0c1016;
+  --chart-tick: #2a3545;
+  --tooltip-bg: #111418;
+  --section-lbl: #1e2430;
+  --green: #3dd68c;
+  --green-faint: rgba(61,214,140,0.08);
+  --yellow: #f5c518;
+  --yellow-faint: rgba(245,197,24,0.08);
+  --orange: #f07b3a;
+  --orange-faint: rgba(240,123,58,0.08);
+  --blue: #5b9cf6;
+  --blue-faint: rgba(91,156,246,0.08);
+  --violet: #a88bfa;
+  --violet-faint: rgba(168,139,250,0.08);
+  --red: #f26065;
+  --red-faint: rgba(242,96,101,0.08);
+  --teal: #2dd4bf;
+  --teal-faint: rgba(45,212,191,0.08);
+}
+
+/* ── LIGHT THEME ── */
+:root[data-theme="light"],
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --bg: #f8f9fb;
+  --panel: #f0f2f5;
+  --card: #ffffff;
+  --border: #dde1e8;
+  --border2: #c8cdd7;
+  --text: #1a1e26;
+  --muted: #7a8597;
+  --footer-text: #b0b8c8;
+  --chart-grid: #edf0f4;
+  --chart-tick: #b0b8c8;
+  --tooltip-bg: #ffffff;
+  --section-lbl: #c8cdd7;
+  --green: #179e5f;
+  --green-faint: rgba(23,158,95,0.07);
+  --yellow: #c49800;
+  --yellow-faint: rgba(196,152,0,0.08);
+  --orange: #c45a15;
+  --orange-faint: rgba(196,90,21,0.08);
+  --blue: #2c6fd4;
+  --blue-faint: rgba(44,111,212,0.08);
+  --violet: #6d4fc7;
+  --violet-faint: rgba(109,79,199,0.08);
+  --red: #c4383c;
+  --red-faint: rgba(196,56,60,0.08);
+  --teal: #0e9488;
+  --teal-faint: rgba(14,148,136,0.08);
+}}
+
+/* ── FORCE LIGHT via data attribute ── */
+:root[data-theme="light"] {
+  --bg: #f8f9fb;
+  --panel: #f0f2f5;
+  --card: #ffffff;
+  --border: #dde1e8;
+  --border2: #c8cdd7;
+  --text: #1a1e26;
+  --muted: #7a8597;
+  --footer-text: #b0b8c8;
+  --chart-grid: #edf0f4;
+  --chart-tick: #b0b8c8;
+  --tooltip-bg: #ffffff;
+  --section-lbl: #c8cdd7;
+  --green: #179e5f;
+  --green-faint: rgba(23,158,95,0.07);
+  --yellow: #c49800;
+  --yellow-faint: rgba(196,152,0,0.08);
+  --orange: #c45a15;
+  --orange-faint: rgba(196,90,21,0.08);
+  --blue: #2c6fd4;
+  --blue-faint: rgba(44,111,212,0.08);
+  --violet: #6d4fc7;
+  --violet-faint: rgba(109,79,199,0.08);
+  --red: #c4383c;
+  --red-faint: rgba(196,56,60,0.08);
+  --teal: #0e9488;
+  --teal-faint: rgba(14,148,136,0.08);
+}
+
+/* ── FORCE DARK via data attribute ── */
+:root[data-theme="dark"] {
+  --bg: #070809;
+  --panel: #0d0f12;
+  --card: #111418;
+  --border: #1c2028;
+  --border2: #252a33;
+  --text: #dde2ea;
+  --muted: #556070;
+  --footer-text: #252e3a;
+  --chart-grid: #0c1016;
+  --chart-tick: #2a3545;
+  --tooltip-bg: #111418;
+  --section-lbl: #1e2430;
+  --green: #3dd68c;
+  --green-faint: rgba(61,214,140,0.08);
+  --yellow: #f5c518;
+  --yellow-faint: rgba(245,197,24,0.08);
+  --orange: #f07b3a;
+  --orange-faint: rgba(240,123,58,0.08);
+  --blue: #5b9cf6;
+  --blue-faint: rgba(91,156,246,0.08);
+  --violet: #a88bfa;
+  --violet-faint: rgba(168,139,250,0.08);
+  --red: #f26065;
+  --red-faint: rgba(242,96,101,0.08);
+  --teal: #2dd4bf;
+  --teal-faint: rgba(45,212,191,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  padding: 40px 40px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(61,214,140,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.header-eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+.header h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(26px, 4vw, 48px);
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--text);
+  max-width: 700px;
+}
+.header h1 em { font-style: italic; color: var(--green); }
+.header-sub {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--muted);
+  max-width: 600px;
+  line-height: 1.7;
+}
+
+/* INPUTS SECTION LABEL */
+.inputs-section-label {
+  width: 100%;
+  padding: 5px 22px;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--border2);
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+}
+
+/* INPUTS BAR */
+.inputs-bar {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+}
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 14px 22px;
+  border-right: 1px solid var(--border);
+  flex: 1;
+  min-width: 120px;
+}
+.input-group label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.input-group input[type=number] {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 600;
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+  -moz-appearance: textfield;
+}
+.input-group input[type=number]::-webkit-inner-spin-button,
+.input-group input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+.input-group input[type=number]:focus { color: var(--green); }
+.input-note { font-size: 9px; color: var(--muted); }
+
+/* IR PILLS */
+.ir-pills {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+}
+.ir-pill {
+  font-size: 9px;
+  padding: 3px 7px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  font-family: 'DM Mono', monospace;
+}
+.ir-pill:hover { border-color: var(--border2); color: var(--text); }
+.ir-pill.active { background: var(--teal-faint); border-color: var(--teal); color: var(--teal); }
+
+/* DIVIDEND TOGGLE BAR */
+.div-toggle-bar {
+  padding: 12px 40px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  background: var(--panel);
+}
+.div-toggle-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 22px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background: var(--border2);
+  border-radius: 11px;
+  transition: background 0.25s;
+}
+.toggle-switch input:checked + .toggle-track { background: var(--green); }
+.toggle-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.25s;
+  pointer-events: none;
+}
+.toggle-switch input:checked ~ .toggle-thumb { transform: translateX(22px); }
+.toggle-label-text {
+  font-size: 11px;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.toggle-label-text.on { color: var(--green); }
+.div-description {
+  font-size: 10px;
+  color: var(--muted);
+  margin-left: auto;
+  border-left: 1px solid var(--border);
+  padding-left: 16px;
+  max-width: 400px;
+  line-height: 1.5;
+}
+.div-description .tag-on  { color: var(--green); }
+.div-description .tag-off { color: var(--orange); }
+
+/* MAIN GRID */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  min-height: 500px;
+}
+
+/* CHART AREA */
+.chart-area {
+  padding: 28px 40px;
+  border-right: 1px solid var(--border);
+}
+.section-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+.chart-wrap { position: relative; height: 360px; }
+
+/* LEGEND */
+.legend-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 18px;
+  margin-top: 18px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s;
+  user-select: none;
+}
+.legend-item:hover { color: var(--text); }
+.legend-item.dimmed { opacity: 0.3; }
+.legend-line {
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* SIDEBAR */
+.sidebar { padding: 28px 20px; }
+.milestone-tabs { display: flex; gap: 4px; margin-bottom: 18px; }
+.tab-btn {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.tab-btn.active { background: var(--green-faint); border-color: var(--green); color: var(--green); }
+.tab-btn:hover:not(.active) { border-color: var(--border2); color: var(--text); }
+
+.ranking { display: flex; flex-direction: column; gap: 7px; }
+.rank-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.rank-card:hover { border-color: var(--border2); }
+.rank-card.rank-1 { border-color: rgba(61,214,140,0.3); background: var(--green-faint); }
+.rank-card.rank-2 { border-color: rgba(91,156,246,0.2); }
+.rank-pos {
+  position: absolute;
+  top: 8px; right: 10px;
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--border2);
+  line-height: 1;
+}
+.rank-card.rank-1 .rank-pos { color: rgba(61,214,140,0.15); }
+.rank-name {
+  font-size: 10px;
+  color: var(--text);
+  margin-bottom: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 30px;
+}
+.rank-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.rank-rate { font-size: 9px; color: var(--muted); margin-bottom: 8px; }
+.rank-fv { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; line-height: 1; }
+.rank-fv small { font-size: 11px; font-weight: 300; margin-right: 2px; }
+.rank-detail { display: flex; gap: 10px; margin-top: 7px; flex-wrap: wrap; }
+.rank-stat { display: flex; flex-direction: column; gap: 2px; }
+.rank-stat-label { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.rank-stat-val { font-size: 10px; color: var(--text); }
+.rank-stat-val.pos  { color: var(--green); }
+.rank-stat-val.warn { color: var(--yellow); }
+.rank-stat-val.risk { color: var(--orange); }
+
+/* CAVEATS */
+.caveats {
+  padding: 28px 40px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+.caveat-card {
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+.caveat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding: 3px 7px;
+}
+.caveat-badge.green  { background: var(--green-faint);  color: var(--green);  border: 1px solid rgba(61,214,140,0.2); }
+.caveat-badge.yellow { background: var(--yellow-faint); color: var(--yellow); border: 1px solid rgba(245,197,24,0.2); }
+.caveat-badge.blue   { background: var(--blue-faint);   color: var(--blue);   border: 1px solid rgba(91,156,246,0.2); }
+.caveat-badge.red    { background: var(--red-faint);    color: var(--red);    border: 1px solid rgba(242,96,101,0.2); }
+.caveat-badge.teal   { background: var(--teal-faint);   color: var(--teal);   border: 1px solid rgba(45,212,191,0.2); }
+.caveat-title { font-size: 11px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+.caveat-body  { font-size: 10px; color: var(--muted); line-height: 1.7; }
+
+/* FOOTER */
+.footer {
+  padding: 18px 40px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--footer-text);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@media (max-width: 768px) {
+  .header, .chart-area, .caveats, .footer { padding-left: 20px; padding-right: 20px; }
+  .div-toggle-bar { padding-left: 20px; padding-right: 20px; }
+  .input-group { padding: 12px 14px; min-width: 100px; }
+  .main { grid-template-columns: 1fr; }
+  .chart-area { border-right: none; border-bottom: 1px solid var(--border); }
+  .sidebar { padding: 20px; }
+  .div-description { margin-left: 0; border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 8px; width: 100%; max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div class="header-eyebrow" style="margin-bottom:0;">Simulador de Patrimônio · Longo Prazo</div>
+    <button id="themeToggleBtn" onclick="toggleTheme()" style="
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 6px 14px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    " onmouseover="this.style.borderColor='var(--border2)';this.style.color='var(--text)'"
+       onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+      <span id="themeIcon">☀︎</span>
+      <span id="themeLabel">Tema claro</span>
+    </button>
+  </div>
+  <h1>R$ 20k inicial + R$ 2k/<em>mês</em></h1>
+  <p class="header-sub">
+    Tesouro IPCA+7,21% · LCI/LCA · CDB · Ações (ITUB4, ABCB4…)<br>
+    Todos os parâmetros configuráveis. Clique na legenda para ocultar séries.
+  </p>
+</div>
+
+<!-- ── INPUTS: GERAIS ── -->
+<div class="inputs-section-label">Parâmetros Gerais</div>
+<div class="inputs-bar">
+  <div class="input-group">
+    <label>Capital Inicial</label>
+    <input type="number" id="inicial" value="20000" min="0" step="1000">
+    <span class="input-note">saldo atual</span>
+  </div>
+  <div class="input-group">
+    <label>Aporte Mensal</label>
+    <input type="number" id="aporte" value="2000" min="0" step="100">
+    <span class="input-note">100% reinvestido</span>
+  </div>
+  <div class="input-group">
+    <label>IPCA % a.a.</label>
+    <input type="number" id="ipca" value="5.0" min="0" max="30" step="0.5">
+    <span class="input-note">projeção anual</span>
+  </div>
+  <div class="input-group">
+    <label>DY das Ações %</label>
+    <input type="number" id="dy" value="6.5" min="0" max="20" step="0.5">
+    <span class="input-note">dividend yield anual</span>
+  </div>
+</div>
+
+<!-- ── INPUTS: RENDA FIXA ── -->
+<div class="inputs-section-label">Renda Fixa — Taxas e Impostos</div>
+<div class="inputs-bar">
+  <div class="input-group">
+    <label>Taxa LCI/LCA %</label>
+    <input type="number" id="lciRate" value="14.0" min="0" max="30" step="0.5">
+    <span class="input-note">prefixado bruto a.a.</span>
+  </div>
+  <div class="input-group">
+    <label>IR LCI/LCA %</label>
+    <input type="number" id="lciIR" value="0" min="0" max="25" step="2.5">
+    <span class="input-note">0% isento · mude se tributar</span>
+  </div>
+  <div class="input-group">
+    <label>Taxa CDB %</label>
+    <input type="number" id="cdbRate" value="13.5" min="0" max="30" step="0.5">
+    <span class="input-note">prefixado bruto a.a.</span>
+  </div>
+  <div class="input-group" style="min-width:220px; flex: 2;">
+    <label>IR CDB — prazo do resgate</label>
+    <div class="ir-pills">
+      <div class="ir-pill" data-ir="22.5">22,5% · até 180d</div>
+      <div class="ir-pill" data-ir="20">20% · 181–360d</div>
+      <div class="ir-pill" data-ir="17.5">17,5% · 361–720d</div>
+      <div class="ir-pill active" data-ir="15">15% · acima 720d</div>
+    </div>
+    <span class="input-note">alíquota regressiva — LP padrão (acima de 2 anos)</span>
+  </div>
+</div>
+
+<!-- ── DIVIDEND REINVEST TOGGLE ── -->
+<div class="div-toggle-bar">
+  <span class="div-toggle-label">Ações · Dividendos</span>
+  <div class="toggle-wrap">
+    <label class="toggle-switch">
+      <input type="checkbox" id="reinvestToggle" checked>
+      <div class="toggle-track"></div>
+      <div class="toggle-thumb"></div>
+    </label>
+    <span class="toggle-label-text on" id="toggleText">Reinvestindo dividendos</span>
+  </div>
+  <div class="div-description" id="divDescription">
+    <span class="tag-on">✦ Ativado:</span> dividendos compram mais ações que geram mais dividendos — efeito bola de neve. Portfólio cresce pelo total return (preço + DY).
+  </div>
+</div>
+
+<!-- ── MAIN: CHART + SIDEBAR ── -->
+<div class="main">
+  <div class="chart-area">
+    <div class="section-label">Crescimento do Patrimônio</div>
+    <div class="chart-wrap">
+      <canvas id="mainChart"></canvas>
+    </div>
+    <div class="legend-grid" id="legendGrid"></div>
+  </div>
+
+  <div class="sidebar">
+    <div class="section-label" style="margin-bottom:14px;">Ranking no horizonte</div>
+    <div class="milestone-tabs">
+      <button class="tab-btn active" data-years="10">10 anos</button>
+      <button class="tab-btn" data-years="15">15 anos</button>
+      <button class="tab-btn" data-years="20">20 anos</button>
+    </div>
+    <div class="ranking" id="rankingList"></div>
+  </div>
+</div>
+
+<!-- ── CAVEATS ── -->
+<div class="caveats">
+  <div class="caveat-card">
+    <div class="caveat-badge green">✦ Tesouro IPCA+7,21%</div>
+    <div class="caveat-title">Âncora de longo prazo</div>
+    <div class="caveat-body">Taxa real mais alta dos últimos ~15 anos. Garantia soberana. Trava IPCA+7,21% por décadas. IR 15% (LP) somente no resgate. No vencimento, retorno é certo.</div>
+  </div>
+  <div class="caveat-card">
+    <div class="caveat-badge yellow">⚠ LCI/LCA</div>
+    <div class="caveat-title">Bom hoje, incerto amanhã</div>
+    <div class="caveat-body">Prazo máximo típico ~3 anos — impossível travar por 20 anos. Vai renovar às taxas futuras. Mude o IR para 15% acima para simular eventual tributação.</div>
+  </div>
+  <div class="caveat-card">
+    <div class="caveat-badge teal">◈ CDB</div>
+    <div class="caveat-title">IR regressivo · FGC R$250k</div>
+    <div class="caveat-body">Alíquota cai de 22,5% (≤180d) a 15% (720d+). Para longo prazo, aplique 15%. Atenção ao limite do FGC por CPF por instituição. Prazo também limitado como o LCI/LCA.</div>
+  </div>
+  <div class="caveat-card">
+    <div class="caveat-badge blue">◈ Ações com Reinvestimento</div>
+    <div class="caveat-title">Juros sobre juros via dividendos</div>
+    <div class="caveat-body">Dividendos compram mais cotas → mais dividendos no próximo período. ITUB4 e ABCB4 historicamente entregam total return de 12–18% a.a. em bons ciclos.</div>
+  </div>
+  <div class="caveat-card">
+    <div class="caveat-badge red">◈ Ações sem Reinvestimento</div>
+    <div class="caveat-title">Dividendos como renda corrente</div>
+    <div class="caveat-body">Portfólio cresce apenas pela valorização do preço. Dividendos acumulados como caixa separado (sem yield adicional). A diferença vs. reinvestimento se torna enorme em 15–20 anos.</div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>Simulação educacional — não é recomendação de investimento. Rentabilidade passada não garante retorno futuro.</span>
+  <span>fev/2026</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let activeYears = 10;
+let chart = null;
+let hiddenSeries = new Set();
+let reinvestDivs = true;
+let cdbIRpct = 15;
+
+// ═══════════════════════════════════════════
+// INVESTMENTS
+// ═══════════════════════════════════════════
+const INVESTMENTS = [
+  {
+    id: 'tesouro',
+    name: 'Tesouro IPCA+7,21%',
+    shortName: 'Tesouro IPCA+',
+    type: 'tesouro',
+    color: '#3dd68c',
+    risk: 'Muito Baixo', riskClass: 'pos',
+    note: 'Garantia soberana · IR 15% LP · trava 20+ anos'
+  },
+  {
+    id: 'lci',
+    name: 'LCI/LCA (configurável)',
+    shortName: 'LCI/LCA',
+    type: 'lci',
+    color: '#f5c518',
+    risk: 'Baixo*', riskClass: 'warn',
+    note: 'taxa e IR ajustáveis acima · renovação periódica'
+  },
+  {
+    id: 'cdb',
+    name: 'CDB (configurável)',
+    shortName: 'CDB',
+    type: 'cdb',
+    color: '#2dd4bf',
+    risk: 'Baixo', riskClass: 'pos',
+    note: 'IR regressivo · FGC R$250k por inst.'
+  },
+  {
+    id: 'acoes_cons',
+    name: 'Ações — Conservador',
+    shortName: 'Ações Conserv.',
+    type: 'stock',
+    priceGrowth: 0.03,
+    color: '#5b9cf6',
+    risk: 'Médio-Alto', riskClass: 'risk',
+    note: 'DY + valoriz. 3%/ano (ciclo fraco)'
+  },
+  {
+    id: 'acoes_mod',
+    name: 'Ações — Moderado (ITUB4)',
+    shortName: 'Ações Moder.',
+    type: 'stock',
+    priceGrowth: 0.07,
+    color: '#a88bfa',
+    risk: 'Alto', riskClass: 'risk',
+    note: 'DY + valoriz. 7%/ano (histórico médio)'
+  },
+  {
+    id: 'acoes_otm',
+    name: 'Ações — Otimista (ITUB4 bull)',
+    shortName: 'Ações Otim.',
+    type: 'stock',
+    priceGrowth: 0.11,
+    color: '#f26065',
+    risk: 'Alto', riskClass: 'risk',
+    note: 'DY + valoriz. 11%/ano (melhor histórico)'
+  }
+];
+
+// ═══════════════════════════════════════════
+// PARAMS
+// ═══════════════════════════════════════════
+function getParams() {
+  return {
+    inicial: parseFloat(document.getElementById('inicial').value) || 20000,
+    aporte:  parseFloat(document.getElementById('aporte').value)  || 2000,
+    ipca:    parseFloat(document.getElementById('ipca').value)    || 5.0,
+    dy:      parseFloat(document.getElementById('dy').value)      || 6.5,
+    lciRate: parseFloat(document.getElementById('lciRate').value) || 14.0,
+    lciIR:   parseFloat(document.getElementById('lciIR').value)   || 0,
+    cdbRate: parseFloat(document.getElementById('cdbRate').value) || 13.5,
+    cdbIR:   cdbIRpct
+  };
+}
+
+// ═══════════════════════════════════════════
+// RATE → NET ANNUAL
+// ═══════════════════════════════════════════
+function netAnnualRate(inv, p) {
+  switch (inv.type) {
+    case 'tesouro': {
+      // nominal bruto = (1 + 0.0721) * (1 + ipca) - 1, IR 15% approximated on gains
+      const bruto = 1.0721 * (1 + p.ipca / 100) - 1;
+      return bruto * 0.85;
+    }
+    case 'lci': {
+      const bruto = p.lciRate / 100;
+      if (p.lciIR === 0) return bruto;
+      return bruto * (1 - p.lciIR / 100);
+    }
+    case 'cdb':
+      return (p.cdbRate / 100) * (1 - p.cdbIR / 100);
+    case 'stock':
+      if (reinvestDivs) {
+        return (1 + p.dy / 100) * (1 + inv.priceGrowth) - 1;
+      } else {
+        return inv.priceGrowth; // only price for the portfolio display
+      }
+    default: return 0;
+  }
+}
+
+// ═══════════════════════════════════════════
+// SIMULATION
+// ═══════════════════════════════════════════
+
+// Generic monthly compound with contributions
+function simFixed(annualRate, inicial, aporte, months) {
+  const r = Math.pow(1 + annualRate, 1 / 12) - 1;
+  const out = [];
+  let bal = inicial;
+  for (let m = 1; m <= months; m++) {
+    bal = bal * (1 + r) + aporte;
+    if (m % 12 === 0) out.push(Math.round(bal));
+  }
+  return out;
+}
+
+// Stock WITHOUT reinvestment:
+//   - stock value grows by price appreciation only + contributions
+//   - dividends accumulate as separate cash (no further yield, conservative)
+//   - total shown = stock value + cumulative dividends
+function simStockNoReinvest(dyRate, priceGrowth, inicial, aporte, months) {
+  const rPrice = Math.pow(1 + priceGrowth, 1 / 12) - 1;
+  const rDY    = Math.pow(1 + dyRate, 1 / 12) - 1;
+  const out = [];
+  let stock = inicial;
+  let cashDivs = 0;
+  for (let m = 1; m <= months; m++) {
+    cashDivs += stock * rDY;          // dividends earned this month
+    stock = stock * (1 + rPrice) + aporte; // price grows, contribution added
+    if (m % 12 === 0) out.push(Math.round(stock + cashDivs));
+  }
+  return out;
+}
+
+function getSeriesData(inv, p, months) {
+  if (inv.type === 'stock') {
+    if (reinvestDivs) {
+      const totalRate = (1 + p.dy / 100) * (1 + inv.priceGrowth) - 1;
+      return simFixed(totalRate, p.inicial, p.aporte, months);
+    } else {
+      return simStockNoReinvest(p.dy / 100, inv.priceGrowth, p.inicial, p.aporte, months);
+    }
+  }
+  return simFixed(netAnnualRate(inv, p), p.inicial, p.aporte, months);
+}
+
+// ═══════════════════════════════════════════
+// FORMAT
+// ═══════════════════════════════════════════
+function fmtBRL(v) {
+  if (v >= 1e6) return 'R$ ' + (v / 1e6).toFixed(2).replace('.', ',') + ' mi';
+  if (v >= 1e3) return 'R$ ' + (v / 1e3).toFixed(0) + ' mil';
+  return 'R$ ' + Math.round(v);
+}
+function fmtFV(v) {
+  if (v >= 1e6) return (v / 1e6).toFixed(2).replace('.', ',') + ' mi';
+  return (v / 1e3).toFixed(0) + 'k';
+}
+
+// ═══════════════════════════════════════════
+// BUILD CHART
+// ═══════════════════════════════════════════
+function buildChart() {
+  const p = getParams();
+  const maxYears = 20;
+  const labels = Array.from({length: maxYears}, (_, i) => `${i + 1}a`);
+
+  // Read CSS vars dynamically so chart matches theme
+  const cs = getComputedStyle(document.documentElement);
+  const cGrid    = cs.getPropertyValue('--chart-grid').trim();
+  const cTick    = cs.getPropertyValue('--chart-tick').trim();
+  const cBorder  = cs.getPropertyValue('--border').trim();
+  const cTooltip = cs.getPropertyValue('--tooltip-bg').trim();
+  const cMuted   = cs.getPropertyValue('--muted').trim();
+  const cText    = cs.getPropertyValue('--text').trim();
+
+  const datasets = INVESTMENTS.map(inv => {
+    const data = getSeriesData(inv, p, maxYears * 12);
+    const stockNoReinv = inv.type === 'stock' && !reinvestDivs;
+    return {
+      label: inv.name,
+      data,
+      borderColor: inv.color,
+      backgroundColor: inv.color + '10',
+      borderWidth: stockNoReinv ? 1.5 : 2,
+      borderDash: stockNoReinv ? [5, 4] : [],
+      pointRadius: 2,
+      pointHoverRadius: 5,
+      tension: 0.4,
+      hidden: hiddenSeries.has(inv.id)
+    };
+  });
+
+  const ctx = document.getElementById('mainChart').getContext('2d');
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: cTooltip,
+          borderColor: cBorder,
+          borderWidth: 1,
+          titleColor: cMuted,
+          bodyColor: cText,
+          titleFont: { family: 'DM Mono', size: 10 },
+          bodyFont: { family: 'DM Mono', size: 11 },
+          padding: 12,
+          callbacks: {
+            title: items => `Ano ${items[0].dataIndex + 1}`,
+            label: item => {
+              if (item.dataset.hidden) return null;
+              const inv = INVESTMENTS[item.datasetIndex];
+              const noReinv = inv.type === 'stock' && !reinvestDivs ? ' (s/reinv)' : '';
+              return `  ${inv.shortName}${noReinv}: ${fmtBRL(item.raw)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: cGrid },
+          ticks: { color: cTick, font: { family: 'DM Mono', size: 9 }, maxTicksLimit: 10 },
+          border: { color: cBorder }
+        },
+        y: {
+          grid: { color: cGrid },
+          ticks: {
+            color: cTick,
+            font: { family: 'DM Mono', size: 9 },
+            callback: v => {
+              if (v >= 1e6) return (v / 1e6).toFixed(1) + ' mi';
+              if (v >= 1e3) return (v / 1e3).toFixed(0) + 'k';
+              return v;
+            }
+          },
+          border: { color: cBorder }
+        }
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════
+// BUILD LEGEND
+// ═══════════════════════════════════════════
+function buildLegend() {
+  const grid = document.getElementById('legendGrid');
+  grid.innerHTML = '';
+  INVESTMENTS.forEach(inv => {
+    const hidden = hiddenSeries.has(inv.id);
+    const noReinv = inv.type === 'stock' && !reinvestDivs;
+    const item = document.createElement('div');
+    item.className = 'legend-item' + (hidden ? ' dimmed' : '');
+
+    // dashed line for no-reinvest stocks
+    const lineStyle = noReinv
+      ? `background: repeating-linear-gradient(90deg,${inv.color} 0,${inv.color} 5px,transparent 5px,transparent 9px);`
+      : `background:${inv.color};`;
+
+    item.innerHTML = `<div class="legend-line" style="${lineStyle}"></div><span>${inv.shortName}${noReinv ? ' ↗ só preço' : ''}</span>`;
+    item.addEventListener('click', () => {
+      if (hiddenSeries.has(inv.id)) hiddenSeries.delete(inv.id);
+      else hiddenSeries.add(inv.id);
+      buildAll();
+    });
+    grid.appendChild(item);
+  });
+}
+
+// ═══════════════════════════════════════════
+// BUILD RANKING
+// ═══════════════════════════════════════════
+function buildRanking() {
+  const p = getParams();
+  const months = activeYears * 12;
+  const totalInvested = p.inicial + p.aporte * months;
+
+  const results = INVESTMENTS.map(inv => {
+    const data = getSeriesData(inv, p, months);
+    const fv = data[data.length - 1];
+    const gain = fv - totalInvested;
+    const rate = netAnnualRate(inv, p) * 100;
+    return { inv, fv, gain, rate };
+  });
+  results.sort((a, b) => b.fv - a.fv);
+
+  const list = document.getElementById('rankingList');
+  list.innerHTML = '';
+
+  results.forEach((r, i) => {
+    const pos = i + 1;
+    const card = document.createElement('div');
+    card.className = 'rank-card rank-' + Math.min(pos, 3);
+    const gainX = (r.fv / totalInvested).toFixed(1);
+    const noReinv = r.inv.type === 'stock' && !reinvestDivs;
+    const rateLabel = noReinv ? `${r.rate.toFixed(1)}% preço · DY em caixa` : `${r.rate.toFixed(1)}% a.a. líq.`;
+
+    card.innerHTML = `
+      <div class="rank-pos">${pos}</div>
+      <div class="rank-name">
+        <div class="rank-dot" style="background:${r.inv.color}"></div>
+        ${r.inv.shortName}${noReinv ? '<span style="color:var(--orange);font-size:8px;margin-left:4px">s/reinv.</span>' : ''}
+      </div>
+      <div class="rank-rate">${rateLabel}</div>
+      <div class="rank-fv" style="color:${r.inv.color}"><small>R$</small>${fmtFV(r.fv)}</div>
+      <div class="rank-detail">
+        <div class="rank-stat">
+          <span class="rank-stat-label">Ganho</span>
+          <span class="rank-stat-val pos">+${fmtBRL(r.gain)}</span>
+        </div>
+        <div class="rank-stat">
+          <span class="rank-stat-label">Múltiplo</span>
+          <span class="rank-stat-val">${gainX}×</span>
+        </div>
+        <div class="rank-stat">
+          <span class="rank-stat-label">Risco</span>
+          <span class="rank-stat-val ${r.inv.riskClass}">${r.inv.risk}</span>
+        </div>
+      </div>
+    `;
+
+    if (pos <= 2) {
+      const note = document.createElement('div');
+      note.style.cssText = 'font-size:9px;color:var(--muted);margin-top:7px;border-top:1px solid var(--border);padding-top:7px;';
+      note.textContent = r.inv.note;
+      card.appendChild(note);
+    }
+
+    list.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════
+// BUILD ALL
+// ═══════════════════════════════════════════
+function buildAll() {
+  buildChart();
+  buildLegend();
+  buildRanking();
+}
+
+// ═══════════════════════════════════════════
+// EVENT LISTENERS
+// ═══════════════════════════════════════════
+
+// Number inputs
+document.querySelectorAll('input[type=number]').forEach(el => {
+  el.addEventListener('input', buildAll);
+});
+
+// CDB IR pills
+document.querySelectorAll('.ir-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.ir-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    cdbIRpct = parseFloat(pill.dataset.ir);
+    buildAll();
+  });
+});
+
+// Dividend toggle
+const toggleInput = document.getElementById('reinvestToggle');
+const toggleText  = document.getElementById('toggleText');
+const divDesc     = document.getElementById('divDescription');
+
+toggleInput.addEventListener('change', () => {
+  reinvestDivs = toggleInput.checked;
+  if (reinvestDivs) {
+    toggleText.textContent = 'Reinvestindo dividendos';
+    toggleText.classList.add('on');
+    divDesc.innerHTML = '<span class="tag-on">✦ Ativado:</span> dividendos compram mais ações que geram mais dividendos — efeito bola de neve. Portfólio cresce pelo total return (preço + DY).';
+  } else {
+    toggleText.textContent = 'Sacando dividendos';
+    toggleText.classList.remove('on');
+    divDesc.innerHTML = '<span class="tag-off">✦ Desativado:</span> portfólio cresce apenas pela valorização do preço. Dividendos acumulam como caixa separado (sem rendimento adicional).';
+  }
+  buildAll();
+});
+
+// Year tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeYears = parseInt(btn.dataset.years);
+    buildRanking();
+  });
+});
+
+// ═══════════════════════════════════════════
+// THEME TOGGLE
+// ═══════════════════════════════════════════
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+}
+
+let currentTheme = getSystemTheme();
+
+function applyTheme(theme) {
+  currentTheme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  const icon  = document.getElementById('themeIcon');
+  const label = document.getElementById('themeLabel');
+  if (theme === 'light') {
+    icon.textContent  = '☾';
+    label.textContent = 'Tema escuro';
+  } else {
+    icon.textContent  = '☀︎';
+    label.textContent = 'Tema claro';
+  }
+  buildAll(); // rebuild chart with updated CSS vars
+}
+
+function toggleTheme() {
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+}
+
+// Listen for OS theme changes
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+  // Only auto-switch if user hasn't manually picked
+  if (!document.documentElement.hasAttribute('data-theme')) {
+    applyTheme(e.matches ? 'light' : 'dark');
+  }
+});
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+applyTheme(getSystemTheme());
+buildAll();
+</script>
+</body>
+</html>
