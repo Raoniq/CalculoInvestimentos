@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,900;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-/* ── DARK THEME (default) ── */
+/* ── DARK THEME ── */
 :root {
   --bg: #070809;
   --panel: #0d0f12;
@@ -37,7 +37,7 @@
   --teal-faint: rgba(45,212,191,0.08);
 }
 
-/* ── LIGHT THEME ── */
+/* ── LIGHT THEME (Padrão) ── */
 :root[data-theme="light"],
 @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
   --bg: #f8f9fb;
@@ -68,7 +68,7 @@
   --teal-faint: rgba(14,148,136,0.08);
 }}
 
-/* ── FORCE LIGHT via data attribute ── */
+/* ── FORCE LIGHT padrão do windows ── */
 :root[data-theme="light"] {
   --bg: #f8f9fb;
   --panel: #f0f2f5;
@@ -98,7 +98,7 @@
   --teal-faint: rgba(14,148,136,0.08);
 }
 
-/* ── FORCE DARK via data attribute ── */
+/* ── FORCE DARK padrão do windows ── */
 :root[data-theme="dark"] {
   --bg: #070809;
   --panel: #0d0f12;
@@ -546,7 +546,7 @@ body {
       <span id="themeLabel">Tema claro</span>
     </button>
   </div>
-  <h1><span id="h1Inicial">R$ 20k</span> inicial + <span id="h1Aporte">R$ 2k</span>/<em>mês</em></h1>
+  <h1><span id="h1Inicial">R$ 10k</span> inicial + <span id="h1Aporte">R$ 1k</span>/<em>mês</em></h1>
   <p class="header-sub">
     Tesouro IPCA+ · LCI/LCA · CDB · Ações (ITUB3, PRT4…)<br>
     Todos os parâmetros configuráveis.
@@ -558,12 +558,12 @@ body {
 <div class="inputs-bar">
   <div class="input-group">
     <label>Capital Inicial</label>
-    <input type="number" id="inicial" value="20000" min="0" step="1000">
+    <input type="number" id="inicial" value="10000" min="0" step="1000">
     <span class="input-note">saldo atual</span>
   </div>
   <div class="input-group">
     <label>Aporte Mensal</label>
-    <input type="number" id="aporte" value="2000" min="0" step="100">
+    <input type="number" id="aporte" value="1000" min="0" step="100">
     <span class="input-note" id="aporteNote">100% reinvestido</span>
   </div>
   <div class="input-group">
