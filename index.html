@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Investimentos - Ações e renda fixa</title>
+<title>Simulador de Investimentos — Longo Prazo</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,900;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -528,10 +528,10 @@ body {
       <span id="themeLabel">Tema claro</span>
     </button>
   </div>
-  <h1>R$ 10k inicial + R$ 1k/<em>mês</em></h1>
+  <h1><span id="h1Inicial">R$ 20k</span> inicial + <span id="h1Aporte">R$ 2k</span>/<em>mês</em></h1>
   <p class="header-sub">
     Tesouro IPCA+7,21% · LCI/LCA · CDB · Ações (ITUB4, ABCB4…)<br>
-    Todos os parâmetros configuráveis.
+    Todos os parâmetros configuráveis. Clique na legenda para ocultar séries.
   </p>
 </div>
 
@@ -540,12 +540,12 @@ body {
 <div class="inputs-bar">
   <div class="input-group">
     <label>Capital Inicial</label>
-    <input type="number" id="inicial" value="10000" min="0" step="1000">
+    <input type="number" id="inicial" value="20000" min="0" step="1000">
     <span class="input-note">saldo atual</span>
   </div>
   <div class="input-group">
     <label>Aporte Mensal</label>
-    <input type="number" id="aporte" value="1000" min="0" step="100">
+    <input type="number" id="aporte" value="2000" min="0" step="100">
     <span class="input-note">100% reinvestido</span>
   </div>
   <div class="input-group">
@@ -782,8 +782,8 @@ function getParams() {
   const cdbGross = cdbMode === 'pos' ? (cdbRaw / 100) * selic : cdbRaw;
 
   return {
-    inicial: parseFloat(document.getElementById('inicial').value) || 10000,
-    aporte:  parseFloat(document.getElementById('aporte').value)  || 1000,
+    inicial: parseFloat(document.getElementById('inicial').value) || 20000,
+    aporte:  parseFloat(document.getElementById('aporte').value)  || 2000,
     selic,
     tesReal,
     ipca:    parseFloat(document.getElementById('ipca').value)    || 5.0,
@@ -1126,9 +1126,21 @@ function buildRanking() {
 // ═══════════════════════════════════════════
 function buildAll() {
   updateRateHints();
+  updateHeader();
   buildChart();
   buildLegend();
   buildRanking();
+}
+
+function updateHeader() {
+  const p = getParams();
+  const fmt = v => {
+    if (v >= 1e6) return 'R$ ' + (v/1e6).toFixed(1).replace('.',',') + 'M';
+    if (v >= 1e3) return 'R$ ' + (v/1e3 % 1 === 0 ? (v/1e3).toFixed(0) : (v/1e3).toFixed(1).replace('.',',')) + 'k';
+    return 'R$ ' + v.toFixed(0);
+  };
+  document.getElementById('h1Inicial').textContent = fmt(p.inicial);
+  document.getElementById('h1Aporte').textContent  = fmt(p.aporte);
 }
 
 // ═══════════════════════════════════════════
