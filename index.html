@@ -1110,7 +1110,7 @@ function buildRanking() {
       </div>
     `;
 
-    if (pos <= 2) {
+    if (pos <= 2 || r.inv.type === 'stock') {
       const note = document.createElement('div');
       note.style.cssText = 'font-size:9px;color:var(--muted);margin-top:7px;border-top:1px solid var(--border);padding-top:7px;';
       note.textContent = r.inv.note;
