@@ -168,7 +168,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
   margin-bottom:18px;display:flex;align-items:center;gap:12px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-.chart-wrap{position:relative;height:360px;}
+.chart-wrap{position:relative;height:360px;width:100%;overflow:hidden;}
+.chart-wrap canvas{max-width:100%;}
 .chart-note{font-size:9px;color:var(--muted);margin-top:8px;font-style:italic;}
 
 /* LEGEND */
@@ -1396,16 +1397,22 @@ applyTheme('light');
 updateCdbIrFromMonths(activeMonths);
 buildAll();
 
-// Fix chart not resizing on browser zoom in/out
-const chartWrap = document.querySelector('.chart-wrap');
-if (chartWrap && window.ResizeObserver) {
-  new ResizeObserver(() => {
-    if (chart) chart.resize();
-  }).observe(chartWrap);
+// Fix chart resize on browser zoom — full rebuild with debounce
+let resizeTimer = null;
+function onResize() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    // Force canvas back to zero so Chart.js measures container fresh
+    const canvas = document.getElementById('mainChart');
+    if (canvas) { canvas.style.width = '0'; canvas.style.height = '0'; }
+    buildChart();
+    buildLegend();
+  }, 120);
 }
-window.addEventListener('resize', () => {
-  if (chart) chart.resize();
-});
+if (window.ResizeObserver) {
+  new ResizeObserver(onResize).observe(document.querySelector('.chart-wrap'));
+}
+window.addEventListener('resize', onResize);
 </script>
 </body>
 </html>
