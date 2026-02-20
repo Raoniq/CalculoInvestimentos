@@ -274,8 +274,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .res-progress-fill.done{background:var(--green);}
 
 /* Chart containers */
-.res-donut-wrap{position:relative;height:220px;margin-bottom:24px;}
-.res-line-wrap{position:relative;height:200px;}
+.res-donut-wrap{position:relative;height:220px;margin-bottom:24px;width:100%;overflow:hidden;}
+.res-donut-wrap canvas{max-width:100%;}
+.res-line-wrap{position:relative;height:200px;width:100%;overflow:hidden;}
+.res-line-wrap canvas{max-width:100%;}
 .res-chart-title{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
 
 /* Expert tips */
@@ -1402,15 +1404,25 @@ let resizeTimer = null;
 function onResize() {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
-    // Force canvas back to zero so Chart.js measures container fresh
+    // Reset main chart canvas
     const canvas = document.getElementById('mainChart');
     if (canvas) { canvas.style.width = '0'; canvas.style.height = '0'; }
     buildChart();
     buildLegend();
+
+    // Reset reserva chart canvases
+    const donut = document.getElementById('resDonut');
+    const line  = document.getElementById('resLine');
+    if (donut) { donut.style.width = '0'; donut.style.height = '0'; }
+    if (line)  { line.style.width  = '0'; line.style.height  = '0'; }
+    if (resDonutChart) resDonutChart.resize();
+    if (resLineChart)  resLineChart.resize();
   }, 120);
 }
 if (window.ResizeObserver) {
   new ResizeObserver(onResize).observe(document.querySelector('.chart-wrap'));
+  const resCharts = document.querySelector('.res-charts');
+  if (resCharts) new ResizeObserver(onResize).observe(resCharts);
 }
 window.addEventListener('resize', onResize);
 </script>
