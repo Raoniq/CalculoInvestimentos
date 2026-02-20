@@ -1395,6 +1395,17 @@ document.getElementById('res-filhos').addEventListener('change', function() {
 applyTheme('light');
 updateCdbIrFromMonths(activeMonths);
 buildAll();
+
+// Fix chart not resizing on browser zoom in/out
+const chartWrap = document.querySelector('.chart-wrap');
+if (chartWrap && window.ResizeObserver) {
+  new ResizeObserver(() => {
+    if (chart) chart.resize();
+  }).observe(chartWrap);
+}
+window.addEventListener('resize', () => {
+  if (chart) chart.resize();
+});
 </script>
 </body>
 </html>
