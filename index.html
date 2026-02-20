@@ -289,6 +289,45 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .expert-text{font-size:10px;color:var(--muted);line-height:1.7;}
 
 /* ═══════════════════════════════════════════
+   CALCULADORA DE AÇÕES
+═══════════════════════════════════════════ */
+.ac-main{display:grid;grid-template-columns:360px 1fr;min-height:520px;border-bottom:1px solid var(--border);}
+.ac-scenarios{padding:28px 24px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:12px;}
+.ac-chart-area{padding:28px 40px;}
+.ac-chart-wrap{position:relative;height:380px;width:100%;overflow:hidden;}
+.ac-chart-wrap canvas{max-width:100%;}
+
+.ac-scenario-card{background:var(--card);border:1px solid var(--border);padding:14px 16px;transition:border-color .2s;}
+.ac-scenario-card:hover{border-color:var(--border2);}
+.ac-scenario-card.rank-1{border-color:rgba(61,214,140,.3);background:var(--green-faint);}
+
+.ac-sc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.ac-sc-badge{font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border:1px solid;font-family:'DM Mono',monospace;}
+.ac-sc-growth{font-size:10px;color:var(--muted);}
+
+.ac-sc-body{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border);padding-top:10px;}
+.ac-sc-col{padding-right:12px;}
+.ac-sc-col:last-child{padding-right:0;border-left:1px solid var(--border);padding-left:12px;}
+.ac-sc-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.ac-sc-val{font-family:'Fraunces',serif;font-size:22px;font-weight:700;line-height:1.1;}
+.ac-sc-val-net{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--muted);line-height:1.1;}
+.ac-sc-detail{font-size:9px;color:var(--muted);margin-top:8px;line-height:1.6;border-top:1px solid var(--border);padding-top:7px;}
+
+/* Dividend projection row */
+.ac-dividends-section{border-top:1px solid var(--border);}
+.ac-div-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0;border-top:1px solid var(--border);margin-top:14px;}
+.ac-div-cell{padding:12px 16px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
+.ac-div-cell:last-child{border-right:none;}
+.ac-div-year{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.ac-div-val{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--violet);}
+.ac-div-monthly{font-size:9px;color:var(--muted);margin-top:2px;}
+
+@media(max-width:900px){
+  .ac-main{grid-template-columns:1fr;}
+  .ac-scenarios{border-right:none;border-bottom:1px solid var(--border);}
+}
+
+/* ═══════════════════════════════════════════
    FOOTER LEGAL
 ═══════════════════════════════════════════ */
 .footer-legal{border-top:2px solid var(--border);background:var(--panel);}
@@ -349,6 +388,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
           <div class="nav-item-text">
             <span class="nav-item-label">Reserva de Emergência</span>
             <span class="nav-item-desc">Meta, prazo e progresso</span>
+          </div>
+        </button>
+        <button class="nav-dropdown-item" id="menu-acoes" onclick="showTab('acoes')">
+          <span class="nav-icon">📊</span>
+          <div class="nav-item-text">
+            <span class="nav-item-label">Calculadora de Ações</span>
+            <span class="nav-item-desc">DY, cenários e imposto</span>
           </div>
         </button>
       </div>
@@ -668,6 +714,155 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 </div><!-- /tab-reserva -->
 
 <!-- ══════════════════════════════════════════
+     TAB 3: CALCULADORA DE AÇÕES
+══════════════════════════════════════════ -->
+<div id="tab-acoes" style="display:none;">
+
+  <div class="header">
+    <div class="header-eyebrow">Calculadora de Ações · Dividendos e Valorização</div>
+    <h1>Quanto rende <em>sua ação?</em></h1>
+    <p class="header-sub">
+      Insira o ticker, DY histórico e capital. Veja os três cenários de crescimento e o valor líquido após IR.
+    </p>
+  </div>
+
+  <!-- INPUTS -->
+  <div class="inputs-section-label">Dados da Ação</div>
+  <div class="inputs-bar">
+    <div class="input-group" style="min-width:140px;">
+      <label>Ticker</label>
+      <input type="text" id="ac-ticker" value="ITUB4" maxlength="8"
+        style="background:transparent;border:none;color:var(--text);font-family:'Fraunces',serif;
+               font-size:28px;font-weight:900;width:100%;outline:none;text-transform:uppercase;">
+      <span class="input-note">código da ação (ex: PETR4)</span>
+    </div>
+    <div class="input-group" style="min-width:180px;flex:2;">
+      <label>DY Histórico % a.a.</label>
+      <input type="number" id="ac-dy" value="7.0" min="0" max="50" step="0.5">
+      <span class="input-note">média dos últimos 5–10 anos excluindo anos atípicos</span>
+    </div>
+    <div class="input-group">
+      <label>Capital Inicial</label>
+      <input type="number" id="ac-inicial" value="10000" min="0" step="1000">
+      <span class="input-note">R$ investido hoje</span>
+    </div>
+    <div class="input-group">
+      <label>Aporte Mensal</label>
+      <input type="number" id="ac-aporte" value="1000" min="0" step="100">
+      <span class="input-note">R$ por mês</span>
+    </div>
+    <div class="input-group">
+      <label>Horizonte (anos)</label>
+      <input type="number" id="ac-anos" value="20" min="1" max="40" step="1">
+      <span class="input-note">período de acumulação</span>
+    </div>
+    <div class="input-group">
+      <label>Reinvestir dividendos?</label>
+      <div class="toggle-wrap" style="margin-top:4px;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="ac-reinvest" checked>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+        <span class="toggle-label-text on" id="ac-reinvest-label">Sim</span>
+      </div>
+      <span class="input-note" id="ac-reinvest-note">dividendos compram mais ações</span>
+    </div>
+  </div>
+
+  <!-- DY GUIDE -->
+  <div style="padding:10px 40px;background:var(--panel);border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span style="color:var(--blue);font-weight:500;">💡 Como calcular seu DY histórico:</span>
+    <span>Some os dividendos pagos por ação em cada ano · divida pelo preço médio do ano · tire a média dos últimos 5–10 anos</span>
+    <span style="color:var(--orange);">· Exclua anos atípicos (ex: distribuições extras pós-pandemia) para uma base mais conservadora</span>
+    <span>· Fontes: <em>Status Invest, Fundamentus, B3</em></span>
+  </div>
+
+  <!-- CARDS DE CENÁRIO + GRÁFICO -->
+  <div class="ac-main">
+    <!-- CENÁRIOS -->
+    <div class="ac-scenarios">
+      <div class="section-label">Três Cenários · <span id="ac-ticker-label">ITUB4</span></div>
+
+      <div class="ac-scenario-card" id="ac-card-cons">
+        <div class="ac-sc-header">
+          <span class="ac-sc-badge" style="background:var(--blue-faint);color:var(--blue);border-color:var(--blue);">Conservador</span>
+          <span class="ac-sc-growth" id="ac-growth-cons">+3% preço/ano</span>
+        </div>
+        <div class="ac-sc-body">
+          <div class="ac-sc-col">
+            <div class="ac-sc-label">Patrimônio bruto</div>
+            <div class="ac-sc-val" id="ac-fv-cons" style="color:var(--blue);">—</div>
+          </div>
+          <div class="ac-sc-col">
+            <div class="ac-sc-label">No bolso (após IR)</div>
+            <div class="ac-sc-val-net" id="ac-net-cons">—</div>
+          </div>
+        </div>
+        <div class="ac-sc-detail" id="ac-detail-cons"></div>
+      </div>
+
+      <div class="ac-scenario-card" id="ac-card-mod">
+        <div class="ac-sc-header">
+          <span class="ac-sc-badge" style="background:var(--violet-faint);color:var(--violet);border-color:var(--violet);">Moderado</span>
+          <span class="ac-sc-growth" id="ac-growth-mod">+7% preço/ano</span>
+        </div>
+        <div class="ac-sc-body">
+          <div class="ac-sc-col">
+            <div class="ac-sc-label">Patrimônio bruto</div>
+            <div class="ac-sc-val" id="ac-fv-mod" style="color:var(--violet);">—</div>
+          </div>
+          <div class="ac-sc-col">
+            <div class="ac-sc-label">No bolso (após IR)</div>
+            <div class="ac-sc-val-net" id="ac-net-mod">—</div>
+          </div>
+        </div>
+        <div class="ac-sc-detail" id="ac-detail-mod"></div>
+      </div>
+
+      <div class="ac-scenario-card rank-1" id="ac-card-otm">
+        <div class="ac-sc-header">
+          <span class="ac-sc-badge" style="background:var(--green-faint);color:var(--green);border-color:var(--green);">Otimista</span>
+          <span class="ac-sc-growth" id="ac-growth-otm">+11% preço/ano</span>
+        </div>
+        <div class="ac-sc-body">
+          <div class="ac-sc-col">
+            <div class="ac-sc-label">Patrimônio bruto</div>
+            <div class="ac-sc-val" id="ac-fv-otm" style="color:var(--green);">—</div>
+          </div>
+          <div class="ac-sc-col">
+            <div class="ac-sc-label">No bolso (após IR)</div>
+            <div class="ac-sc-val-net" id="ac-net-otm">—</div>
+          </div>
+        </div>
+        <div class="ac-sc-detail" id="ac-detail-otm"></div>
+      </div>
+
+      <!-- IR note -->
+      <div style="font-size:9px;color:var(--muted);line-height:1.7;margin-top:10px;padding:10px;border:1px solid var(--border);background:var(--panel);">
+        <strong style="color:var(--text);">IR sobre ações:</strong>
+        Dividendos são isentos de IR. Ganho de capital na venda: 15% para operações comuns (até R$20k/mês isentos),
+        20% para day-trade. O cálculo aqui aplica 15% apenas sobre o ganho de preço (valorização).
+      </div>
+    </div>
+
+    <!-- GRÁFICO -->
+    <div class="ac-chart-area">
+      <div class="section-label">Evolução Patrimonial — <span id="ac-anos-label">20</span> anos</div>
+      <div class="ac-chart-wrap"><canvas id="acChart"></canvas></div>
+      <div class="legend-grid" id="ac-legend"></div>
+    </div>
+  </div>
+
+  <!-- DIVIDENDOS PROJETADOS -->
+  <div class="ac-dividends-section">
+    <div class="section-label" style="padding:0 40px;margin-bottom:0;padding-top:20px;">Renda de Dividendos Projetada (cenário moderado)</div>
+    <div class="ac-div-grid" id="ac-div-grid"></div>
+  </div>
+
+</div><!-- /tab-acoes -->
+
+<!-- ══════════════════════════════════════════
      FOOTER LEGAL (compartilhado)
 ══════════════════════════════════════════ -->
 <footer class="footer-legal">
@@ -706,7 +901,8 @@ let cdbMode = 'pre';
 // ═══════════════════════════════════════════
 const TABS = {
   simulador: { label: 'Simulador de Investimentos' },
-  reserva:   { label: 'Reserva de Emergência' }
+  reserva:   { label: 'Reserva de Emergência' },
+  acoes:     { label: 'Calculadora de Ações' }
 };
 
 function toggleMenu() {
@@ -729,24 +925,21 @@ document.addEventListener('click', e => {
 // TAB NAVIGATION
 // ═══════════════════════════════════════════
 function showTab(tab) {
-  // Hide all tabs, show selected
   document.getElementById('tab-simulador').style.display = tab === 'simulador' ? '' : 'none';
   document.getElementById('tab-reserva').style.display   = tab === 'reserva'   ? '' : 'none';
+  document.getElementById('tab-acoes').style.display     = tab === 'acoes'     ? '' : 'none';
 
-  // Update menu item active states
   Object.keys(TABS).forEach(key => {
     document.getElementById('menu-'+key).classList.toggle('active', key === tab);
   });
 
-  // Update breadcrumb label
   document.getElementById('navActiveLabel').textContent = TABS[tab]?.label || '';
-
-  // Close the dropdown
   document.getElementById('navDropdown').classList.remove('open');
   document.getElementById('hamburgerBtn').classList.remove('open');
 
   if (tab === 'reserva')   calcReserva();
   if (tab === 'simulador') buildAll();
+  if (tab === 'acoes')     calcAcoes();
 }
 
 // ═══════════════════════════════════════════
@@ -1319,6 +1512,210 @@ function buildResLine(atual, poupar, meta, rMes, totalMeses) {
 }
 
 // ═══════════════════════════════════════════
+// CALCULADORA DE AÇÕES
+// ═══════════════════════════════════════════
+let acChart = null;
+
+const AC_SCENARIOS = [
+  { id:'cons', label:'Conservador', priceGrowth:0.03, color:'#5b9cf6' },
+  { id:'mod',  label:'Moderado',    priceGrowth:0.07, color:'#a88bfa' },
+  { id:'otm',  label:'Otimista',    priceGrowth:0.11, color:'#3dd68c' }
+];
+
+function calcAcoes() {
+  const ticker   = (document.getElementById('ac-ticker').value  || 'AÇÃO').toUpperCase();
+  const dy       = parseFloat(document.getElementById('ac-dy').value)      || 7.0;
+  const inicial  = parseFloat(document.getElementById('ac-inicial').value) || 10000;
+  const aporte   = parseFloat(document.getElementById('ac-aporte').value)  || 1000;
+  const anos     = parseInt(document.getElementById('ac-anos').value)      || 20;
+  const reinvest = document.getElementById('ac-reinvest').checked;
+  const months   = anos * 12;
+  const totalInv = inicial + aporte * months;
+
+  document.getElementById('ac-ticker-label').textContent = ticker;
+  document.getElementById('ac-anos-label').textContent   = anos;
+
+  // Simulate each scenario
+  AC_SCENARIOS.forEach(sc => {
+    let fvGross, stockFinalForIR;
+
+    if (reinvest) {
+      const totalRate = (1 + dy/100) * (1 + sc.priceGrowth) - 1;
+      const data = simFixed(totalRate, inicial, aporte, months);
+      fvGross = data[data.length - 1];
+      // IR: 15% on price-appreciation share of gain
+      const priceFrac = totalRate > 0 ? Math.min(sc.priceGrowth / totalRate, 1) : 0;
+      const priceGain = Math.max((fvGross - totalInv) * priceFrac, 0);
+      stockFinalForIR = priceGain;
+    } else {
+      const stockData = simFixed(sc.priceGrowth, inicial, aporte, months);
+      const stockFinal = stockData[stockData.length - 1];
+      const priceGain  = Math.max(stockFinal - totalInv, 0);
+      // Dividends accumulate as separate exempt cash
+      const rPrice = Math.pow(1 + sc.priceGrowth, 1/12) - 1;
+      const rDY    = Math.pow(1 + dy/100, 1/12) - 1;
+      let stock2 = inicial, cashDivs = 0;
+      for (let m = 1; m <= months; m++) {
+        cashDivs += stock2 * rDY;
+        stock2    = stock2 * (1+rPrice) + aporte;
+      }
+      fvGross = Math.round(stock2 + cashDivs);
+      stockFinalForIR = priceGain;
+    }
+
+    const irAmount = 0.15 * Math.max(stockFinalForIR, 0);
+    const netPocket = fvGross - irAmount;
+    const gain = fvGross - totalInv;
+    const gainX = (fvGross / totalInv).toFixed(1);
+    const totalReturnRate = reinvest
+      ? ((1 + dy/100) * (1 + sc.priceGrowth) - 1) * 100
+      : sc.priceGrowth * 100;
+
+    // Projected annual dividends at end (based on portfolio value × DY)
+    const annualDivs = fvGross * (dy / 100);
+    const monthlyDivs = annualDivs / 12;
+
+    document.getElementById(`ac-fv-${sc.id}`).textContent  = fmtBRL(fvGross);
+    document.getElementById(`ac-net-${sc.id}`).textContent = fmtBRL(netPocket);
+    document.getElementById(`ac-growth-${sc.id}`).textContent =
+      `+${(sc.priceGrowth*100).toFixed(0)}% preço/ano · ${totalReturnRate.toFixed(1)}% total return`;
+    document.getElementById(`ac-detail-${sc.id}`).innerHTML =
+      `Ganho bruto: <strong>+${fmtBRL(gain)}</strong> &nbsp;·&nbsp; Múltiplo: <strong>${gainX}×</strong><br>` +
+      `IR 15% s/ ganho de preço: −${fmtBRL(irAmount)} (dividendos isentos)<br>` +
+      `Dividendos projetados (ano ${anos}): <strong style="color:var(--violet)">${fmtBRL(annualDivs)}/ano = ${fmtBRL(monthlyDivs)}/mês</strong>`;
+  });
+
+  buildAcChart(dy, inicial, aporte, months, reinvest);
+  buildAcDivGrid(dy, inicial, aporte, anos, reinvest);
+}
+
+function buildAcChart(dy, inicial, aporte, months, reinvest) {
+  const cs = getComputedStyle(document.documentElement);
+  const cGrid=cs.getPropertyValue('--chart-grid').trim(), cTick=cs.getPropertyValue('--chart-tick').trim(),
+        cBorder=cs.getPropertyValue('--border').trim(), cTooltip=cs.getPropertyValue('--tooltip-bg').trim(),
+        cMuted=cs.getPropertyValue('--muted').trim(), cText=cs.getPropertyValue('--text').trim();
+
+  const labels = Array.from({length: months/12}, (_,i) => `${i+1}a`);
+
+  const datasets = AC_SCENARIOS.map(sc => {
+    let data;
+    if (reinvest) {
+      const totalRate = (1 + dy/100) * (1 + sc.priceGrowth) - 1;
+      data = simFixed(totalRate, inicial, aporte, months);
+    } else {
+      // stock + cumulative divs month by month
+      const rPrice = Math.pow(1 + sc.priceGrowth, 1/12) - 1;
+      const rDY    = Math.pow(1 + dy/100, 1/12) - 1;
+      const out = [];
+      let stock = inicial, cashDivs = 0;
+      for (let m = 1; m <= months; m++) {
+        cashDivs += stock * rDY;
+        stock     = stock * (1+rPrice) + aporte;
+        if (m % 12 === 0) out.push(Math.round(stock + cashDivs));
+      }
+      data = out;
+    }
+    return {
+      label: sc.label,
+      data,
+      borderColor: sc.color,
+      backgroundColor: sc.color+'15',
+      borderWidth: sc.id==='otm' ? 2.5 : 2,
+      pointRadius: 2, pointHoverRadius: 5,
+      tension: 0.4, fill: sc.id==='cons'
+    };
+  });
+
+  // Invested capital line
+  const invested = Array.from({length: months/12}, (_,i) => inicial + aporte * (i+1)*12);
+  datasets.unshift({
+    label: 'Total investido',
+    data: invested,
+    borderColor: cs.getPropertyValue('--border2').trim(),
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderDash: [4,4],
+    pointRadius: 0,
+    tension: 0, fill: false
+  });
+
+  const ctx = document.getElementById('acChart').getContext('2d');
+  if (acChart) acChart.destroy();
+  acChart = new Chart(ctx, {
+    type:'line', data:{labels, datasets},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index', intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:cTooltip, borderColor:cBorder, borderWidth:1,
+          titleColor:cMuted, bodyColor:cText,
+          titleFont:{family:'DM Mono',size:10}, bodyFont:{family:'DM Mono',size:11}, padding:12,
+          callbacks:{
+            title: items => `Ano ${items[0].dataIndex+1}`,
+            label: item => `  ${item.dataset.label}: ${fmtBRL(item.raw)}`
+          }
+        }
+      },
+      scales:{
+        x:{grid:{color:cGrid},ticks:{color:cTick,font:{family:'DM Mono',size:9},maxTicksLimit:12},border:{color:cBorder}},
+        y:{grid:{color:cGrid},ticks:{color:cTick,font:{family:'DM Mono',size:9},
+            callback:v=>v>=1e6?(v/1e6).toFixed(1)+' mi':v>=1e3?(v/1e3).toFixed(0)+'k':v},border:{color:cBorder}}
+      }
+    }
+  });
+
+  // Legend
+  const lgd = document.getElementById('ac-legend');
+  lgd.innerHTML = '';
+  [...AC_SCENARIOS].reverse().forEach(sc => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<div class="legend-line" style="background:${sc.color}"></div><span>${sc.label}</span>`;
+    lgd.appendChild(item);
+  });
+  const inv = document.createElement('div');
+  inv.className = 'legend-item';
+  inv.innerHTML = `<div class="legend-line" style="background:repeating-linear-gradient(90deg,var(--border2) 0,var(--border2) 4px,transparent 4px,transparent 8px)"></div><span>Capital investido</span>`;
+  lgd.appendChild(inv);
+}
+
+function buildAcDivGrid(dy, inicial, aporte, anos, reinvest) {
+  const grid = document.getElementById('ac-div-grid');
+  grid.innerHTML = '';
+  // Moderado scenario, show dividends at years 1,2,3,5,10,15,20 (up to anos)
+  const milestones = [1,2,3,5,10,15,20,25,30].filter(y => y <= anos);
+  const priceGrowth = 0.07; // moderado
+
+  milestones.forEach(y => {
+    const m = y * 12;
+    let portfolioVal;
+    if (reinvest) {
+      const totalRate = (1 + dy/100) * (1 + priceGrowth) - 1;
+      const data = simFixed(totalRate, inicial, aporte, m);
+      portfolioVal = data[data.length - 1];
+    } else {
+      const rPrice = Math.pow(1 + priceGrowth, 1/12) - 1;
+      let stock = inicial;
+      for (let mm = 1; mm <= m; mm++) stock = stock*(1+rPrice) + aporte;
+      portfolioVal = stock;
+    }
+    const annualDivs  = portfolioVal * (dy/100);
+    const monthlyDivs = annualDivs / 12;
+
+    const cell = document.createElement('div');
+    cell.className = 'ac-div-cell';
+    cell.innerHTML = `
+      <div class="ac-div-year">Ano ${y}</div>
+      <div class="ac-div-val">${fmtBRL(annualDivs)}</div>
+      <div class="ac-div-monthly">${fmtBRL(monthlyDivs)}/mês</div>
+    `;
+    grid.appendChild(cell);
+  });
+}
+
+// ═══════════════════════════════════════════
 // EVENT LISTENERS
 // ═══════════════════════════════════════════
 
@@ -1385,6 +1782,19 @@ document.querySelectorAll('#tab-reserva input, #tab-reserva select').forEach(el=
   el.addEventListener('change', calcReserva);
 });
 
+// Ações inputs
+document.querySelectorAll('#tab-acoes input[type=number], #tab-acoes input[type=text]').forEach(el=>{
+  el.addEventListener('input', calcAcoes);
+});
+document.getElementById('ac-reinvest').addEventListener('change', function() {
+  const lbl  = document.getElementById('ac-reinvest-label');
+  const note = document.getElementById('ac-reinvest-note');
+  lbl.textContent  = this.checked ? 'Sim' : 'Não';
+  lbl.classList.toggle('on', this.checked);
+  note.textContent = this.checked ? 'dividendos compram mais ações' : 'dividendos acumulam como caixa';
+  calcAcoes();
+});
+
 // Filhos toggle label
 document.getElementById('res-filhos').addEventListener('change', function() {
   document.getElementById('filhosLabel').textContent = this.checked ? 'Sim' : 'Não';
@@ -1413,10 +1823,13 @@ function onResize() {
     // Reset reserva chart canvases
     const donut = document.getElementById('resDonut');
     const line  = document.getElementById('resLine');
+    const acCv  = document.getElementById('acChart');
     if (donut) { donut.style.width = '0'; donut.style.height = '0'; }
     if (line)  { line.style.width  = '0'; line.style.height  = '0'; }
+    if (acCv)  { acCv.style.width  = '0'; acCv.style.height  = '0'; }
     if (resDonutChart) resDonutChart.resize();
     if (resLineChart)  resLineChart.resize();
+    if (acChart)       acChart.resize();
   }, 120);
 }
 if (window.ResizeObserver) {
