@@ -206,7 +206,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .rank-detail{display:flex;gap:10px;margin-top:7px;flex-wrap:wrap;}
 .rank-stat{display:flex;flex-direction:column;gap:2px;}
 .rank-stat-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
-.rank-stat-val{font-size:12px;color:var(--text);}
+.rank-stat-val{font-size:10px;color:var(--text);}
 .rank-stat-val.pos{color:var(--green);}
 .rank-stat-val.warn{color:var(--yellow);}
 .rank-stat-val.risk{color:var(--orange);}
@@ -311,7 +311,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .ac-sc-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
 .ac-sc-val{font-family:'Fraunces',serif;font-size:22px;font-weight:700;line-height:1.1;}
 .ac-sc-val-net{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--muted);line-height:1.1;}
-.ac-sc-detail{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6;border-top:1px solid var(--border);padding-top:7px;}
+.ac-sc-detail{font-size:9px;color:var(--muted);margin-top:8px;line-height:1.6;border-top:1px solid var(--border);padding-top:7px;}
 
 /* Dividend projection row */
 .ac-dividends-section{border-top:1px solid var(--border);}
@@ -325,6 +325,76 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 @media(max-width:900px){
   .ac-main{grid-template-columns:1fr;}
   .ac-scenarios{border-right:none;border-bottom:1px solid var(--border);}
+}
+
+/* ═══════════════════════════════════════════
+   REBALANCEAMENTO DE CARTEIRA
+═══════════════════════════════════════════ */
+.rb-options-bar{padding:8px 40px;border-bottom:1px solid var(--border);background:var(--panel);display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.rb-opt-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+.rb-opt-toggle input{display:none;}
+.rb-opt-box{display:flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--border);background:var(--card);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.5px;color:var(--text);transition:all .2s;}
+.rb-opt-toggle input:checked ~ .rb-opt-box{border-color:var(--green);color:var(--green);background:var(--green-faint);}
+.rb-opt-dot{display:inline-block;width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.rb-opt-sub{font-size:9px;color:var(--muted);}
+
+.rb-profiles-bar{padding:0 40px;border-bottom:1px solid var(--border);}
+.rb-profile-header{display:grid;grid-template-columns:180px 1fr 1fr 1fr;gap:0;padding:8px 0 6px;border-bottom:1px solid var(--border);}
+.rb-ph-empty{}
+.rb-ph-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:0 12px;font-family:'DM Mono',monospace;}
+.rb-ph-label.cons{color:var(--blue);}
+.rb-ph-label.mod{color:var(--violet);}
+.rb-ph-label.arr{color:var(--green);}
+
+.rb-row{display:grid;grid-template-columns:180px 1fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border);align-items:center;}
+.rb-row:last-of-type{border-bottom:none;}
+.rb-row-label{padding:8px 0;display:flex;flex-direction:column;gap:1px;}
+.rb-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;flex-shrink:0;}
+.rb-row-label>span:first-child{display:flex;align-items:center;font-size:11px;color:var(--text);}
+.rb-row-sub{font-size:8px;color:var(--muted);margin-left:12px;margin-top:0;}
+
+.rb-row-bar{padding:8px 12px;display:flex;align-items:center;gap:8px;border-left:1px solid var(--border);}
+.rb-bar-fill{height:6px;border-radius:3px;min-width:3px;transition:width .5s ease;}
+.rb-row-bar span{font-family:'Fraunces',serif;font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;}
+
+.rb-dalio-note{padding:8px 0 10px;font-size:9px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);}
+
+/* Compact header for rebalance tab */
+#tab-rebalance .header{padding:16px 40px 14px;}
+#tab-rebalance .header h1{font-size:28px;margin:4px 0;}
+#tab-rebalance .header-sub{margin-top:4px;font-size:10px;}
+
+/* Profile selector buttons */
+.rb-profile-btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;padding:6px 14px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;transition:all .2s;}
+.rb-profile-btn:hover{border-color:var(--border2);color:var(--text);}
+.rb-profile-btn.active{border-color:var(--green);color:var(--green);background:var(--green-faint);}
+
+/* Diagnosis grid */
+.rb-diag-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--border);border-left:1px solid var(--border);margin:0 40px 24px;}
+.rb-diag-cell{padding:16px 18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
+.rb-diag-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.rb-diag-current{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--text);}
+.rb-diag-target{font-size:10px;color:var(--muted);margin-top:2px;}
+.rb-diag-delta{font-size:11px;font-weight:600;margin-top:8px;padding:4px 8px;display:inline-block;}
+.rb-diag-delta.buy{background:var(--green-faint);color:var(--green);}
+.rb-diag-delta.ok{background:var(--card);color:var(--muted);}
+.rb-diag-delta.over{background:rgba(251,146,60,.1);color:var(--orange);}
+.rb-diag-amount{font-size:10px;color:var(--muted);margin-top:4px;}
+
+/* Charts row */
+.rb-charts-row{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 40px 0;}
+.rb-donut-area{padding:24px;border-right:1px solid var(--border);}
+.rb-donut-area:last-child{border-right:none;}
+.rb-chart-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.rb-donut-wrap{position:relative;height:220px;width:100%;overflow:hidden;}
+.rb-donut-wrap canvas{max-width:100%;}
+
+@media(max-width:900px){
+  .rb-profile-header,.rb-row{grid-template-columns:1fr 1fr;}
+  .rb-ph-empty,.rb-ph-label:not(.cons){display:none;}
+  .rb-row-bar.mod,.rb-row-bar.arr{display:none;}
+  .rb-diag-grid{grid-template-columns:1fr 1fr;}
+  .rb-charts-row{grid-template-columns:1fr;}
 }
 
 /* ═══════════════════════════════════════════
@@ -395,6 +465,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
           <div class="nav-item-text">
             <span class="nav-item-label">Calculadora de Ações</span>
             <span class="nav-item-desc">DY, cenários e imposto</span>
+          </div>
+        </button>
+        <button class="nav-dropdown-item" id="menu-rebalance" onclick="showTab('rebalance')">
+          <span class="nav-icon">⚖️</span>
+          <div class="nav-item-text">
+            <span class="nav-item-label">Rebalanceamento de Carteira</span>
+            <span class="nav-item-desc">3 perfis · o que comprar agora</span>
           </div>
         </button>
       </div>
@@ -722,7 +799,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     <div class="header-eyebrow">Calculadora de Ações · Dividendos e Valorização</div>
     <h1>Quanto rende <em>sua ação?</em></h1>
     <p class="header-sub">
-      Insira o ticker, DY histórico e capital. Veja os três cenários de crescimento e o valor líquido após IR. Valor puramente especulativo.
+      Insira o ticker, DY histórico e capital. Veja os três cenários de crescimento e o valor líquido após IR.
     </p>
   </div>
 
@@ -862,6 +939,175 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 </div><!-- /tab-acoes -->
 
 <!-- ══════════════════════════════════════════
+     TAB 4: REBALANCEAMENTO DE CARTEIRA
+══════════════════════════════════════════ -->
+<div id="tab-rebalance" style="display:none;">
+
+  <div class="header">
+    <div class="header-eyebrow">Rebalanceamento de Carteira · Alocação por Perfil</div>
+    <h1>Como está sua <em>carteira?</em></h1>
+    <p class="header-sub">
+      Veja os três perfis de alocação lado a lado. Informe quanto você tem em cada classe e descubra o que comprar para rebalancear.
+    </p>
+  </div>
+
+  <!-- OPÇÕES DE CLASSES -->
+  <div class="rb-options-bar">
+    <span style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);">Incluir na carteira:</span>
+    <label class="rb-opt-toggle">
+      <input type="checkbox" id="rb-use-fii" checked onchange="rebuildProfiles()">
+      <span class="rb-opt-box">
+        <span class="rb-opt-dot" style="background:#f59e0b"></span>
+        Fundos Imobiliários
+      </span>
+      <span class="rb-opt-sub">desativado → % vai para Ações</span>
+    </label>
+    <label class="rb-opt-toggle">
+      <input type="checkbox" id="rb-use-prot" checked onchange="rebuildProfiles()">
+      <span class="rb-opt-box">
+        <span class="rb-opt-dot" style="background:#f87171"></span>
+        Proteção (Ouro/Dólar)
+      </span>
+      <span class="rb-opt-sub">desativado → % vai para Renda Fixa</span>
+    </label>
+  </div>
+
+  <!-- PERFIS SIDE BY SIDE -->
+  <div class="rb-profiles-bar">
+    <div class="rb-profile-header">
+      <div class="rb-ph-empty"></div>
+      <div class="rb-ph-label cons">🛡️ Conservador</div>
+      <div class="rb-ph-label mod">⚖️ Moderado</div>
+      <div class="rb-ph-label arr">🚀 Arrojado</div>
+    </div>
+
+    <!-- Renda Fixa -->
+    <div class="rb-row" id="rbrow-rf">
+      <div class="rb-row-label">
+        <span class="rb-dot" style="background:#a78bfa"></span>
+        Renda Fixa
+        <span class="rb-row-sub">Tesouro, CDB, LCI/LCA</span>
+      </div>
+      <div class="rb-row-bar cons"><div class="rb-bar-fill" id="rbbar-rf-cons" style="background:#a78bfa"></div><span id="rbpct-rf-cons">75%</span></div>
+      <div class="rb-row-bar mod"><div class="rb-bar-fill" id="rbbar-rf-mod" style="background:#a78bfa"></div><span id="rbpct-rf-mod">50%</span></div>
+      <div class="rb-row-bar arr"><div class="rb-bar-fill" id="rbbar-rf-arr" style="background:#a78bfa"></div><span id="rbpct-rf-arr">20%</span></div>
+    </div>
+
+    <!-- Ações -->
+    <div class="rb-row" id="rbrow-ac">
+      <div class="rb-row-label">
+        <span class="rb-dot" style="background:#3dd68c"></span>
+        Ações
+        <span class="rb-row-sub">Ações BR, BDRs, ETFs</span>
+      </div>
+      <div class="rb-row-bar cons"><div class="rb-bar-fill" id="rbbar-ac-cons" style="background:#3dd68c"></div><span id="rbpct-ac-cons">10%</span></div>
+      <div class="rb-row-bar mod"><div class="rb-bar-fill" id="rbbar-ac-mod" style="background:#3dd68c"></div><span id="rbpct-ac-mod">30%</span></div>
+      <div class="rb-row-bar arr"><div class="rb-bar-fill" id="rbbar-ac-arr" style="background:#3dd68c"></div><span id="rbpct-ac-arr">55%</span></div>
+    </div>
+
+    <!-- FIIs (ocultável) -->
+    <div class="rb-row" id="rbrow-fii">
+      <div class="rb-row-label">
+        <span class="rb-dot" style="background:#f59e0b"></span>
+        Fundos Imobiliários
+        <span class="rb-row-sub">FIIs listados em bolsa</span>
+      </div>
+      <div class="rb-row-bar cons"><div class="rb-bar-fill" id="rbbar-fii-cons" style="background:#f59e0b"></div><span id="rbpct-fii-cons">10%</span></div>
+      <div class="rb-row-bar mod"><div class="rb-bar-fill" id="rbbar-fii-mod" style="background:#f59e0b"></div><span id="rbpct-fii-mod">15%</span></div>
+      <div class="rb-row-bar arr"><div class="rb-bar-fill" id="rbbar-fii-arr" style="background:#f59e0b"></div><span id="rbpct-fii-arr">20%</span></div>
+    </div>
+
+    <!-- Proteção (ocultável) -->
+    <div class="rb-row" id="rbrow-prot">
+      <div class="rb-row-label">
+        <span class="rb-dot" style="background:#f87171"></span>
+        Proteção
+        <span class="rb-row-sub">Ouro (GOLD11), Dólar/BDR</span>
+      </div>
+      <div class="rb-row-bar cons"><div class="rb-bar-fill" id="rbbar-prot-cons" style="background:#f87171"></div><span id="rbpct-prot-cons">5%</span></div>
+      <div class="rb-row-bar mod"><div class="rb-bar-fill" id="rbbar-prot-mod" style="background:#f87171"></div><span id="rbpct-prot-mod">5%</span></div>
+      <div class="rb-row-bar arr"><div class="rb-bar-fill" id="rbbar-prot-arr" style="background:#f87171"></div><span id="rbpct-prot-arr">5%</span></div>
+    </div>
+
+    <!-- Referência Ray Dalio -->
+    <div class="rb-dalio-note">
+      <strong>Referência internacional — Ray Dalio (All Weather):</strong>
+      30% Ações · 55% Renda Fixa · 7,5% Ouro · 7,5% Commodities.
+      Estratégia de "risco balanceado" voltada para preservação com crescimento moderado.
+      <a href="https://www.bridgewater.com" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;">Bridgewater Associates ↗</a>
+    </div>
+  </div>
+
+  <!-- MINHA CARTEIRA ATUAL -->
+  <div class="inputs-section-label">Minha Carteira Atual</div>
+  <div class="inputs-bar">
+    <div class="input-group">
+      <label>Renda Fixa</label>
+      <input type="number" id="rb-rf" value="0" min="0" step="100" oninput="calcRebalance()">
+      <span class="input-note">R$ em Tesouro, CDB, LCI…</span>
+    </div>
+    <div class="input-group">
+      <label>Ações</label>
+      <input type="number" id="rb-ac" value="0" min="0" step="100" oninput="calcRebalance()">
+      <span class="input-note">R$ em ações e ETFs</span>
+    </div>
+    <div id="rb-fii-input-wrap" class="input-group">
+      <label>Fundos Imobiliários</label>
+      <input type="number" id="rb-fii" value="0" min="0" step="100" oninput="calcRebalance()">
+      <span class="input-note">R$ em FIIs</span>
+    </div>
+    <div id="rb-prot-input-wrap" class="input-group">
+      <label>Proteção (Ouro/Dólar)</label>
+      <input type="number" id="rb-prot" value="0" min="0" step="100" oninput="calcRebalance()">
+      <span class="input-note">R$ em ouro, dólar, BDR</span>
+    </div>
+    <div class="input-group" style="background:var(--green-faint);border:1px solid var(--green);padding:12px 16px;">
+      <label style="color:var(--green);">Total da Carteira</label>
+      <div id="rb-total" style="font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--green);">R$ 0</div>
+      <span class="input-note">soma automática</span>
+    </div>
+  </div>
+
+  <!-- RESULTADO DO REBALANCEAMENTO -->
+  <div id="rb-result-section" style="display:none;">
+    <div class="inputs-section-label">Diagnóstico · o que comprar para rebalancear</div>
+
+    <!-- SELECTOR DE PERFIL -->
+    <div style="padding:0 40px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);">Perfil alvo:</span>
+      <button class="rb-profile-btn active" id="rbp-cons" onclick="setRbProfile('cons')">🛡️ Conservador</button>
+      <button class="rb-profile-btn" id="rbp-mod" onclick="setRbProfile('mod')">⚖️ Moderado</button>
+      <button class="rb-profile-btn" id="rbp-arr" onclick="setRbProfile('arr')">🚀 Arrojado</button>
+    </div>
+
+    <div class="rb-diag-grid" id="rb-diag-grid"></div>
+
+    <!-- DONUT -->
+    <div class="rb-charts-row">
+      <div class="rb-donut-area">
+        <div class="rb-chart-title">SUA CARTEIRA ATUAL</div>
+        <div class="rb-donut-wrap"><canvas id="rbCurrentDonut"></canvas></div>
+      </div>
+      <div class="rb-donut-area">
+        <div class="rb-chart-title" id="rb-target-title">CARTEIRA ALVO — CONSERVADOR</div>
+        <div class="rb-donut-wrap"><canvas id="rbTargetDonut"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTA SOBRE RESERVA DE EMERGÊNCIA -->
+  <div style="padding:20px 40px;border-top:1px solid var(--border);font-size:10px;color:var(--muted);line-height:1.7;background:var(--panel);">
+    <strong style="color:var(--text);">⚠ Atenção:</strong>
+    Os valores acima são a sua <em>carteira de investimentos</em> — não inclua a reserva de emergência nesse cálculo.
+    A reserva de emergência (6–12 meses de gastos, em CDB ou Tesouro Selic com liquidez diária) deve estar separada e
+    não é considerada parte da carteira de longo prazo. Use a aba <strong>Reserva de Emergência</strong> para calculá-la.
+    · <strong>Proteção (Ouro/Dólar)</strong> é diferente de reserva de emergência: é uma camada de proteção patrimonial contra crises e desvalorização cambial,
+    com correlação negativa à bolsa. Recomendação: ouro via ETF <strong>GOLD11</strong> ou fundos referenciados em ouro/dólar.
+  </div>
+
+</div><!-- /tab-rebalance -->
+
+<!-- ══════════════════════════════════════════
      FOOTER LEGAL (compartilhado)
 ══════════════════════════════════════════ -->
 <footer class="footer-legal">
@@ -899,9 +1145,10 @@ let cdbMode = 'pre';
 // HAMBURGER MENU
 // ═══════════════════════════════════════════
 const TABS = {
-  simulador: { label: 'Simulador de Investimentos' },
-  reserva:   { label: 'Reserva de Emergência' },
-  acoes:     { label: 'Calculadora de Ações' }
+  simulador:  { label: 'Simulador de Investimentos' },
+  reserva:    { label: 'Reserva de Emergência' },
+  acoes:      { label: 'Calculadora de Ações' },
+  rebalance:  { label: 'Rebalanceamento de Carteira' }
 };
 
 function toggleMenu() {
@@ -924,9 +1171,10 @@ document.addEventListener('click', e => {
 // TAB NAVIGATION
 // ═══════════════════════════════════════════
 function showTab(tab) {
-  document.getElementById('tab-simulador').style.display = tab === 'simulador' ? '' : 'none';
-  document.getElementById('tab-reserva').style.display   = tab === 'reserva'   ? '' : 'none';
-  document.getElementById('tab-acoes').style.display     = tab === 'acoes'     ? '' : 'none';
+  document.getElementById('tab-simulador').style.display  = tab === 'simulador'  ? '' : 'none';
+  document.getElementById('tab-reserva').style.display    = tab === 'reserva'    ? '' : 'none';
+  document.getElementById('tab-acoes').style.display      = tab === 'acoes'      ? '' : 'none';
+  document.getElementById('tab-rebalance').style.display  = tab === 'rebalance'  ? '' : 'none';
 
   Object.keys(TABS).forEach(key => {
     document.getElementById('menu-'+key).classList.toggle('active', key === tab);
@@ -939,6 +1187,7 @@ function showTab(tab) {
   if (tab === 'reserva')   calcReserva();
   if (tab === 'simulador') buildAll();
   if (tab === 'acoes')     calcAcoes();
+  if (tab === 'rebalance') calcRebalance();
 }
 
 // ═══════════════════════════════════════════
@@ -1715,6 +1964,205 @@ function buildAcDivGrid(dy, inicial, aporte, anos, reinvest) {
 }
 
 // ═══════════════════════════════════════════
+// REBALANCEAMENTO DE CARTEIRA
+// ═══════════════════════════════════════════
+let rbCurrentDonut = null;
+let rbTargetDonut  = null;
+let rbProfile = 'cons';
+
+// BASE targets (with FIIs and Proteção included)
+const RB_BASE = {
+  cons: { rf:75, ac:10, fii:10, prot:5 },
+  mod:  { rf:50, ac:30, fii:15, prot:5 },
+  arr:  { rf:20, ac:55, fii:20, prot:5 }
+};
+
+function getRbTargets() {
+  const useFii  = document.getElementById('rb-use-fii').checked;
+  const useProt = document.getElementById('rb-use-prot').checked;
+  const out = {};
+  ['cons','mod','arr'].forEach(p => {
+    const b = RB_BASE[p];
+    let rf = b.rf, ac = b.ac, fii = b.fii, prot = b.prot;
+    if (!useFii)  { ac   += fii;  fii  = 0; }
+    if (!useProt) { rf   += prot; prot = 0; }
+    out[p] = { rf, ac, fii, prot };
+  });
+  return out;
+}
+
+const RB_TARGETS_LABELS = {
+  cons: 'Conservador',
+  mod:  'Moderado',
+  arr:  'Arrojado'
+};
+
+function rebuildProfiles() {
+  const useFii  = document.getElementById('rb-use-fii').checked;
+  const useProt = document.getElementById('rb-use-prot').checked;
+
+  // Show/hide table rows and inputs
+  document.getElementById('rbrow-fii').style.display         = useFii  ? '' : 'none';
+  document.getElementById('rbrow-prot').style.display        = useProt ? '' : 'none';
+  document.getElementById('rb-fii-input-wrap').style.display  = useFii  ? '' : 'none';
+  document.getElementById('rb-prot-input-wrap').style.display = useProt ? '' : 'none';
+  if (!useFii)  document.getElementById('rb-fii').value  = 0;
+  if (!useProt) document.getElementById('rb-prot').value = 0;
+
+  // Update bar widths and labels
+  const targets = getRbTargets();
+  ['cons','mod','arr'].forEach(p => {
+    const t = targets[p];
+    ['rf','ac','fii','prot'].forEach(cls => {
+      const bar = document.getElementById(`rbbar-${cls}-${p}`);
+      const lbl = document.getElementById(`rbpct-${cls}-${p}`);
+      if (bar) bar.style.width = t[cls] + '%';
+      if (lbl) lbl.textContent = t[cls] + '%';
+    });
+  });
+
+  // Also update the active classes list used in diagnosis/donuts
+  calcRebalance();
+}
+
+function getRbClasses() {
+  const useFii  = document.getElementById('rb-use-fii').checked;
+  const useProt = document.getElementById('rb-use-prot').checked;
+  return [
+    { id:'rf',   label:'Renda Fixa',          color:'#a78bfa' },
+    { id:'ac',   label:'Ações',               color:'#3dd68c' },
+    ...(useFii  ? [{ id:'fii',  label:'Fundos Imobiliários', color:'#f59e0b' }] : []),
+    ...(useProt ? [{ id:'prot', label:'Proteção',            color:'#f87171' }] : [])
+  ];
+}
+
+function setRbProfile(p) {
+  rbProfile = p;
+  ['cons','mod','arr'].forEach(k => {
+    document.getElementById('rbp-'+k).classList.toggle('active', k === p);
+  });
+  document.getElementById('rb-target-title').textContent = `CARTEIRA ALVO — ${RB_TARGETS_LABELS[p].toUpperCase()}`;
+  buildRbDiag();
+  buildRbDonuts();
+}
+
+function calcRebalance() {
+  const rf   = parseFloat(document.getElementById('rb-rf').value)   || 0;
+  const ac   = parseFloat(document.getElementById('rb-ac').value)   || 0;
+  const fii  = parseFloat(document.getElementById('rb-fii').value)  || 0;
+  const prot = parseFloat(document.getElementById('rb-prot').value) || 0;
+  const total = rf + ac + fii + prot;
+
+  // Update total display
+  const totalEl = document.getElementById('rb-total');
+  totalEl.textContent = fmtBRL(total);
+
+  const section = document.getElementById('rb-result-section');
+  if (total <= 0) { section.style.display = 'none'; return; }
+  section.style.display = '';
+
+  buildRbDiag();
+  buildRbDonuts();
+}
+
+function buildRbDiag() {
+  const rf   = parseFloat(document.getElementById('rb-rf').value)   || 0;
+  const ac   = parseFloat(document.getElementById('rb-ac').value)   || 0;
+  const fii  = parseFloat(document.getElementById('rb-fii').value)  || 0;
+  const prot = parseFloat(document.getElementById('rb-prot').value) || 0;
+  const total = rf + ac + fii + prot;
+  if (total <= 0) return;
+
+  const tgt     = getRbTargets()[rbProfile];
+  const rbCls   = getRbClasses();
+  const current = { rf, ac, fii, prot };
+  const grid    = document.getElementById('rb-diag-grid');
+  grid.innerHTML = '';
+
+  rbCls.forEach(cls => {
+    const currentVal = current[cls.id];
+    const currentPct = (currentVal / total) * 100;
+    const targetPct  = tgt[cls.id];
+    const diff       = targetPct - currentPct;
+    const diffVal    = (diff / 100) * total;
+
+    let deltaClass, deltaText, amountText;
+    if (Math.abs(diff) < 1.5) {
+      deltaClass = 'ok'; deltaText = '✓ Balanceado';
+      amountText = 'Diferença < 1,5% — sem necessidade de ação';
+    } else if (diff > 0) {
+      deltaClass = 'buy'; deltaText = `+${diff.toFixed(1)}% a comprar`;
+      amountText = `Comprar ~${fmtBRL(diffVal)}`;
+    } else {
+      deltaClass = 'over'; deltaText = `${diff.toFixed(1)}% acima do alvo`;
+      amountText = `Alocar novos aportes em outras classes`;
+    }
+
+    const cell = document.createElement('div');
+    cell.className = 'rb-diag-cell';
+    cell.innerHTML = `
+      <div class="rb-diag-label" style="color:${cls.color}">${cls.label.toUpperCase()}</div>
+      <div class="rb-diag-current">${currentPct.toFixed(1)}%</div>
+      <div class="rb-diag-target">Alvo: ${targetPct}% · ${fmtBRL(currentVal)}</div>
+      <div class="rb-diag-delta ${deltaClass}">${deltaText}</div>
+      <div class="rb-diag-amount">${amountText}</div>
+    `;
+    grid.appendChild(cell);
+  });
+}
+
+function buildRbDonuts() {
+  const rf   = parseFloat(document.getElementById('rb-rf').value)   || 0;
+  const ac   = parseFloat(document.getElementById('rb-ac').value)   || 0;
+  const fii  = parseFloat(document.getElementById('rb-fii').value)  || 0;
+  const prot = parseFloat(document.getElementById('rb-prot').value) || 0;
+  const total = rf + ac + fii + prot;
+  const tgt     = getRbTargets()[rbProfile];
+  const rbCls   = getRbClasses();
+
+  const cs = getComputedStyle(document.documentElement);
+  const cTooltip = cs.getPropertyValue('--tooltip-bg').trim();
+  const cBorder  = cs.getPropertyValue('--border').trim();
+  const cText    = cs.getPropertyValue('--text').trim();
+  const cMuted   = cs.getPropertyValue('--muted').trim();
+  const colors   = rbCls.map(c => c.color);
+  const labels   = rbCls.map(c => c.label);
+
+  const currentPcts = total > 0
+    ? rbCls.map(c => ({ rf, ac, fii, prot })[c.id] / total * 100)
+    : rbCls.map(() => 100 / rbCls.length);
+  const targetPcts = rbCls.map(c => tgt[c.id]);
+
+  const donutOpts = (lbs, data, cols) => ({
+    type: 'doughnut',
+    data: {
+      labels: lbs,
+      datasets:[{ data, backgroundColor: cols.map(c => c+'cc'),
+        borderColor: cols, borderWidth:1, hoverOffset:4 }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'65%',
+      plugins:{
+        legend:{ display:true, position:'bottom',
+          labels:{color:cMuted, font:{family:'DM Mono',size:9}, boxWidth:10, padding:10}},
+        tooltip:{ backgroundColor:cTooltip, borderColor:cBorder, borderWidth:1,
+          bodyColor:cText, titleColor:cMuted,
+          titleFont:{family:'DM Mono',size:9}, bodyFont:{family:'DM Mono',size:10},
+          callbacks:{ label: item => `  ${item.label}: ${item.raw.toFixed(1)}%` }}
+      }
+    }
+  });
+
+  const ctx1 = document.getElementById('rbCurrentDonut').getContext('2d');
+  if (rbCurrentDonut) rbCurrentDonut.destroy();
+  rbCurrentDonut = new Chart(ctx1, donutOpts(labels, currentPcts, colors));
+
+  const ctx2 = document.getElementById('rbTargetDonut').getContext('2d');
+  if (rbTargetDonut) rbTargetDonut.destroy();
+  rbTargetDonut = new Chart(ctx2, donutOpts(labels, targetPcts, colors));
+}
+
+// ═══════════════════════════════════════════
 // EVENT LISTENERS
 // ═══════════════════════════════════════════
 
@@ -1807,6 +2255,7 @@ document.getElementById('res-filhos').addEventListener('change', function() {
 applyTheme('light');
 updateCdbIrFromMonths(activeMonths);
 buildAll();
+rebuildProfiles();
 
 // Fix chart resize on browser zoom — full rebuild with debounce
 let resizeTimer = null;
