@@ -3,986 +3,941 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Investimentos - Ações e renda fixa</title>
+<title>Simulador de Patrimônio · Ações e renda fixa</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,900;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-/* ── DARK THEME ── */
+/* ═══════════════════════════════════════════
+   THEMES
+═══════════════════════════════════════════ */
 :root {
-  --bg: #070809;
-  --panel: #0d0f12;
-  --card: #111418;
-  --border: #1c2028;
-  --border2: #252a33;
-  --text: #dde2ea;
-  --muted: #556070;
-  --footer-text: #252e3a;
-  --chart-grid: #0c1016;
-  --chart-tick: #2a3545;
-  --tooltip-bg: #111418;
-  --section-lbl: #1e2430;
-  --green: #3dd68c;
-  --green-faint: rgba(61,214,140,0.08);
-  --yellow: #f5c518;
-  --yellow-faint: rgba(245,197,24,0.08);
-  --orange: #f07b3a;
-  --orange-faint: rgba(240,123,58,0.08);
-  --blue: #5b9cf6;
-  --blue-faint: rgba(91,156,246,0.08);
-  --violet: #a88bfa;
-  --violet-faint: rgba(168,139,250,0.08);
-  --red: #f26065;
-  --red-faint: rgba(242,96,101,0.08);
-  --teal: #2dd4bf;
-  --teal-faint: rgba(45,212,191,0.08);
+  --bg:#070809;--panel:#0d0f12;--card:#111418;--border:#1c2028;--border2:#252a33;
+  --text:#dde2ea;--muted:#556070;--footer-text:#252e3a;
+  --chart-grid:#0c1016;--chart-tick:#2a3545;--tooltip-bg:#111418;
+  --green:#3dd68c;--green-faint:rgba(61,214,140,.08);
+  --yellow:#f5c518;--yellow-faint:rgba(245,197,24,.08);
+  --orange:#f07b3a;--orange-faint:rgba(240,123,58,.08);
+  --blue:#5b9cf6;--blue-faint:rgba(91,156,246,.08);
+  --violet:#a88bfa;--violet-faint:rgba(168,139,250,.08);
+  --red:#f26065;--red-faint:rgba(242,96,101,.08);
+  --teal:#2dd4bf;--teal-faint:rgba(45,212,191,.08);
 }
-
-/* ── LIGHT THEME (Padrão) ── */
-:root[data-theme="light"],
-@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
-  --bg: #f8f9fb;
-  --panel: #f0f2f5;
-  --card: #ffffff;
-  --border: #dde1e8;
-  --border2: #c8cdd7;
-  --text: #1a1e26;
-  --muted: #7a8597;
-  --footer-text: #b0b8c8;
-  --chart-grid: #edf0f4;
-  --chart-tick: #b0b8c8;
-  --tooltip-bg: #ffffff;
-  --section-lbl: #c8cdd7;
-  --green: #179e5f;
-  --green-faint: rgba(23,158,95,0.07);
-  --yellow: #c49800;
-  --yellow-faint: rgba(196,152,0,0.08);
-  --orange: #c45a15;
-  --orange-faint: rgba(196,90,21,0.08);
-  --blue: #2c6fd4;
-  --blue-faint: rgba(44,111,212,0.08);
-  --violet: #6d4fc7;
-  --violet-faint: rgba(109,79,199,0.08);
-  --red: #c4383c;
-  --red-faint: rgba(196,56,60,0.08);
-  --teal: #0e9488;
-  --teal-faint: rgba(14,148,136,0.08);
-}}
-
-/* ── FORCE LIGHT padrão do windows ── */
 :root[data-theme="light"] {
-  --bg: #f8f9fb;
-  --panel: #f0f2f5;
-  --card: #ffffff;
-  --border: #dde1e8;
-  --border2: #c8cdd7;
-  --text: #1a1e26;
-  --muted: #7a8597;
-  --footer-text: #b0b8c8;
-  --chart-grid: #edf0f4;
-  --chart-tick: #b0b8c8;
-  --tooltip-bg: #ffffff;
-  --section-lbl: #c8cdd7;
-  --green: #179e5f;
-  --green-faint: rgba(23,158,95,0.07);
-  --yellow: #c49800;
-  --yellow-faint: rgba(196,152,0,0.08);
-  --orange: #c45a15;
-  --orange-faint: rgba(196,90,21,0.08);
-  --blue: #2c6fd4;
-  --blue-faint: rgba(44,111,212,0.08);
-  --violet: #6d4fc7;
-  --violet-faint: rgba(109,79,199,0.08);
-  --red: #c4383c;
-  --red-faint: rgba(196,56,60,0.08);
-  --teal: #0e9488;
-  --teal-faint: rgba(14,148,136,0.08);
+  --bg:#f8f9fb;--panel:#f0f2f5;--card:#fff;--border:#dde1e8;--border2:#c8cdd7;
+  --text:#1a1e26;--muted:#7a8597;--footer-text:#b0b8c8;
+  --chart-grid:#edf0f4;--chart-tick:#b0b8c8;--tooltip-bg:#fff;
+  --green:#179e5f;--green-faint:rgba(23,158,95,.07);
+  --yellow:#c49800;--yellow-faint:rgba(196,152,0,.08);
+  --orange:#c45a15;--orange-faint:rgba(196,90,21,.08);
+  --blue:#2c6fd4;--blue-faint:rgba(44,111,212,.08);
+  --violet:#6d4fc7;--violet-faint:rgba(109,79,199,.08);
+  --red:#c4383c;--red-faint:rgba(196,56,60,.08);
+  --teal:#0e9488;--teal-faint:rgba(14,148,136,.08);
 }
 
-/* ── FORCE DARK padrão do windows ── */
-:root[data-theme="dark"] {
-  --bg: #070809;
-  --panel: #0d0f12;
-  --card: #111418;
-  --border: #1c2028;
-  --border2: #252a33;
-  --text: #dde2ea;
-  --muted: #556070;
-  --footer-text: #252e3a;
-  --chart-grid: #0c1016;
-  --chart-tick: #2a3545;
-  --tooltip-bg: #111418;
-  --section-lbl: #1e2430;
-  --green: #3dd68c;
-  --green-faint: rgba(61,214,140,0.08);
-  --yellow: #f5c518;
-  --yellow-faint: rgba(245,197,24,0.08);
-  --orange: #f07b3a;
-  --orange-faint: rgba(240,123,58,0.08);
-  --blue: #5b9cf6;
-  --blue-faint: rgba(91,156,246,0.08);
-  --violet: #a88bfa;
-  --violet-faint: rgba(168,139,250,0.08);
-  --red: #f26065;
-  --red-faint: rgba(242,96,101,0.08);
-  --teal: #2dd4bf;
-  --teal-faint: rgba(45,212,191,0.08);
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  min-height: 100vh;
-}
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:1.5;min-height:100vh;}
 
-/* HEADER */
-.header {
-  padding: 40px 40px 28px;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  overflow: hidden;
+/* ═══════════════════════════════════════════
+   PAGE NAV — HAMBURGER MENU
+═══════════════════════════════════════════ */
+.page-nav {
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);background:var(--panel);
+  padding:0 40px;height:52px;position:sticky;top:0;z-index:200;
 }
-.header::before {
-  content: '';
-  position: absolute;
-  top: -40px; right: -40px;
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(61,214,140,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-.header-eyebrow {
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--green);
-  margin-bottom: 12px;
-}
-.header h1 {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(26px, 4vw, 48px);
-  font-weight: 900;
-  line-height: 1.05;
-  color: var(--text);
-  max-width: 700px;
-}
-.header h1 em { font-style: italic; color: var(--green); }
-.header-sub {
-  margin-top: 10px;
-  font-size: 11px;
-  color: var(--muted);
-  max-width: 600px;
-  line-height: 1.7;
-}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-brand{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--text);letter-spacing:-.2px;}
+.nav-brand span{color:var(--green);}
+.nav-active-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
 
-/* INPUTS SECTION LABEL */
-.inputs-section-label {
-  width: 100%;
-  padding: 5px 22px;
-  font-size: 8px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--border2);
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  border-top: 1px solid var(--border);
+/* Hamburger button */
+.hamburger-btn {
+  background:var(--card);border:1px solid var(--border);color:var(--muted);
+  font-family:'DM Mono',monospace;font-size:11px;padding:6px 12px;
+  cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;
+  position:relative;
 }
+.hamburger-btn:hover{border-color:var(--border2);color:var(--text);}
+.hamburger-btn.open{border-color:var(--green);color:var(--green);}
+.hamburger-icon{display:flex;flex-direction:column;gap:4px;width:16px;}
+.hamburger-icon span{display:block;height:1.5px;background:currentColor;transition:all .25s;border-radius:1px;}
+.hamburger-btn.open .hamburger-icon span:nth-child(1){transform:translateY(5.5px) rotate(45deg);}
+.hamburger-btn.open .hamburger-icon span:nth-child(2){opacity:0;transform:scaleX(0);}
+.hamburger-btn.open .hamburger-icon span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg);}
 
-/* INPUTS BAR */
-.inputs-bar {
-  display: flex;
-  flex-wrap: wrap;
-  border-bottom: 1px solid var(--border);
+/* Dropdown */
+.nav-dropdown {
+  position:absolute;top:52px;left:0;
+  background:var(--panel);border:1px solid var(--border);border-top:none;
+  min-width:260px;display:none;flex-direction:column;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+  z-index:300;
 }
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 14px 22px;
-  border-right: 1px solid var(--border);
-  flex: 1;
-  min-width: 120px;
+.nav-dropdown.open{display:flex;}
+.nav-dropdown-item {
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;border:none;background:transparent;
+  color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;
+  cursor:pointer;text-align:left;transition:all .15s;border-bottom:1px solid var(--border);
+  letter-spacing:.5px;
 }
-.input-group label {
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
+.nav-dropdown-item:last-child{border-bottom:none;}
+.nav-dropdown-item:hover{background:var(--card);color:var(--text);}
+.nav-dropdown-item.active{color:var(--green);background:var(--green-faint);}
+.nav-dropdown-item .nav-icon{font-size:14px;flex-shrink:0;}
+.nav-dropdown-item .nav-item-text{display:flex;flex-direction:column;gap:2px;}
+.nav-dropdown-item .nav-item-label{font-size:11px;}
+.nav-dropdown-item .nav-item-desc{font-size:9px;color:var(--muted);letter-spacing:.3px;}
+.nav-dropdown-item.active .nav-item-desc{color:var(--green);opacity:.7;}
+
+.nav-right{display:flex;align-items:center;gap:10px;}
+.theme-btn {
+  background:var(--card);border:1px solid var(--border);color:var(--muted);
+  font-family:'DM Mono',monospace;font-size:10px;padding:5px 12px;cursor:pointer;
+  letter-spacing:1px;display:flex;align-items:center;gap:6px;transition:all .2s;
 }
-.input-group input[type=number] {
-  background: transparent;
-  border: none;
-  color: var(--text);
-  font-family: 'Fraunces', serif;
-  font-size: 20px;
-  font-weight: 600;
-  width: 100%;
-  outline: none;
-  cursor: pointer;
-  -moz-appearance: textfield;
-}
+.theme-btn:hover{border-color:var(--border2);color:var(--text);}
+
+/* ═══════════════════════════════════════════
+   SHARED: HEADER
+═══════════════════════════════════════════ */
+.header{padding:36px 40px 24px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-40px;right:-40px;width:280px;height:280px;
+  background:radial-gradient(circle,rgba(61,214,140,.05) 0%,transparent 70%);pointer-events:none;}
+.header-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:10px;}
+.header h1{font-family:'Fraunces',serif;font-size:clamp(24px,4vw,46px);font-weight:900;line-height:1.05;max-width:700px;}
+.header h1 em{font-style:italic;color:var(--green);}
+.header-sub{margin-top:8px;font-size:11px;color:var(--muted);max-width:600px;line-height:1.7;}
+
+/* ═══════════════════════════════════════════
+   INPUTS
+═══════════════════════════════════════════ */
+.inputs-section-label{width:100%;padding:5px 22px;font-size:8px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--border2);background:var(--panel);border-bottom:1px solid var(--border);border-top:1px solid var(--border);}
+.inputs-bar{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+.input-group{display:flex;flex-direction:column;gap:5px;padding:14px 22px;border-right:1px solid var(--border);flex:1;min-width:120px;}
+.input-group label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.input-group input[type=number]{background:transparent;border:none;color:var(--text);
+  font-family:'Fraunces',serif;font-size:20px;font-weight:600;width:100%;outline:none;cursor:pointer;
+  -moz-appearance:textfield;}
 .input-group input[type=number]::-webkit-inner-spin-button,
-.input-group input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
-.input-group input[type=number]:focus { color: var(--green); }
-.input-note { font-size: 9px; color: var(--muted); }
+.input-group input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
+.input-group input[type=number]:focus{color:var(--green);}
+.input-note{font-size:9px;color:var(--muted);}
 
-/* MODE PILLS (Pré / Pós) */
-.mode-pill {
-  font-size: 8px;
-  padding: 2px 6px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: 'DM Mono', monospace;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-.mode-pill:hover { border-color: var(--border2); color: var(--text); }
-.mode-pill.active { background: var(--blue-faint); border-color: var(--blue); color: var(--blue); }
-
-/* RATE RESULT HINT */
-.rate-result {
-  color: var(--blue) !important;
-  font-size: 10px !important;
-}
+/* MODE PILLS */
+.mode-pill{font-size:8px;padding:2px 6px;border:1px solid var(--border);background:var(--card);
+  color:var(--muted);cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace;white-space:nowrap;}
+.mode-pill:hover{border-color:var(--border2);color:var(--text);}
+.mode-pill.active{background:var(--blue-faint);border-color:var(--blue);color:var(--blue);}
+.rate-result{color:var(--blue)!important;font-size:10px!important;}
 
 /* IR PILLS */
-.ir-pills {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin-top: 3px;
-}
-.ir-pill {
-  font-size: 9px;
-  padding: 3px 7px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-  font-family: 'DM Mono', monospace;
-}
-.ir-pill:hover { border-color: var(--border2); color: var(--text); }
-.ir-pill.active { background: var(--teal-faint); border-color: var(--teal); color: var(--teal); }
+.ir-pills{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;}
+.ir-pill{font-size:9px;padding:3px 7px;border:1px solid var(--border);background:var(--card);
+  color:var(--muted);cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace;white-space:nowrap;}
+.ir-pill:hover{border-color:var(--border2);color:var(--text);}
+.ir-pill.active{background:var(--teal-faint);border-color:var(--teal);color:var(--teal);}
 
-/* DIVIDEND TOGGLE BAR */
-.div-toggle-bar {
-  padding: 12px 40px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  background: var(--panel);
-}
-.div-toggle-label {
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  flex-shrink: 0;
-}
-.toggle-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.toggle-switch {
-  position: relative;
-  width: 44px;
-  height: 22px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
-.toggle-track {
-  position: absolute;
-  inset: 0;
-  background: var(--border2);
-  border-radius: 11px;
-  transition: background 0.25s;
-}
-.toggle-switch input:checked + .toggle-track { background: var(--green); }
-.toggle-thumb {
-  position: absolute;
-  top: 3px; left: 3px;
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  background: #fff;
-  transition: transform 0.25s;
-  pointer-events: none;
-}
-.toggle-switch input:checked ~ .toggle-thumb { transform: translateX(22px); }
-.toggle-label-text {
-  font-size: 11px;
-  color: var(--muted);
-  transition: color 0.2s;
-}
-.toggle-label-text.on { color: var(--green); }
-.div-description {
-  font-size: 10px;
-  color: var(--muted);
-  margin-left: auto;
-  border-left: 1px solid var(--border);
-  padding-left: 16px;
-  max-width: 400px;
-  line-height: 1.5;
-}
-.div-description .tag-on  { color: var(--green); }
-.div-description .tag-off { color: var(--orange); }
+/* TOGGLE BAR */
+.div-toggle-bar{padding:12px 40px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:20px;flex-wrap:wrap;background:var(--panel);}
+.div-toggle-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);flex-shrink:0;}
+.toggle-wrap{display:flex;align-items:center;gap:10px;}
+.toggle-switch{position:relative;width:44px;height:22px;cursor:pointer;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:var(--border2);border-radius:11px;transition:background .25s;}
+.toggle-switch input:checked+.toggle-track{background:var(--green);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s;pointer-events:none;}
+.toggle-switch input:checked~.toggle-thumb{transform:translateX(22px);}
+.toggle-label-text{font-size:11px;color:var(--muted);transition:color .2s;}
+.toggle-label-text.on{color:var(--green);}
+.div-description{font-size:10px;color:var(--muted);margin-left:auto;border-left:1px solid var(--border);padding-left:16px;max-width:400px;line-height:1.5;}
+.div-description .tag-on{color:var(--green);}
+.div-description .tag-off{color:var(--orange);}
 
-/* MAIN GRID */
-.main {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  min-height: 500px;
-}
-
-/* CHART AREA */
-.chart-area {
-  padding: 28px 40px;
-  border-right: 1px solid var(--border);
-}
-.section-label {
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 18px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.section-label::after { content:''; flex:1; height:1px; background: var(--border); }
-.chart-wrap { position: relative; height: 360px; }
+/* ═══════════════════════════════════════════
+   MAIN GRID (chart + sidebar)
+═══════════════════════════════════════════ */
+.main{display:grid;grid-template-columns:1fr 320px;min-height:500px;}
+.chart-area{padding:28px 40px;border-right:1px solid var(--border);}
+.section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+  margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.chart-wrap{position:relative;height:360px;}
+.chart-note{font-size:9px;color:var(--muted);margin-top:8px;font-style:italic;}
 
 /* LEGEND */
-.legend-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px 18px;
-  margin-top: 18px;
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 10px;
-  color: var(--muted);
-  cursor: pointer;
-  transition: color 0.2s;
-  user-select: none;
-}
-.legend-item:hover { color: var(--text); }
-.legend-item.dimmed { opacity: 0.3; }
-.legend-line {
-  width: 20px;
-  height: 2px;
-  border-radius: 1px;
-  flex-shrink: 0;
-}
+.legend-grid{display:flex;flex-wrap:wrap;gap:5px 18px;margin-top:18px;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted);cursor:pointer;transition:color .2s;user-select:none;}
+.legend-item:hover{color:var(--text);}
+.legend-item.dimmed{opacity:.3;}
+.legend-line{width:20px;height:2px;border-radius:1px;flex-shrink:0;}
 
 /* SIDEBAR */
-.sidebar { padding: 28px 20px; }
-.milestone-tabs { display: flex; gap: 4px; margin-bottom: 18px; }
-.tab-btn {
-  flex: 1;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  padding: 8px 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-}
-.tab-btn.active { background: var(--green-faint); border-color: var(--green); color: var(--green); }
-.tab-btn:hover:not(.active) { border-color: var(--border2); color: var(--text); }
+.sidebar{padding:28px 20px;}
+.milestone-tabs{display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap;}
+.tab-btn{flex:1;min-width:36px;background:var(--card);border:1px solid var(--border);color:var(--muted);
+  font-family:'DM Mono',monospace;font-size:11px;padding:7px 4px;cursor:pointer;transition:all .2s;text-align:center;}
+.tab-btn.active{background:var(--green-faint);border-color:var(--green);color:var(--green);}
+.tab-btn:hover:not(.active){border-color:var(--border2);color:var(--text);}
+.ranking{display:flex;flex-direction:column;gap:7px;}
 
-.ranking { display: flex; flex-direction: column; gap: 7px; }
-.rank-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 12px 14px;
-  position: relative;
-  transition: border-color 0.2s;
-}
-.rank-card:hover { border-color: var(--border2); }
-.rank-card.rank-1 { border-color: rgba(61,214,140,0.3); background: var(--green-faint); }
-.rank-card.rank-2 { border-color: rgba(91,156,246,0.2); }
-.rank-pos {
-  position: absolute;
-  top: 8px; right: 10px;
-  font-family: 'Fraunces', serif;
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--border2);
-  line-height: 1;
-}
-.rank-card.rank-1 .rank-pos { color: rgba(61,214,140,0.15); }
-.rank-name {
-  font-size: 10px;
-  color: var(--text);
-  margin-bottom: 1px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding-right: 30px;
-}
-.rank-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.rank-rate { font-size: 9px; color: var(--muted); margin-bottom: 8px; }
-.rank-fv { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; line-height: 1; }
-.rank-fv small { font-size: 11px; font-weight: 300; margin-right: 2px; }
-.rank-net {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  margin-top: 4px;
-  padding-top: 5px;
-  border-top: 1px solid var(--border);
-}
-.rank-net-val {
-  font-size: 11px;
-  color: var(--muted);
-  font-family: 'DM Mono', monospace;
-}
-.rank-net-label {
-  font-size: 8px;
-  color: var(--border2);
-  letter-spacing: 0.5px;
-}
-.rank-detail { display: flex; gap: 10px; margin-top: 7px; flex-wrap: wrap; }
-.rank-stat { display: flex; flex-direction: column; gap: 2px; }
-.rank-stat-label { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
-.rank-stat-val { font-size: 10px; color: var(--text); }
-.rank-stat-val.pos  { color: var(--green); }
-.rank-stat-val.warn { color: var(--yellow); }
-.rank-stat-val.risk { color: var(--orange); }
+/* RANK CARDS */
+.rank-card{background:var(--card);border:1px solid var(--border);padding:12px 14px;position:relative;transition:border-color .2s;}
+.rank-card:hover{border-color:var(--border2);}
+.rank-card.rank-1{border-color:rgba(61,214,140,.3);background:var(--green-faint);}
+.rank-card.rank-2{border-color:rgba(91,156,246,.2);}
+.rank-pos{position:absolute;top:8px;right:10px;font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:var(--border2);line-height:1;}
+.rank-card.rank-1 .rank-pos{color:rgba(61,214,140,.15);}
+.rank-name{font-size:10px;color:var(--text);margin-bottom:1px;display:flex;align-items:center;gap:6px;padding-right:30px;}
+.rank-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.rank-rate{font-size:9px;color:var(--muted);margin-bottom:8px;}
+.rank-fv{font-family:'Fraunces',serif;font-size:20px;font-weight:600;line-height:1;}
+.rank-fv small{font-size:11px;font-weight:300;margin-right:2px;}
+.rank-net{display:flex;flex-direction:column;gap:1px;margin-top:4px;padding-top:5px;border-top:1px solid var(--border);}
+.rank-net-val{font-size:11px;color:var(--muted);}
+.rank-net-label{font-size:8px;color:var(--border2);letter-spacing:.5px;}
+.rank-detail{display:flex;gap:10px;margin-top:7px;flex-wrap:wrap;}
+.rank-stat{display:flex;flex-direction:column;gap:2px;}
+.rank-stat-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.rank-stat-val{font-size:10px;color:var(--text);}
+.rank-stat-val.pos{color:var(--green);}
+.rank-stat-val.warn{color:var(--yellow);}
+.rank-stat-val.risk{color:var(--orange);}
 
-/* CAVEATS */
-.caveats {
-  padding: 28px 40px;
-  border-top: 1px solid var(--border);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px;
-}
-.caveat-card {
-  padding: 16px 18px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-}
-.caveat-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 9px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-  padding: 3px 7px;
-}
-.caveat-badge.green  { background: var(--green-faint);  color: var(--green);  border: 1px solid rgba(61,214,140,0.2); }
-.caveat-badge.yellow { background: var(--yellow-faint); color: var(--yellow); border: 1px solid rgba(245,197,24,0.2); }
-.caveat-badge.blue   { background: var(--blue-faint);   color: var(--blue);   border: 1px solid rgba(91,156,246,0.2); }
-.caveat-badge.red    { background: var(--red-faint);    color: var(--red);    border: 1px solid rgba(242,96,101,0.2); }
-.caveat-badge.teal   { background: var(--teal-faint);   color: var(--teal);   border: 1px solid rgba(45,212,191,0.2); }
-.caveat-title { font-size: 11px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-.caveat-body  { font-size: 10px; color: var(--muted); line-height: 1.7; }
+/* ═══════════════════════════════════════════
+   CAVEATS
+═══════════════════════════════════════════ */
+.caveats{padding:28px 40px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+.caveat-card{padding:16px 18px;border:1px solid var(--border);background:var(--panel);}
+.caveat-badge{display:inline-flex;align-items:center;gap:5px;font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;padding:3px 7px;}
+.caveat-badge.green{background:var(--green-faint);color:var(--green);border:1px solid rgba(61,214,140,.2);}
+.caveat-badge.yellow{background:var(--yellow-faint);color:var(--yellow);border:1px solid rgba(245,197,24,.2);}
+.caveat-badge.blue{background:var(--blue-faint);color:var(--blue);border:1px solid rgba(91,156,246,.2);}
+.caveat-badge.red{background:var(--red-faint);color:var(--red);border:1px solid rgba(242,96,101,.2);}
+.caveat-badge.teal{background:var(--teal-faint);color:var(--teal);border:1px solid rgba(45,212,191,.2);}
+.caveat-title{font-size:11px;font-weight:500;color:var(--text);margin-bottom:6px;}
+.caveat-body{font-size:10px;color:var(--muted);line-height:1.7;}
 
-/* FOOTER */
-.footer {
-  padding: 18px 40px;
-  border-top: 1px solid var(--border);
-  font-size: 10px;
-  color: var(--footer-text);
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 6px;
+/* ═══════════════════════════════════════════
+   RESERVA DE EMERGÊNCIA
+═══════════════════════════════════════════ */
+#tab-reserva .header::before{
+  background:radial-gradient(circle,rgba(91,156,246,.06) 0%,transparent 70%);
 }
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border);}
+.res-inputs{padding:32px 40px;border-right:1px solid var(--border);}
+.res-charts{padding:32px 40px;}
 
-@media (max-width: 768px) {
-  .header, .chart-area, .caveats, .footer { padding-left: 20px; padding-right: 20px; }
-  .div-toggle-bar { padding-left: 20px; padding-right: 20px; }
-  .input-group { padding: 12px 14px; min-width: 100px; }
-  .main { grid-template-columns: 1fr; }
-  .chart-area { border-right: none; border-bottom: 1px solid var(--border); }
-  .sidebar { padding: 20px; }
-  .div-description { margin-left: 0; border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 8px; width: 100%; max-width: 100%; }
+.res-section-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.res-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.res-input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.res-input-group{display:flex;flex-direction:column;gap:5px;}
+.res-input-group label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.res-input-group input[type=number]{background:var(--card);border:1px solid var(--border);color:var(--text);
+  font-family:'Fraunces',serif;font-size:20px;font-weight:600;padding:10px 14px;outline:none;width:100%;
+  -moz-appearance:textfield;transition:border-color .2s;}
+.res-input-group input[type=number]::-webkit-inner-spin-button,
+.res-input-group input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
+.res-input-group input[type=number]:focus{border-color:var(--blue);}
+.res-input-group .input-note{font-size:9px;color:var(--muted);}
+
+/* Filhos toggle */
+.filhos-toggle-row{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:12px 16px;background:var(--card);border:1px solid var(--border);}
+.filhos-toggle-label{font-size:11px;color:var(--text);flex:1;}
+.filhos-toggle-sub{font-size:9px;color:var(--muted);}
+
+/* Result box */
+.res-result-box{background:var(--card);border:1px solid var(--border);padding:20px;margin-top:20px;}
+.res-result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
+.res-result-item{padding:12px 16px;border-right:1px solid var(--border);}
+.res-result-item:last-child{border-right:none;}
+.res-result-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.res-result-value{font-family:'Fraunces',serif;font-size:22px;font-weight:700;line-height:1.1;}
+.res-result-value.highlight{color:var(--blue);}
+.res-result-value.ok{color:var(--green);}
+.res-result-value.warn{color:var(--orange);}
+.res-result-sub{font-size:9px;color:var(--muted);margin-top:3px;}
+
+/* Progress bar */
+.res-progress-wrap{margin-top:16px;}
+.res-progress-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:6px;}
+.res-progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.res-progress-fill{height:100%;border-radius:3px;transition:width .6s ease;background:var(--blue);}
+.res-progress-fill.done{background:var(--green);}
+
+/* Chart containers */
+.res-donut-wrap{position:relative;height:220px;margin-bottom:24px;}
+.res-line-wrap{position:relative;height:200px;}
+.res-chart-title{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+
+/* Expert tips */
+.expert-tips{padding:24px 40px;border-top:1px solid var(--border);background:var(--panel);}
+.expert-tips-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.expert-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.expert-card{padding:14px 16px;border:1px solid var(--border);background:var(--card);}
+.expert-name{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:4px;}
+.expert-text{font-size:10px;color:var(--muted);line-height:1.7;}
+
+/* ═══════════════════════════════════════════
+   FOOTER LEGAL
+═══════════════════════════════════════════ */
+.footer-legal{border-top:2px solid var(--border);background:var(--panel);}
+.footer-legal-main{padding:24px 40px;display:grid;grid-template-columns:1fr 1fr;gap:32px;border-bottom:1px solid var(--border);}
+.footer-legal-block h4{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.footer-legal-block p{font-size:10px;color:var(--muted);line-height:1.7;}
+.footer-bottom{padding:14px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.footer-copy{font-size:10px;color:var(--footer-text);}
+.footer-copy strong{color:var(--muted);}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media(max-width:900px){
+  .main{grid-template-columns:1fr;}
+  .chart-area{border-right:none;border-bottom:1px solid var(--border);}
+  .res-grid{grid-template-columns:1fr;}
+  .res-inputs{border-right:none;border-bottom:1px solid var(--border);}
+  .footer-legal-main{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  .page-nav{padding:0 20px;}
+  .header,.chart-area,.caveats,.res-inputs,.res-charts,.expert-tips,.footer-legal-main,.footer-bottom{padding-left:20px;padding-right:20px;}
+  .div-toggle-bar{padding-left:20px;padding-right:20px;}
+  .input-group{padding:12px 14px;min-width:100px;}
+  .sidebar{padding:20px;}
+  .div-description{margin-left:0;border-left:none;padding-left:0;border-top:1px solid var(--border);padding-top:8px;width:100%;max-width:100%;}
+  .res-input-row{grid-template-columns:1fr;}
+  .res-result-grid{grid-template-columns:1fr;}
+  .res-result-item{border-right:none;border-bottom:1px solid var(--border);}
 }
 </style>
 </head>
 <body>
 
-<!-- ── HEADER ── -->
-<div class="header">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-    <div class="header-eyebrow" style="margin-bottom:0;">Simulador de Patrimônio · Ações e renda fixa</div>
-    <button id="themeToggleBtn" onclick="toggleTheme()" style="
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      padding: 6px 14px;
-      cursor: pointer;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      transition: all 0.2s;
-      white-space: nowrap;
-    " onmouseover="this.style.borderColor='var(--border2)';this.style.color='var(--text)'"
-       onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
-      <span id="themeIcon">☀︎</span>
-      <span id="themeLabel">Tema claro</span>
+<!-- ══════════════════════════════════════════
+     PAGE NAV — HAMBURGER
+══════════════════════════════════════════ -->
+<nav class="page-nav">
+  <div class="nav-left">
+    <div style="position:relative;">
+      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()">
+        <div class="hamburger-icon">
+          <span></span><span></span><span></span>
+        </div>
+        Menu
+      </button>
+      <div class="nav-dropdown" id="navDropdown">
+        <button class="nav-dropdown-item active" id="menu-simulador" onclick="showTab('simulador')">
+          <span class="nav-icon">📈</span>
+          <div class="nav-item-text">
+            <span class="nav-item-label">Simulador de Investimentos</span>
+            <span class="nav-item-desc">Ações, Tesouro, CDB, LCI/LCA</span>
+          </div>
+        </button>
+        <button class="nav-dropdown-item" id="menu-reserva" onclick="showTab('reserva')">
+          <span class="nav-icon">🛡️</span>
+          <div class="nav-item-text">
+            <span class="nav-item-label">Reserva de Emergência</span>
+            <span class="nav-item-desc">Meta, prazo e progresso</span>
+          </div>
+        </button>
+      </div>
+    </div>
+    <span class="nav-active-label" id="navActiveLabel">Simulador de Investimentos</span>
+  </div>
+  <div class="nav-right">
+    <button class="theme-btn" onclick="toggleTheme()">
+      <span id="themeIcon">☾</span>
+      <span id="themeLabel">Tema escuro</span>
     </button>
   </div>
-  <h1><span id="h1Inicial">R$ 10k</span> inicial + <span id="h1Aporte">R$ 1k</span>/<em>mês</em></h1>
-  <p class="header-sub">
-    Tesouro IPCA+ · LCI/LCA · CDB · Ações (ITUB3, PETR4…)<br>
-    Todos os parâmetros configuráveis.
-  </p>
-</div>
+</nav>
 
-<!-- ── INPUTS: GERAIS ── -->
-<div class="inputs-section-label">Parâmetros Gerais</div>
-<div class="inputs-bar">
-  <div class="input-group">
-    <label>Capital Inicial</label>
-    <input type="number" id="inicial" value="10000" min="0" step="1000">
-    <span class="input-note">saldo atual</span>
-  </div>
-  <div class="input-group">
-    <label>Aporte Mensal</label>
-    <input type="number" id="aporte" value="1000" min="0" step="100">
-    <span class="input-note" id="aporteNote">100% reinvestido</span>
-  </div>
-  <div class="input-group">
-    <label>Selic % a.a.</label>
-    <input type="number" id="selic" value="15.0" min="0" max="30" step="0.25">
-    <span class="input-note">atual: 15% · base do CDI</span>
-  </div>
-  <div class="input-group">
-    <label>Tesouro IPCA+ real %</label>
-    <input type="number" id="tesouRoReal" value="7.21" min="0" max="20" step="0.01">
-    <span class="input-note">Atualizar manualmente com o valor atual</span>
-  </div>
-  <div class="input-group">
-    <label>IPCA % a.a.</label>
-    <input type="number" id="ipca" value="4.0" min="0" max="30" step="0.5">
-    <span class="input-note">projeção anual</span>
-  </div>
-  <div class="input-group">
-    <label>DY das Ações %</label>
-    <input type="number" id="dy" value="6" min="0" max="20" step="0.5">
-    <span class="input-note">dividend yield anual</span>
-  </div>
-</div>
+<!-- ══════════════════════════════════════════
+     TAB 1: SIMULADOR
+══════════════════════════════════════════ -->
+<div id="tab-simulador">
 
-<!-- ── INPUTS: RENDA FIXA ── -->
-<div class="inputs-section-label">Renda Fixa — Taxas e Impostos</div>
-<div class="inputs-bar">
-
-  <!-- LCI/LCA -->
-  <div class="input-group" style="min-width:180px;">
-    <label style="display:flex;align-items:center;justify-content:space-between;">
-      <span>LCI/LCA</span>
-      <span style="display:flex;gap:3px;">
-        <button class="mode-pill active" id="lciModePre" onclick="setMode('lci','pre')">Pré</button>
-        <button class="mode-pill" id="lciModePos" onclick="setMode('lci','pos')">Pós · %CDI</button>
-      </span>
-    </label>
-    <input type="number" id="lciRate" value="14.0" min="0" max="200" step="0.5">
-    <span class="input-note" id="lciRateNote">bruto prefixado a.a.</span>
-    <span class="input-note rate-result" id="lciResult" style="display:none;"></span>
-  </div>
-  <div class="input-group" style="min-width:130px;">
-    <label>IR LCI/LCA %</label>
-    <input type="number" id="lciIR" value="0" min="0" max="25" step="2.5">
-    <span class="input-note">0% isento · mude se tributar</span>
+  <div class="header">
+    <div class="header-eyebrow">Simulador de Patrimônio · Ações e renda fixa</div>
+    <h1><span id="h1Inicial">R$ 10k</span> inicial + <span id="h1Aporte">R$ 1k</span>/<em>mês</em></h1>
+    <p class="header-sub">
+      Tesouro IPCA+ · LCI/LCA · CDB · Ações (ITUB3, PETR4…)<br>
+      Todos os parâmetros configuráveis. Clique na legenda para ocultar séries.
+    </p>
   </div>
 
-  <!-- CDB -->
-  <div class="input-group" style="min-width:180px;">
-    <label style="display:flex;align-items:center;justify-content:space-between;">
-      <span>CDB</span>
-      <span style="display:flex;gap:3px;">
-        <button class="mode-pill active" id="cdbModePre" onclick="setMode('cdb','pre')">Pré</button>
-        <button class="mode-pill" id="cdbModePos" onclick="setMode('cdb','pos')">Pós · %CDI</button>
-      </span>
-    </label>
-    <input type="number" id="cdbRate" value="13.5" min="0" max="200" step="0.5">
-    <span class="input-note" id="cdbRateNote">bruto prefixado a.a.</span>
-    <span class="input-note rate-result" id="cdbResult" style="display:none;"></span>
-  </div>
-  <div class="input-group" style="min-width:220px; flex: 2;">
-    <label>IR CDB — prazo do resgate</label>
-    <div class="ir-pills">
-      <div class="ir-pill" data-ir="22.5">22,5% · até 180d</div>
-      <div class="ir-pill" data-ir="20">20% · 181–360d</div>
-      <div class="ir-pill" data-ir="17.5">17,5% · 361–720d</div>
-      <div class="ir-pill active" data-ir="15">15% · acima 720d</div>
+  <div class="inputs-section-label">Parâmetros Gerais</div>
+  <div class="inputs-bar">
+    <div class="input-group">
+      <label>Capital Inicial</label>
+      <input type="number" id="inicial" value="10000" min="0" step="1000">
+      <span class="input-note">saldo atual</span>
     </div>
-    <span class="input-note">alíquota regressiva — LP padrão (acima de 2 anos)</span>
-  </div>
-
-</div>
-
-<!-- ── DIVIDEND REINVEST TOGGLE ── -->
-<div class="div-toggle-bar">
-  <span class="div-toggle-label">Ações · Dividendos</span>
-  <div class="toggle-wrap">
-    <label class="toggle-switch">
-      <input type="checkbox" id="reinvestToggle" checked>
-      <div class="toggle-track"></div>
-      <div class="toggle-thumb"></div>
-    </label>
-    <span class="toggle-label-text on" id="toggleText">Reinvestindo dividendos</span>
-  </div>
-  <div class="div-description" id="divDescription">
-    <span class="tag-on">✦ Ativado:</span> dividendos compram mais ações que geram mais dividendos — efeito bola de neve. Portfólio cresce pelo total return (preço + DY).
-  </div>
-</div>
-
-<!-- ── MAIN: CHART + SIDEBAR ── -->
-<div class="main">
-  <div class="chart-area">
-    <div class="section-label">Crescimento do Patrimônio</div>
-    <div class="chart-wrap">
-      <canvas id="mainChart"></canvas>
+    <div class="input-group">
+      <label>Aporte Mensal</label>
+      <input type="number" id="aporte" value="1000" min="0" step="100">
+      <span class="input-note" id="aporteNote">100% reinvestido</span>
     </div>
-    <div class="legend-grid" id="legendGrid"></div>
-  </div>
-
-  <div class="sidebar">
-    <div class="section-label" style="margin-bottom:14px;">Ranking no horizonte</div>
-    <div class="milestone-tabs" style="flex-wrap:wrap;">
-      <button class="tab-btn" data-months="6">6m</button>
-      <button class="tab-btn" data-months="12">1a</button>
-      <button class="tab-btn" data-months="24">2a</button>
-      <button class="tab-btn" data-months="60">5a</button>
-      <button class="tab-btn active" data-months="120">10a</button>
-      <button class="tab-btn" data-months="180">15a</button>
-      <button class="tab-btn" data-months="240">20a</button>
+    <div class="input-group">
+      <label>Selic % a.a.</label>
+      <input type="number" id="selic" value="15.0" min="0" max="30" step="0.25">
+      <span class="input-note">atual: 15% · base do CDI</span>
     </div>
-    <div class="ranking" id="rankingList"></div>
-  </div>
-</div>
-
-<!-- ── CAVEATS ── -->
-<div class="caveats">
-  <div class="caveat-card">
-    <div class="caveat-badge green">✦ Tesouro IPCA+ <span id="caveatTesRate">7,21%</span></div>
-    <div class="caveat-title">Âncora de longo prazo</div>
-    <div class="caveat-body">
-      Taxa real configurável acima. Ex: 2045+ ≈ IPCA+7,21% · 2040+ ≈ IPCA+7,18% · O valor deve ser atualizado.
-      Garantia do Estado. IR 15% (LP) somente no resgate ou vencimento. No vencimento, retorno é certo.
+    <div class="input-group">
+      <label>Tesouro IPCA+ real %</label>
+      <input type="number" id="tesouRoReal" value="7.21" min="0" max="20" step="0.01">
+      <span class="input-note">ex: 7,21% (2045+) · 7,18% (2040+)</span>
+    </div>
+    <div class="input-group">
+      <label>IPCA % a.a.</label>
+      <input type="number" id="ipca" value="4.0" min="0" max="30" step="0.5">
+      <span class="input-note">projeção anual</span>
+    </div>
+    <div class="input-group">
+      <label>DY das Ações %</label>
+      <input type="number" id="dy" value="6" min="0" max="20" step="0.5">
+      <span class="input-note">dividend yield anual</span>
     </div>
   </div>
-  <div class="caveat-card">
-    <div class="caveat-badge yellow">⚠ LCI/LCA</div>
-    <div class="caveat-title">Bom hoje, incerto amanhã</div>
-    <div class="caveat-body">Prazo máximo típico ~3 anos — impossível travar por 20 anos. Vai renovar às taxas futuras. Mude o IR para 15% acima para simular eventual tributação.</div>
-  </div>
-  <div class="caveat-card">
-    <div class="caveat-badge teal">◈ CDB</div>
-    <div class="caveat-title">IR regressivo · FGC R$250k</div>
-    <div class="caveat-body">Alíquota cai de 22,5% (≤180d) a 15% (720d+). Para longo prazo, aplique 15%. Atenção ao limite do FGC por CPF por instituição. Prazo também limitado como o LCI/LCA.</div>
-  </div>
-  <div class="caveat-card">
-    <div class="caveat-badge blue">◈ Ações com Reinvestimento</div>
-    <div class="caveat-title">Juros sobre juros via dividendos</div>
-    <div class="caveat-body">Dividendos compram mais cotas → mais dividendos no próximo período. ITUB4 e outros historicamente entregam total return de 12+% a.a. em bons ciclos.</div>
-  </div>
-  <div class="caveat-card">
-    <div class="caveat-badge red">◈ Ações sem Reinvestimento</div>
-    <div class="caveat-title">Dividendos como renda corrente</div>
-    <div class="caveat-body">Portfólio cresce apenas pela valorização do preço. Dividendos acumulados como caixa separado (sem yield adicional). A diferença vs. reinvestimento se torna enorme em 10–20 anos.</div>
-  </div>
-</div>
 
-<div class="footer">
-  <span>Simulação educacional, NÃO É recomendação de investimento. Rentabilidade passada não garante retorno futuro.</span>
-  <span style="display:flex;gap:24px;align-items:center;">
-    <span style="color:var(--muted);font-size:11px;">Raoni Queiroz. Todos os direitos reservados</span>
-    <span>fev/2026</span>
-  </span>
-</div>
+  <div class="inputs-section-label">Renda Fixa — Taxas e Impostos</div>
+  <div class="inputs-bar">
+    <div class="input-group" style="min-width:180px;">
+      <label style="display:flex;align-items:center;justify-content:space-between;">
+        <span>LCI/LCA</span>
+        <span style="display:flex;gap:3px;">
+          <button class="mode-pill active" id="lciModePre" onclick="setMode('lci','pre')">Pré</button>
+          <button class="mode-pill" id="lciModePos" onclick="setMode('lci','pos')">Pós · %CDI</button>
+        </span>
+      </label>
+      <input type="number" id="lciRate" value="14.0" min="0" max="200" step="0.5">
+      <span class="input-note" id="lciRateNote">bruto prefixado a.a.</span>
+      <span class="input-note rate-result" id="lciResult" style="display:none;"></span>
+    </div>
+    <div class="input-group" style="min-width:130px;">
+      <label>IR LCI/LCA %</label>
+      <input type="number" id="lciIR" value="0" min="0" max="25" step="2.5">
+      <span class="input-note">0% isento · mude se tributar</span>
+    </div>
+    <div class="input-group" style="min-width:180px;">
+      <label style="display:flex;align-items:center;justify-content:space-between;">
+        <span>CDB</span>
+        <span style="display:flex;gap:3px;">
+          <button class="mode-pill active" id="cdbModePre" onclick="setMode('cdb','pre')">Pré</button>
+          <button class="mode-pill" id="cdbModePos" onclick="setMode('cdb','pos')">Pós · %CDI</button>
+        </span>
+      </label>
+      <input type="number" id="cdbRate" value="13.5" min="0" max="200" step="0.5">
+      <span class="input-note" id="cdbRateNote">bruto prefixado a.a.</span>
+      <span class="input-note rate-result" id="cdbResult" style="display:none;"></span>
+    </div>
+    <div class="input-group" style="min-width:220px;flex:2;">
+      <label>IR CDB — automático pelo horizonte</label>
+      <div style="margin-top:4px;display:flex;flex-direction:column;gap:4px;">
+        <span id="cdbIrAutoLabel" style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--teal);">15%</span>
+        <span class="input-note" id="cdbIrAutoDesc">acima de 720 dias · ajusta conforme o prazo selecionado no ranking</span>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+        <span style="font-size:9px;color:var(--muted);">6m→22,5%</span>
+        <span style="font-size:9px;color:var(--muted);">·</span>
+        <span style="font-size:9px;color:var(--muted);">1a→20%</span>
+        <span style="font-size:9px;color:var(--muted);">·</span>
+        <span style="font-size:9px;color:var(--muted);">2a→17,5%</span>
+        <span style="font-size:9px;color:var(--muted);">·</span>
+        <span style="font-size:9px;color:var(--muted);">5a+→15%</span>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="div-toggle-bar">
+    <span class="div-toggle-label">Ações · Dividendos</span>
+    <div class="toggle-wrap">
+      <label class="toggle-switch">
+        <input type="checkbox" id="reinvestToggle" checked>
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+      <span class="toggle-label-text on" id="toggleText">Reinvestindo dividendos</span>
+    </div>
+    <div class="div-description" id="divDescription">
+      <span class="tag-on">✦ Ativado:</span> dividendos compram mais ações → portfólio cresce pelo total return (preço + DY).
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="chart-area">
+      <div class="section-label">Crescimento do Patrimônio — valor bruto acumulado</div>
+      <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+      <p class="chart-note">* Renda fixa: curvas mostram o valor bruto que rende juros compostos. IR incide apenas no resgate (não há come-cotas). "No bolso" no ranking desconta o IR. Ações: gráfico em valor total; IR sobre ganho de capital calculado no ranking.</p>
+      <div class="legend-grid" id="legendGrid"></div>
+    </div>
+    <div class="sidebar">
+      <div class="section-label" style="margin-bottom:14px;">Ranking no horizonte</div>
+      <div class="milestone-tabs">
+        <button class="tab-btn" data-months="6">6m</button>
+        <button class="tab-btn" data-months="12">1a</button>
+        <button class="tab-btn" data-months="24">2a</button>
+        <button class="tab-btn" data-months="60">5a</button>
+        <button class="tab-btn active" data-months="120">10a</button>
+        <button class="tab-btn" data-months="180">15a</button>
+        <button class="tab-btn" data-months="240">20a</button>
+      </div>
+      <div class="ranking" id="rankingList"></div>
+    </div>
+  </div>
+
+  <div class="caveats">
+    <div class="caveat-card">
+      <div class="caveat-badge green">✦ Tesouro IPCA+ <span id="caveatTesRate">7,21%</span></div>
+      <div class="caveat-title">Âncora de longo prazo</div>
+      <div class="caveat-body">Taxa real configurável acima. Ex: 2045+ ≈ 7,21% · 2040+ ≈ 7,18%. Garantia soberana. IR 15% só no resgate — sem come-cotas. No vencimento, retorno garantido.</div>
+    </div>
+    <div class="caveat-card">
+      <div class="caveat-badge yellow">⚠ LCI/LCA</div>
+      <div class="caveat-title">Bom hoje, incerto amanhã</div>
+      <div class="caveat-body">Prazo típico ~3 anos — impossível travar por 20 anos. Renova às taxas futuras. Mude IR para 15% para simular eventual tributação.</div>
+    </div>
+    <div class="caveat-card">
+      <div class="caveat-badge teal">◈ CDB</div>
+      <div class="caveat-title">IR regressivo · FGC R$250k</div>
+      <div class="caveat-body">IR cai de 22,5% (≤180d) a 15% (720d+). Rende pela taxa bruta — IR incide só no resgate. Atenção ao limite FGC por CPF por instituição.</div>
+    </div>
+    <div class="caveat-card">
+      <div class="caveat-badge blue">◈ Ações com Reinvestimento</div>
+      <div class="caveat-title">Bola de neve via dividendos</div>
+      <div class="caveat-body">Dividendos compram mais cotas → mais dividendos → efeito exponencial. ITUB4, ABCB4 historicamente entregam total return 12–18% a.a. em bons ciclos.</div>
+    </div>
+    <div class="caveat-card">
+      <div class="caveat-badge red">◈ Ações sem Reinvestimento</div>
+      <div class="caveat-title">Dividendos como renda corrente</div>
+      <div class="caveat-body">Portfólio cresce só pela valorização de preço. Dividendos acumulam como caixa separado. A diferença vs. reinvestimento se torna enorme em 15–20 anos.</div>
+    </div>
+  </div>
+
+</div><!-- /tab-simulador -->
+
+<!-- ══════════════════════════════════════════
+     TAB 2: RESERVA DE EMERGÊNCIA
+══════════════════════════════════════════ -->
+<div id="tab-reserva" style="display:none;">
+
+  <div class="header">
+    <div class="header-eyebrow">Reserva de Emergência · Planejamento</div>
+    <h1>Quanto você<br>precisa <em>guardar?</em></h1>
+    <p class="header-sub">
+      Calcule sua meta ideal, o tempo necessário para atingi-la e onde investir.
+    </p>
+  </div>
+
+  <div class="res-grid">
+    <!-- INPUTS -->
+    <div class="res-inputs">
+      <div class="res-section-title">Sua situação</div>
+
+      <div class="res-input-row">
+        <div class="res-input-group">
+          <label>Pessoas na casa</label>
+          <input type="number" id="res-pessoas" value="2" min="1" max="20" step="1">
+          <span class="input-note" id="res-per-capita">≈ R$ 2.500/pessoa</span>
+        </div>
+        <div class="res-input-group">
+          <label>Gasto fixo mensal</label>
+          <input type="number" id="res-gasto" value="5000" min="0" step="500">
+          <span class="input-note">R$ — aluguel, comida, contas…</span>
+        </div>
+      </div>
+
+      <div class="filhos-toggle-row">
+        <div>
+          <div class="filhos-toggle-label">Tem filhos menores de 18 anos?</div>
+          <div class="filhos-toggle-sub">Afeta o prazo recomendado: 6 → 8 meses</div>
+        </div>
+        <div class="toggle-wrap">
+          <label class="toggle-switch">
+            <input type="checkbox" id="res-filhos">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="toggle-label-text" id="filhosLabel">Não</span>
+        </div>
+      </div>
+
+      <div class="res-input-row">
+        <div class="res-input-group">
+          <label>Já tenho guardado</label>
+          <input type="number" id="res-atual" value="0" min="0" step="500">
+          <span class="input-note">R$ — reserva atual</span>
+        </div>
+        <div class="res-input-group">
+          <label>Posso guardar/mês</label>
+          <input type="number" id="res-poupar" value="500" min="0" step="100">
+          <span class="input-note">R$ — valor disponível</span>
+        </div>
+      </div>
+
+      <div class="res-input-row">
+        <div class="res-input-group">
+          <label>Renda variável?</label>
+          <select id="res-renda" style="background:var(--card);border:1px solid var(--border);color:var(--text);
+            font-family:'DM Mono',monospace;font-size:13px;padding:10px 14px;outline:none;width:100%;">
+            <option value="0">Emprego CLT estável</option>
+            <option value="1">Renda variável / freelancer</option>
+            <option value="2">Empresário / autônomo</option>
+          </select>
+          <span class="input-note">impacta meses recomendados</span>
+        </div>
+        <div class="res-input-group">
+          <label>Rendimento da reserva</label>
+          <input type="number" id="res-rendimento" value="13.5" min="0" max="30" step="0.5">
+          <span class="input-note">% a.a. bruto (CDB liquidez diária)</span>
+        </div>
+      </div>
+
+      <!-- RESULTADO -->
+      <div class="res-result-box">
+        <div class="res-result-grid">
+          <div class="res-result-item">
+            <div class="res-result-label">Meta ideal</div>
+            <div class="res-result-value highlight" id="res-meta">R$ 30.000</div>
+            <div class="res-result-sub" id="res-meta-sub">6 meses × R$ 5.000</div>
+          </div>
+          <div class="res-result-item">
+            <div class="res-result-label">Falta acumular</div>
+            <div class="res-result-value warn" id="res-falta">R$ 30.000</div>
+            <div class="res-result-sub" id="res-falta-sub">100% da meta</div>
+          </div>
+          <div class="res-result-item">
+            <div class="res-result-label">Tempo estimado</div>
+            <div class="res-result-value ok" id="res-tempo">—</div>
+            <div class="res-result-sub" id="res-tempo-sub">com rendimento da reserva</div>
+          </div>
+        </div>
+        <div class="res-progress-wrap">
+          <div class="res-progress-label">
+            <span>Progresso atual</span>
+            <span id="res-pct">0%</span>
+          </div>
+          <div class="res-progress-bar"><div class="res-progress-fill" id="res-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="res-charts">
+      <div class="res-chart-title">Distribuição da sua meta</div>
+      <div class="res-donut-wrap"><canvas id="resDonut"></canvas></div>
+      <div class="res-chart-title">Evolução até atingir a reserva</div>
+      <div class="res-line-wrap"><canvas id="resLine"></canvas></div>
+    </div>
+  </div>
+
+  <!-- EXPERT TIPS -->
+  <div class="expert-tips">
+    <div class="expert-tips-title">O que dizem os especialistas</div>
+    <div class="expert-grid">
+      <div class="expert-card">
+        <div class="expert-name">Gustavo Cerbasi</div>
+        <div class="expert-text">Recomenda de 6 a 12 meses de despesas, investida em ativos de liquidez diária. Para profissionais liberais e autônomos, prefere o teto de 12 meses.</div>
+      </div>
+      <div class="expert-card">
+        <div class="expert-name">Nathalia Arcuri (Me Poupe!)</div>
+        <div class="expert-text">Mínimo de 6 meses de gastos fixos. Para quem tem dependentes ou renda instável, eleva para 8–12 meses. A reserva deve ficar no Tesouro Selic ou CDB com liquidez diária.</div>
+      </div>
+      <div class="expert-card">
+        <div class="expert-name">Dave Ramsey</div>
+        <div class="expert-text">Baby Step 1: reserve R$ 1.000 de emergência rapidamente. Baby Step 3: complete com 3–6 meses de despesas. Prioridade antes de qualquer investimento.</div>
+      </div>
+      <div class="expert-card">
+        <div class="expert-name">Onde investir a reserva</div>
+        <div class="expert-text">Tesouro Selic (resgate D+1) · CDB liquidez diária de banco grande · Fundo DI taxa zero. Nunca em renda variável ou CDB sem liquidez — a reserva precisa estar disponível imediatamente.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-reserva -->
+
+<!-- ══════════════════════════════════════════
+     FOOTER LEGAL (compartilhado)
+══════════════════════════════════════════ -->
+<footer class="footer-legal">
+  <div class="footer-legal-main">
+    <div class="footer-legal-block">
+      <h4>⚠ Isenção de Responsabilidade</h4>
+      <p>As simulações apresentadas neste site têm caráter exclusivamente educacional e informativo. Os resultados são estimativas baseadas em premissas matemáticas e não constituem recomendação de investimento, consultoria financeira ou garantia de rentabilidade. Rentabilidade passada não é garantia de rentabilidade futura. O autor não se responsabiliza por decisões financeiras tomadas com base nas informações aqui apresentadas. Consulte sempre um profissional certificado (CFP® / CNPI) antes de investir.</p>
+    </div>
+    <div class="footer-legal-block">
+      <h4>© Direitos Autorais e Propriedade Intelectual</h4>
+      <p>Todo o conteúdo deste site — incluindo código-fonte, design, interface, textos e lógica de cálculo — é de propriedade exclusiva de <strong>Raoni Queiroz</strong> e está protegido pela Lei nº 9.610/1998 (Lei de Direitos Autorais) e pela legislação de propriedade intelectual brasileira. É expressamente proibida a cópia, reprodução, distribuição ou uso comercial de qualquer parte deste material sem autorização prévia e por escrito. Violações estão sujeitas às penalidades civis e criminais previstas em lei.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 <strong>Raoni Queiroz</strong> — Todos os direitos reservados.</span>
+    <span class="footer-copy">Simulação educacional — não é recomendação de investimento · fev/2026</span>
+  </div>
+</footer>
 
 <script>
 // ═══════════════════════════════════════════
-// STATE
+// ESTADO GLOBAL
 // ═══════════════════════════════════════════
 let activeMonths = 120;
 let chart = null;
+let resDonutChart = null;
+let resLineChart = null;
 let hiddenSeries = new Set();
 let reinvestDivs = true;
 let cdbIRpct = 15;
-let lciMode = 'pre'; // 'pre' or 'pos'
-let cdbMode = 'pre'; // 'pre' or 'pos'
+let lciMode = 'pre';
+let cdbMode = 'pre';
+
+// ═══════════════════════════════════════════
+// HAMBURGER MENU
+// ═══════════════════════════════════════════
+const TABS = {
+  simulador: { label: 'Simulador de Investimentos' },
+  reserva:   { label: 'Reserva de Emergência' }
+};
+
+function toggleMenu() {
+  const btn      = document.getElementById('hamburgerBtn');
+  const dropdown = document.getElementById('navDropdown');
+  const isOpen   = dropdown.classList.contains('open');
+  dropdown.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('#hamburgerBtn') && !e.target.closest('#navDropdown')) {
+    document.getElementById('navDropdown').classList.remove('open');
+    document.getElementById('hamburgerBtn').classList.remove('open');
+  }
+});
+
+// ═══════════════════════════════════════════
+// TAB NAVIGATION
+// ═══════════════════════════════════════════
+function showTab(tab) {
+  // Hide all tabs, show selected
+  document.getElementById('tab-simulador').style.display = tab === 'simulador' ? '' : 'none';
+  document.getElementById('tab-reserva').style.display   = tab === 'reserva'   ? '' : 'none';
+
+  // Update menu item active states
+  Object.keys(TABS).forEach(key => {
+    document.getElementById('menu-'+key).classList.toggle('active', key === tab);
+  });
+
+  // Update breadcrumb label
+  document.getElementById('navActiveLabel').textContent = TABS[tab]?.label || '';
+
+  // Close the dropdown
+  document.getElementById('navDropdown').classList.remove('open');
+  document.getElementById('hamburgerBtn').classList.remove('open');
+
+  if (tab === 'reserva')   calcReserva();
+  if (tab === 'simulador') buildAll();
+}
+
+// ═══════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════
+let currentTheme = 'light';
+function applyTheme(theme) {
+  currentTheme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeIcon').textContent  = theme === 'light' ? '☾' : '☀︎';
+  document.getElementById('themeLabel').textContent = theme === 'light' ? 'Tema escuro' : 'Tema claro';
+  buildAll();
+  calcReserva();
+}
+function toggleTheme() { applyTheme(currentTheme === 'dark' ? 'light' : 'dark'); }
 
 // ═══════════════════════════════════════════
 // INVESTMENTS
 // ═══════════════════════════════════════════
 const INVESTMENTS = [
-  {
-    id: 'tesouro',
-    name: 'Tesouro IPCA+ (configurável)',
-    shortName: 'Tesouro IPCA+',
-    type: 'tesouro',
-    color: '#3dd68c',
-    risk: 'Muito Baixo', riskClass: 'pos',
-    note: 'Garantia soberana · IR 15% LP · taxa real configurável acima'
-  },
-  {
-    id: 'lci',
-    name: 'LCI/LCA (configurável)',
-    shortName: 'LCI/LCA',
-    type: 'lci',
-    color: '#f5c518',
-    risk: 'Baixo*', riskClass: 'warn',
-    note: 'taxa e IR ajustáveis acima · renovação periódica'
-  },
-  {
-    id: 'cdb',
-    name: 'CDB (configurável)',
-    shortName: 'CDB',
-    type: 'cdb',
-    color: '#2dd4bf',
-    risk: 'Baixo', riskClass: 'pos',
-    note: 'IR regressivo · FGC R$250k por inst.'
-  },
-  {
-    id: 'acoes_cons',
-    name: 'Ações — Conservador',
-    shortName: 'Ações Conserv.',
-    type: 'stock',
-    priceGrowth: 0.03,
-    color: '#5b9cf6',
-    risk: 'Médio-Alto', riskClass: 'risk',
-    note: 'DY + valoriz. 3%/ano (ciclo fraco)'
-  },
-  {
-    id: 'acoes_mod',
-    name: 'Ações — Moderado (ITUB4)',
-    shortName: 'Ações Moder.',
-    type: 'stock',
-    priceGrowth: 0.07,
-    color: '#a88bfa',
-    risk: 'Alto', riskClass: 'risk',
-    note: 'DY + valoriz. 7%/ano (histórico médio)'
-  },
-  {
-    id: 'acoes_otm',
-    name: 'Ações — Otimista (ITUB4 bull)',
-    shortName: 'Ações Otim.',
-    type: 'stock',
-    priceGrowth: 0.11,
-    color: '#f26065',
-    risk: 'Alto', riskClass: 'risk',
-    note: 'DY + valoriz. 11%/ano (melhor histórico)'
-  }
+  { id:'tesouro', name:'Tesouro IPCA+ (configurável)', shortName:'Tesouro IPCA+', type:'tesouro',
+    color:'#3dd68c', risk:'Muito Baixo', riskClass:'pos', note:'Garantia soberana · IR 15% só no resgate · trava 20+ anos' },
+  { id:'lci', name:'LCI/LCA (configurável)', shortName:'LCI/LCA', type:'lci',
+    color:'#f5c518', risk:'Baixo*', riskClass:'warn', note:'taxa e IR ajustáveis · renovação periódica · sem come-cotas' },
+  { id:'cdb', name:'CDB (configurável)', shortName:'CDB', type:'cdb',
+    color:'#2dd4bf', risk:'Baixo', riskClass:'pos', note:'IR regressivo · rende bruto até resgate · FGC R$250k/inst.' },
+  { id:'acoes_cons', name:'Ações — Conservador', shortName:'Ações Conserv.', type:'stock', priceGrowth:0.03,
+    color:'#5b9cf6', risk:'Médio-Alto', riskClass:'risk', note:'DY + valoriz. 3%/ano (ciclo fraco)' },
+  { id:'acoes_mod', name:'Ações — Moderado (ITUB4)', shortName:'Ações Moder.', type:'stock', priceGrowth:0.07,
+    color:'#a88bfa', risk:'Alto', riskClass:'risk', note:'DY + valoriz. 7%/ano (histórico médio)' },
+  { id:'acoes_otm', name:'Ações — Otimista (ITUB4 bull)', shortName:'Ações Otim.', type:'stock', priceGrowth:0.11,
+    color:'#f26065', risk:'Alto', riskClass:'risk', note:'DY + valoriz. 11%/ano (melhor histórico)' }
 ];
 
 // ═══════════════════════════════════════════
-// PARAMS
+// PARAMS (simulador)
 // ═══════════════════════════════════════════
 function getParams() {
-  const selic    = parseFloat(document.getElementById('selic').value)       || 15.0;
-  const tesReal  = parseFloat(document.getElementById('tesouRoReal').value) || 7.21;
-  const lciRaw   = parseFloat(document.getElementById('lciRate').value)     || 14.0;
-  const cdbRaw   = parseFloat(document.getElementById('cdbRate').value)     || 13.5;
-
-  // Pós-fixado: input is % of CDI ≈ Selic (e.g. 100 = 100% × 15% = 15%)
+  const selic   = parseFloat(document.getElementById('selic').value)       || 15.0;
+  const tesReal = parseFloat(document.getElementById('tesouRoReal').value) || 7.21;
+  const lciRaw  = parseFloat(document.getElementById('lciRate').value)     || 14.0;
+  const cdbRaw  = parseFloat(document.getElementById('cdbRate').value)     || 13.5;
   const lciGross = lciMode === 'pos' ? (lciRaw / 100) * selic : lciRaw;
   const cdbGross = cdbMode === 'pos' ? (cdbRaw / 100) * selic : cdbRaw;
-
   return {
-    inicial: parseFloat(document.getElementById('inicial').value) || 20000,
-    aporte:  parseFloat(document.getElementById('aporte').value)  || 2000,
-    selic,
-    tesReal,
-    ipca:    parseFloat(document.getElementById('ipca').value)    || 5.0,
-    dy:      parseFloat(document.getElementById('dy').value)      || 6.5,
-    lciGross,
-    lciIR:   parseFloat(document.getElementById('lciIR').value)   || 0,
-    cdbGross,
-    cdbIR:   cdbIRpct
+    inicial: parseFloat(document.getElementById('inicial').value) || 10000,
+    aporte:  parseFloat(document.getElementById('aporte').value)  || 1000,
+    selic, tesReal,
+    ipca:    parseFloat(document.getElementById('ipca').value)    || 4.0,
+    dy:      parseFloat(document.getElementById('dy').value)      || 6.0,
+    lciGross, lciIR: parseFloat(document.getElementById('lciIR').value) || 0,
+    cdbGross, cdbIR: cdbIRpct
   };
 }
 
-// ── Rate hint labels (shown below inputs) ──
-function updateRateHints() {
-  const selic    = parseFloat(document.getElementById('selic').value)       || 15.0;
-  const tesReal  = parseFloat(document.getElementById('tesouRoReal').value) || 7.21;
-  const lciRaw   = parseFloat(document.getElementById('lciRate').value)     || 14.0;
-  const cdbRaw   = parseFloat(document.getElementById('cdbRate').value)     || 13.5;
-
-  // Update tesouro caveat badge
-  const caveatRate = document.getElementById('caveatTesRate');
-  if (caveatRate) caveatRate.textContent = tesReal.toFixed(2).replace('.', ',') + '%';
-
-  const lciNote   = document.getElementById('lciRateNote');
-  const lciResult = document.getElementById('lciResult');
-  const cdbNote   = document.getElementById('cdbRateNote');
-  const cdbResult = document.getElementById('cdbResult');
-
-  if (lciMode === 'pos') {
-    const gross = (lciRaw / 100) * selic;
-    lciNote.textContent = '% do CDI';
-    lciResult.style.display = 'block';
-    lciResult.textContent   = `= ${gross.toFixed(2)}% bruto a.a. (Selic ${selic}%)`;
-  } else {
-    lciNote.textContent     = 'bruto prefixado a.a.';
-    lciResult.style.display = 'none';
-  }
-
-  if (cdbMode === 'pos') {
-    const gross = (cdbRaw / 100) * selic;
-    cdbNote.textContent = '% do CDI';
-    cdbResult.style.display = 'block';
-    cdbResult.textContent   = `= ${gross.toFixed(2)}% bruto a.a. (Selic ${selic}%)`;
-  } else {
-    cdbNote.textContent     = 'bruto prefixado a.a.';
-    cdbResult.style.display = 'none';
-  }
-}
-
-// ── Mode toggle (Pré / Pós) ──
-function setMode(instrument, mode) {
-  if (instrument === 'lci') {
-    lciMode = mode;
-    document.getElementById('lciModePre').classList.toggle('active', mode === 'pre');
-    document.getElementById('lciModePos').classList.toggle('active', mode === 'pos');
-    // Switch placeholder: pré=14%, pós=93 (≈93% CDI ≈14% when Selic=15%)
-    document.getElementById('lciRate').value = mode === 'pos' ? '93' : '14.0';
-  } else {
-    cdbMode = mode;
-    document.getElementById('cdbModePre').classList.toggle('active', mode === 'pre');
-    document.getElementById('cdbModePos').classList.toggle('active', mode === 'pos');
-    document.getElementById('cdbRate').value = mode === 'pos' ? '90' : '13.5';
-  }
-  buildAll();
-}
-
 // ═══════════════════════════════════════════
-// RATE → NET ANNUAL
+// RATES
 // ═══════════════════════════════════════════
-function netAnnualRate(inv, p) {
-  switch (inv.type) {
-    case 'tesouro': {
-      const fatorReal = 1 + p.tesReal / 100;
-      const bruto = fatorReal * (1 + p.ipca / 100) - 1;
-      return bruto * 0.85;
-    }
-    case 'lci': {
-      const bruto = p.lciGross / 100;
-      if (p.lciIR === 0) return bruto;
-      return bruto * (1 - p.lciIR / 100);
-    }
-    case 'cdb':
-      return (p.cdbGross / 100) * (1 - p.cdbIR / 100);
-    case 'stock':
-      if (reinvestDivs) {
-        return (1 + p.dy / 100) * (1 + inv.priceGrowth) - 1;
-      } else {
-        return inv.priceGrowth;
-      }
-    default: return 0;
-  }
-}
 
-// ── Gross rate (no IR deducted) ──
-function grossAnnualRate(inv, p) {
-  switch (inv.type) {
-    case 'tesouro': return 1.0721 * (1 + p.ipca / 100) - 1;
+// Gross rate — what actually compounds in the account (no IR deducted)
+function grossRate(inv, p) {
+  switch(inv.type) {
+    case 'tesouro': return (1 + p.tesReal/100) * (1 + p.ipca/100) - 1;  // nominal bruto
     case 'lci':     return p.lciGross / 100;
     case 'cdb':     return p.cdbGross / 100;
     case 'stock':
-      if (reinvestDivs) return (1 + p.dy / 100) * (1 + inv.priceGrowth) - 1;
+      if (reinvestDivs) return (1 + p.dy/100) * (1 + inv.priceGrowth) - 1;
       return inv.priceGrowth;
     default: return 0;
   }
 }
 
-// ── IR rate applicable on gains ──
-function irRateForType(inv, p) {
-  switch (inv.type) {
+// IR rate on gains at redemption
+function irRate(inv, p) {
+  switch(inv.type) {
     case 'tesouro': return 0.15;
     case 'lci':     return p.lciIR / 100;
     case 'cdb':     return p.cdbIR / 100;
-    // Ações: dividendos isentos. Ganho de capital ~15% sobre valorização de preço.
-    // Aproximação: 15% apenas sobre a parcela de preço do ganho total.
-    case 'stock':   return 0.15;
+    case 'stock':   return 0.15;   // ganho de capital (aproximado sobre parcela de preço)
     default: return 0;
   }
 }
 
-// Generic monthly compound with contributions
+// Display rate label — always gross, clearly labeled
+function displayRate(inv, p) {
+  return grossRate(inv, p) * 100;  // always gross — IR shown separately in "no bolso"
+}
+
+// ═══════════════════════════════════════════
+// SIMULATION
+// ═══════════════════════════════════════════
+
+// Compound at GROSS rate (correct: IR only at redemption)
 function simFixed(annualRate, inicial, aporte, months) {
-  const r = Math.pow(1 + annualRate, 1 / 12) - 1;
+  const r = Math.pow(1 + annualRate, 1/12) - 1;
   const out = [];
   let bal = inicial;
   for (let m = 1; m <= months; m++) {
-    bal = bal * (1 + r) + aporte;
+    bal = bal * (1+r) + aporte;
     if (m % 12 === 0 || m === months) out.push(Math.round(bal));
   }
-  // dedupe last entry if months is exact multiple of 12
-  if (months % 12 === 0 && out.length > months / 12) out.pop();
+  if (months % 12 === 0 && out.length > months/12) out.pop();
   return out;
 }
 
-// Stock WITHOUT reinvestment:
-//   - stock value grows by price appreciation only + contributions
-//   - dividends accumulate as separate cash (no further yield, conservative)
-//   - total shown = stock value + cumulative dividends
+// Stock WITHOUT reinvestment
 function simStockNoReinvest(dyRate, priceGrowth, inicial, aporte, months) {
-  const rPrice = Math.pow(1 + priceGrowth, 1 / 12) - 1;
-  const rDY    = Math.pow(1 + dyRate, 1 / 12) - 1;
+  const rPrice = Math.pow(1 + priceGrowth, 1/12) - 1;
+  const rDY    = Math.pow(1 + dyRate, 1/12) - 1;
   const out = [];
-  let stock = inicial;
-  let cashDivs = 0;
+  let stock = inicial, cashDivs = 0;
   for (let m = 1; m <= months; m++) {
-    cashDivs += stock * rDY;          // dividends earned this month
-    stock = stock * (1 + rPrice) + aporte; // price grows, contribution added
+    cashDivs += stock * rDY;
+    stock = stock * (1+rPrice) + aporte;
     if (m % 12 === 0 || m === months) out.push(Math.round(stock + cashDivs));
   }
-  if (months % 12 === 0 && out.length > months / 12) out.pop();
+  if (months % 12 === 0 && out.length > months/12) out.pop();
   return out;
 }
 
+// Get series — ALL fixed income uses grossRate now (IR at redemption, not every year)
 function getSeriesData(inv, p, months) {
   if (inv.type === 'stock') {
-    if (reinvestDivs) {
-      const totalRate = (1 + p.dy / 100) * (1 + inv.priceGrowth) - 1;
-      return simFixed(totalRate, p.inicial, p.aporte, months);
-    } else {
-      return simStockNoReinvest(p.dy / 100, inv.priceGrowth, p.inicial, p.aporte, months);
-    }
+    if (reinvestDivs) return simFixed((1+p.dy/100)*(1+inv.priceGrowth)-1, p.inicial, p.aporte, months);
+    return simStockNoReinvest(p.dy/100, inv.priceGrowth, p.inicial, p.aporte, months);
   }
-  return simFixed(netAnnualRate(inv, p), p.inicial, p.aporte, months);
+  // Fixed income: always compound at gross rate — IR only at final redemption
+  return simFixed(grossRate(inv, p), p.inicial, p.aporte, months);
 }
 
 // ═══════════════════════════════════════════
 // FORMAT
 // ═══════════════════════════════════════════
 function fmtBRL(v) {
-  if (v >= 1e6) return 'R$ ' + (v / 1e6).toFixed(2).replace('.', ',') + ' mi';
-  if (v >= 1e3) return 'R$ ' + (v / 1e3).toFixed(0) + ' mil';
-  return 'R$ ' + Math.round(v);
+  if (v >= 1e6) return 'R$ '+(v/1e6).toFixed(2).replace('.',',')+' mi';
+  if (v >= 1e3) return 'R$ '+(v/1e3).toFixed(0)+' mil';
+  return 'R$ '+Math.round(v);
 }
 function fmtFV(v) {
-  if (v >= 1e6) return (v / 1e6).toFixed(2).replace('.', ',') + ' mi';
-  return (v / 1e3).toFixed(0) + 'k';
+  if (v >= 1e6) return (v/1e6).toFixed(2).replace('.',',')+' mi';
+  return (v/1e3).toFixed(0)+'k';
+}
+
+// ═══════════════════════════════════════════
+// UPDATE HINTS & HEADER
+// ═══════════════════════════════════════════
+function updateRateHints() {
+  const selic   = parseFloat(document.getElementById('selic').value)   || 15.0;
+  const tesReal = parseFloat(document.getElementById('tesouRoReal').value) || 7.21;
+  const lciRaw  = parseFloat(document.getElementById('lciRate').value)  || 14.0;
+  const cdbRaw  = parseFloat(document.getElementById('cdbRate').value)  || 13.5;
+  const el = document.getElementById('caveatTesRate');
+  if (el) el.textContent = tesReal.toFixed(2).replace('.',',')+'%';
+  const lciNote = document.getElementById('lciRateNote');
+  const lciRes  = document.getElementById('lciResult');
+  if (lciMode === 'pos') {
+    lciNote.textContent = '% do CDI';
+    lciRes.style.display = 'block';
+    lciRes.textContent = `= ${((lciRaw/100)*selic).toFixed(2)}% bruto a.a. (Selic ${selic}%)`;
+  } else { lciNote.textContent = 'bruto prefixado a.a.'; lciRes.style.display = 'none'; }
+  const cdbNote = document.getElementById('cdbRateNote');
+  const cdbRes  = document.getElementById('cdbResult');
+  if (cdbMode === 'pos') {
+    cdbNote.textContent = '% do CDI';
+    cdbRes.style.display = 'block';
+    cdbRes.textContent = `= ${((cdbRaw/100)*selic).toFixed(2)}% bruto a.a. (Selic ${selic}%)`;
+  } else { cdbNote.textContent = 'bruto prefixado a.a.'; cdbRes.style.display = 'none'; }
+}
+
+function updateHeader() {
+  const p = getParams();
+  const fmt = v => {
+    if (v >= 1e6) return 'R$ '+(v/1e6).toFixed(1).replace('.',',')+'M';
+    if (v >= 1e3) return 'R$ '+(v/1e3%1===0?(v/1e3).toFixed(0):(v/1e3).toFixed(1).replace('.',','))+'k';
+    return 'R$ '+v.toFixed(0);
+  };
+  document.getElementById('h1Inicial').textContent = fmt(p.inicial);
+  document.getElementById('h1Aporte').textContent  = fmt(p.aporte);
+}
+
+function setMode(instrument, mode) {
+  if (instrument === 'lci') {
+    lciMode = mode;
+    document.getElementById('lciModePre').classList.toggle('active', mode==='pre');
+    document.getElementById('lciModePos').classList.toggle('active', mode==='pos');
+    document.getElementById('lciRate').value = mode==='pos' ? '93' : '14.0';
+  } else {
+    cdbMode = mode;
+    document.getElementById('cdbModePre').classList.toggle('active', mode==='pre');
+    document.getElementById('cdbModePos').classList.toggle('active', mode==='pos');
+    document.getElementById('cdbRate').value = mode==='pos' ? '90' : '13.5';
+  }
+  buildAll();
 }
 
 // ═══════════════════════════════════════════
@@ -991,88 +946,50 @@ function fmtFV(v) {
 function buildChart() {
   const p = getParams();
   const maxYears = 20;
-  const labels = Array.from({length: maxYears}, (_, i) => `${i + 1}a`);
-
-  // Read CSS vars dynamically so chart matches theme
+  const labels = Array.from({length:maxYears},(_,i)=>`${i+1}a`);
   const cs = getComputedStyle(document.documentElement);
-  const cGrid    = cs.getPropertyValue('--chart-grid').trim();
-  const cTick    = cs.getPropertyValue('--chart-tick').trim();
-  const cBorder  = cs.getPropertyValue('--border').trim();
-  const cTooltip = cs.getPropertyValue('--tooltip-bg').trim();
-  const cMuted   = cs.getPropertyValue('--muted').trim();
-  const cText    = cs.getPropertyValue('--text').trim();
+  const cGrid=cs.getPropertyValue('--chart-grid').trim(), cTick=cs.getPropertyValue('--chart-tick').trim(),
+        cBorder=cs.getPropertyValue('--border').trim(), cTooltip=cs.getPropertyValue('--tooltip-bg').trim(),
+        cMuted=cs.getPropertyValue('--muted').trim(), cText=cs.getPropertyValue('--text').trim();
 
   const datasets = INVESTMENTS.map(inv => {
-    const data = getSeriesData(inv, p, maxYears * 12);
-    const stockNoReinv = inv.type === 'stock' && !reinvestDivs;
-    return {
-      label: inv.name,
-      data,
-      borderColor: inv.color,
-      backgroundColor: inv.color + '10',
-      borderWidth: stockNoReinv ? 1.5 : 2,
-      borderDash: stockNoReinv ? [5, 4] : [],
-      pointRadius: 2,
-      pointHoverRadius: 5,
-      tension: 0.4,
-      hidden: hiddenSeries.has(inv.id)
-    };
+    const data = getSeriesData(inv, p, maxYears*12);
+    const noReinv = inv.type==='stock' && !reinvestDivs;
+    return { label:inv.name, data,
+      borderColor:inv.color, backgroundColor:inv.color+'10',
+      borderWidth:noReinv?1.5:2, borderDash:noReinv?[5,4]:[],
+      pointRadius:2, pointHoverRadius:5, tension:0.4, hidden:hiddenSeries.has(inv.id) };
   });
 
   const ctx = document.getElementById('mainChart').getContext('2d');
   if (chart) chart.destroy();
-
   chart = new Chart(ctx, {
-    type: 'line',
-    data: { labels, datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: cTooltip,
-          borderColor: cBorder,
-          borderWidth: 1,
-          titleColor: cMuted,
-          bodyColor: cText,
-          titleFont: { family: 'DM Mono', size: 10 },
-          bodyFont: { family: 'DM Mono', size: 11 },
-          padding: 12,
-          callbacks: {
-            title: items => `Ano ${items[0].dataIndex + 1}`,
-            label: item => {
-              if (item.dataset.hidden) return null;
+    type:'line', data:{labels,datasets},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:cTooltip, borderColor:cBorder, borderWidth:1,
+          titleColor:cMuted, bodyColor:cText,
+          titleFont:{family:'DM Mono',size:10}, bodyFont:{family:'DM Mono',size:11}, padding:12,
+          callbacks:{
+            title:items=>`Ano ${items[0].dataIndex+1} (valor bruto acumulado)`,
+            label:item=>{
+              if(item.dataset.hidden) return null;
               const inv = INVESTMENTS[item.datasetIndex];
-              const noReinv = inv.type === 'stock' && !reinvestDivs ? ' (s/reinv)' : '';
-              const name = inv.type === 'tesouro'
-                ? `Tesouro IPCA+${p.tesReal.toFixed(2).replace('.',',')}%`
-                : inv.shortName;
+              const noReinv = inv.type==='stock'&&!reinvestDivs?' (s/reinv)':'';
+              const name = inv.type==='tesouro'?`Tesouro IPCA+${p.tesReal.toFixed(2).replace('.',',')}%`:inv.shortName;
               return `  ${name}${noReinv}: ${fmtBRL(item.raw)}`;
             }
           }
         }
       },
-      scales: {
-        x: {
-          grid: { color: cGrid },
-          ticks: { color: cTick, font: { family: 'DM Mono', size: 9 }, maxTicksLimit: 10 },
-          border: { color: cBorder }
-        },
-        y: {
-          grid: { color: cGrid },
-          ticks: {
-            color: cTick,
-            font: { family: 'DM Mono', size: 9 },
-            callback: v => {
-              if (v >= 1e6) return (v / 1e6).toFixed(1) + ' mi';
-              if (v >= 1e3) return (v / 1e3).toFixed(0) + 'k';
-              return v;
-            }
-          },
-          border: { color: cBorder }
-        }
+      scales:{
+        x:{grid:{color:cGrid},ticks:{color:cTick,font:{family:'DM Mono',size:9},maxTicksLimit:10},border:{color:cBorder}},
+        y:{grid:{color:cGrid},ticks:{color:cTick,font:{family:'DM Mono',size:9},
+            callback:v=>v>=1e6?(v/1e6).toFixed(1)+' mi':v>=1e3?(v/1e3).toFixed(0)+'k':v},border:{color:cBorder}}
       }
     }
   });
@@ -1086,19 +1003,15 @@ function buildLegend() {
   grid.innerHTML = '';
   INVESTMENTS.forEach(inv => {
     const hidden = hiddenSeries.has(inv.id);
-    const noReinv = inv.type === 'stock' && !reinvestDivs;
+    const noReinv = inv.type==='stock'&&!reinvestDivs;
     const item = document.createElement('div');
-    item.className = 'legend-item' + (hidden ? ' dimmed' : '');
-
-    // dashed line for no-reinvest stocks
+    item.className = 'legend-item'+(hidden?' dimmed':'');
     const lineStyle = noReinv
-      ? `background: repeating-linear-gradient(90deg,${inv.color} 0,${inv.color} 5px,transparent 5px,transparent 9px);`
+      ? `background:repeating-linear-gradient(90deg,${inv.color} 0,${inv.color} 5px,transparent 5px,transparent 9px);`
       : `background:${inv.color};`;
-
-    item.innerHTML = `<div class="legend-line" style="${lineStyle}"></div><span>${inv.shortName}${noReinv ? ' ↗ só preço' : ''}</span>`;
-    item.addEventListener('click', () => {
-      if (hiddenSeries.has(inv.id)) hiddenSeries.delete(inv.id);
-      else hiddenSeries.add(inv.id);
+    item.innerHTML = `<div class="legend-line" style="${lineStyle}"></div><span>${inv.shortName}${noReinv?' ↗ só preço':''}</span>`;
+    item.addEventListener('click',()=>{
+      if(hiddenSeries.has(inv.id)) hiddenSeries.delete(inv.id); else hiddenSeries.add(inv.id);
       buildAll();
     });
     grid.appendChild(item);
@@ -1114,72 +1027,87 @@ function buildRanking() {
   const totalInvested = p.inicial + p.aporte * months;
 
   const results = INVESTMENTS.map(inv => {
+    // All series use grossRate — IR only at redemption
     const data = getSeriesData(inv, p, months);
-    const fv = data[data.length - 1];
-    const gain = fv - totalInvested;
-    const rate = netAnnualRate(inv, p) * 100;
-
-    // Gross FV (before IR) for tax calculation
-    const gRate = grossAnnualRate(inv, p);
-    const grossData = simFixed(gRate, p.inicial, p.aporte, months);
-    const fvGross = grossData[grossData.length - 1];
+    const fvGross = data[data.length - 1];
     const grossGain = fvGross - totalInvested;
-    const irRate = irRateForType(inv, p);
 
+    const ir = irRate(inv, p);
     let netPocket, irLabel;
+
     if (inv.type === 'stock') {
-      // Dividends exempt; 15% on price-appreciation gain only
-      const priceGainFrac = inv.priceGrowth / (reinvestDivs
-        ? (1 + p.dy / 100) * (1 + inv.priceGrowth) - 1
-        : inv.priceGrowth);
-      const taxableGain = grossGain * Math.min(priceGainFrac, 1);
-      const irAmount = irRate * taxableGain;
-      netPocket = fvGross - irAmount;
-      irLabel = reinvestDivs
-        ? `IR 15% s/ ganho de preço (~${(priceGainFrac * 100).toFixed(0)}% do ganho)`
-        : 'dividendos isentos · IR 15% s/ preço';
+      if (!reinvestDivs) {
+        // BUG FIX: fvGross = stock + cashDivs. Dividends are exempt.
+        // Recalculate stock-only (price appreciation) to isolate taxable gain.
+        const stockOnlyData = simFixed(inv.priceGrowth, p.inicial, p.aporte, months);
+        const stockFinal = stockOnlyData[stockOnlyData.length - 1];
+        const priceGain  = Math.max(stockFinal - totalInvested, 0);
+        netPocket = fvGross - ir * priceGain;
+        irLabel = `IR 15% s/ ganho de preço (${fmtBRL(priceGain)}) · dividendos (caixa) isentos`;
+      } else {
+        // Reinvesting: approximate taxable portion as price-growth share of total return
+        const totalAnnual = grossRate(inv, p);
+        const priceFrac   = totalAnnual > 0 ? Math.min(inv.priceGrowth / totalAnnual, 1) : 0;
+        const taxableGain = Math.max(grossGain * priceFrac, 0);
+        netPocket = fvGross - ir * taxableGain;
+        irLabel = `IR 15% s/ ganho de preço (~${(priceFrac*100).toFixed(0)}% do total) · DY isento`;
+      }
     } else {
-      const irAmount = irRate * Math.max(grossGain, 0);
-      netPocket = fvGross - irAmount;
-      irLabel = irRate === 0
-        ? 'isento de IR'
-        : `IR ${(irRate * 100).toFixed(1)}% s/ ganho`;
+      const taxableGain = Math.max(grossGain, 0);
+      netPocket = fvGross - ir * taxableGain;
+      irLabel = ir === 0 ? 'isento de IR' : `IR ${(ir*100).toFixed(1)}% s/ ganho no resgate`;
     }
 
-    return { inv, fv, gain, rate, fvGross, netPocket, irLabel };
+    const rate = displayRate(inv, p);
+    return { inv, fvGross, grossGain, netPocket, irLabel, rate };
   });
-  results.sort((a, b) => b.fv - a.fv);
+
+  results.sort((a,b) => b.fvGross - a.fvGross);
 
   const list = document.getElementById('rankingList');
   list.innerHTML = '';
 
   results.forEach((r, i) => {
-    const pos = i + 1;
+    const pos = i+1;
     const card = document.createElement('div');
-    card.className = 'rank-card rank-' + Math.min(pos, 3);
-    const gainX = (r.fv / totalInvested).toFixed(1);
-    const noReinv = r.inv.type === 'stock' && !reinvestDivs;
-    const rateLabel = noReinv ? `${r.rate.toFixed(1)}% preço · DY em caixa` : `${r.rate.toFixed(1)}% a.a. líq.`;
-    const displayName = r.inv.type === 'tesouro'
-      ? `Tesouro IPCA+${p.tesReal.toFixed(2).replace('.',',')}%`
-      : r.inv.shortName;
+    card.className = 'rank-card rank-'+Math.min(pos,3);
+    const gainX = (r.fvGross / totalInvested).toFixed(1);
+    const noReinv = r.inv.type==='stock'&&!reinvestDivs;
+    // Rate label: always show gross. Add net estimate for fixed income.
+    let rateLabel;
+    if (noReinv) {
+      rateLabel = `${r.rate.toFixed(1)}% preço (bruto) · DY em caixa`;
+    } else if (r.inv.type === 'stock') {
+      rateLabel = `${r.rate.toFixed(1)}% a.a. total return (bruto)`;
+    } else {
+      const ir = irRate(r.inv, p);
+      if (ir === 0) {
+        rateLabel = `${r.rate.toFixed(1)}% a.a. bruto = líquido (isento)`;
+      } else {
+        // Net is not simply rate*(1-ir) — only gains are taxed, not principal.
+        // Show bruto and note IR at redemption.
+        rateLabel = `${r.rate.toFixed(1)}% a.a. bruto · IR ${(ir*100).toFixed(1)}% no resgate`;
+      }
+    }
+    const displayName = r.inv.type==='tesouro'
+      ? `Tesouro IPCA+${p.tesReal.toFixed(2).replace('.',',')}%` : r.inv.shortName;
 
     card.innerHTML = `
       <div class="rank-pos">${pos}</div>
       <div class="rank-name">
         <div class="rank-dot" style="background:${r.inv.color}"></div>
-        ${displayName}${noReinv ? '<span style="color:var(--orange);font-size:8px;margin-left:4px">s/reinv.</span>' : ''}
+        ${displayName}${noReinv?'<span style="color:var(--orange);font-size:8px;margin-left:4px">s/reinv.</span>':''}
       </div>
       <div class="rank-rate">${rateLabel}</div>
-      <div class="rank-fv" style="color:${r.inv.color}"><small>R$</small>${fmtFV(r.fv)}</div>
+      <div class="rank-fv" style="color:${r.inv.color}"><small>R$</small>${fmtFV(r.fvGross)}</div>
       <div class="rank-net">
         <span class="rank-net-val">no bolso: ${fmtBRL(r.netPocket)}</span>
         <span class="rank-net-label">${r.irLabel}</span>
       </div>
       <div class="rank-detail">
         <div class="rank-stat">
-          <span class="rank-stat-label">Ganho</span>
-          <span class="rank-stat-val pos">+${fmtBRL(r.gain)}</span>
+          <span class="rank-stat-label">Ganho bruto</span>
+          <span class="rank-stat-val pos">+${fmtBRL(r.grossGain)}</span>
         </div>
         <div class="rank-stat">
           <span class="rank-stat-label">Múltiplo</span>
@@ -1191,20 +1119,18 @@ function buildRanking() {
         </div>
       </div>
     `;
-
     if (pos <= 2 || r.inv.type === 'stock') {
       const note = document.createElement('div');
       note.style.cssText = 'font-size:9px;color:var(--muted);margin-top:7px;border-top:1px solid var(--border);padding-top:7px;';
       note.textContent = r.inv.note;
       card.appendChild(note);
     }
-
     list.appendChild(card);
   });
 }
 
 // ═══════════════════════════════════════════
-// BUILD ALL
+// BUILD ALL (simulador)
 // ═══════════════════════════════════════════
 function buildAll() {
   updateRateHints();
@@ -1214,108 +1140,261 @@ function buildAll() {
   buildRanking();
 }
 
-function updateHeader() {
-  const p = getParams();
-  const fmt = v => {
-    if (v >= 1e6) return 'R$ ' + (v/1e6).toFixed(1).replace('.',',') + 'M';
-    if (v >= 1e3) return 'R$ ' + (v/1e3 % 1 === 0 ? (v/1e3).toFixed(0) : (v/1e3).toFixed(1).replace('.',',')) + 'k';
-    return 'R$ ' + v.toFixed(0);
-  };
-  document.getElementById('h1Inicial').textContent = fmt(p.inicial);
-  document.getElementById('h1Aporte').textContent  = fmt(p.aporte);
+// ═══════════════════════════════════════════
+// RESERVA DE EMERGÊNCIA
+// ═══════════════════════════════════════════
+function calcReserva() {
+  const pessoas   = parseInt(document.getElementById('res-pessoas').value)  || 2;
+  const gasto     = parseFloat(document.getElementById('res-gasto').value)  || 5000;
+  const filhos    = document.getElementById('res-filhos').checked;
+  const atual     = parseFloat(document.getElementById('res-atual').value)  || 0;
+  const poupar    = parseFloat(document.getElementById('res-poupar').value) || 500;
+  const renda     = parseInt(document.getElementById('res-renda').value);
+  const rendPct   = parseFloat(document.getElementById('res-rendimento').value) || 13.5;
+
+  // Determine meses recomendados
+  let mesesBase = 6;
+  if (filhos) mesesBase = 8;
+  if (renda === 1) mesesBase = Math.max(mesesBase, 9);   // renda variável
+  if (renda === 2) mesesBase = Math.max(mesesBase, 12);  // empresário
+
+  const meta = gasto * mesesBase;
+  const falta = Math.max(meta - atual, 0);
+  const pct = Math.min(atual / meta, 1);
+
+  // Tempo até atingir com rendimento mensal
+  const rMes = Math.pow(1 + rendPct/100, 1/12) - 1;
+  let meses = 0;
+  if (falta <= 0) {
+    meses = 0;
+  } else if (poupar <= 0) {
+    meses = Infinity;
+  } else {
+    // Simula mês a mês
+    let acum = atual;
+    for (let m = 1; m <= 600; m++) {
+      acum = acum * (1+rMes) + poupar;
+      if (acum >= meta) { meses = m; break; }
+      if (m === 600) meses = Infinity;
+    }
+  }
+
+  // Update per-capita hint (Bug 3 fix: pessoas was read but unused)
+  const gastoPerCapita = pessoas > 0 ? gasto / pessoas : gasto;
+  const pessoasHint = document.getElementById('res-per-capita');
+  if (pessoasHint) pessoasHint.textContent = `≈ ${fmtBRL(gastoPerCapita)}/pessoa`;
+  document.getElementById('res-meta').textContent = fmtBRL(meta);
+  document.getElementById('res-meta-sub').textContent = `${mesesBase} meses × ${fmtBRL(gasto)}`;
+  document.getElementById('res-falta').textContent = fmtBRL(falta);
+  document.getElementById('res-falta-sub').textContent = `${(pct*100).toFixed(0)}% da meta atingida`;
+
+  const tempoEl = document.getElementById('res-tempo');
+  const tempoSub = document.getElementById('res-tempo-sub');
+  if (falta <= 0) {
+    tempoEl.textContent = '✓ Meta atingida!';
+    tempoEl.className = 'res-result-value ok';
+    tempoSub.textContent = 'parabéns — mantenha a reserva';
+  } else if (meses === Infinity) {
+    tempoEl.textContent = '—';
+    tempoEl.className = 'res-result-value warn';
+    tempoSub.textContent = 'aumento no valor guardado necessário';
+  } else {
+    const anos = Math.floor(meses/12);
+    const mesesR = meses % 12;
+    const label = anos > 0 ? `${anos}a ${mesesR}m` : `${meses} meses`;
+    tempoEl.textContent = label;
+    tempoEl.className = 'res-result-value ok';
+    tempoSub.textContent = `rendendo ${rendPct}% a.a. bruto`;
+  }
+
+  // Progress bar
+  const fill = document.getElementById('res-fill');
+  fill.style.width = (pct*100).toFixed(1)+'%';
+  fill.className = 'res-progress-fill'+(pct>=1?' done':'');
+  document.getElementById('res-pct').textContent = (pct*100).toFixed(1)+'%';
+
+  // Charts
+  buildResDonut(atual, falta, meta, mesesBase);
+  buildResLine(atual, poupar, meta, rMes, meses);
+}
+
+function buildResDonut(atual, falta, meta, meses) {
+  const cs = getComputedStyle(document.documentElement);
+  const cGreen = cs.getPropertyValue('--green').trim();
+  const cBlue  = cs.getPropertyValue('--blue').trim();
+  const cBorder= cs.getPropertyValue('--border').trim();
+  const cTooltip = cs.getPropertyValue('--tooltip-bg').trim();
+  const cText  = cs.getPropertyValue('--text').trim();
+
+  const ctx = document.getElementById('resDonut').getContext('2d');
+  if (resDonutChart) resDonutChart.destroy();
+
+  const atingido = Math.min(atual, meta);
+  const restante = Math.max(meta - atual, 0);
+
+  resDonutChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Já guardado', `Falta (meta: ${meses} meses)`],
+      datasets:[{
+        data: atingido > 0 ? [atingido, restante] : [0.001, meta],
+        backgroundColor: [cGreen+'cc', cBorder],
+        borderColor: [cGreen, cBorder],
+        borderWidth: 1, hoverOffset: 4
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'70%',
+      plugins:{
+        legend:{display:true, position:'bottom',
+          labels:{color:cs.getPropertyValue('--muted').trim(), font:{family:'DM Mono',size:10}, boxWidth:12, padding:12}},
+        tooltip:{backgroundColor:cTooltip, borderColor:cBorder, borderWidth:1, bodyColor:cText,
+          titleColor:cs.getPropertyValue('--muted').trim(), titleFont:{family:'DM Mono',size:10},
+          bodyFont:{family:'DM Mono',size:11},
+          callbacks:{label:item=>`  ${item.label}: ${fmtBRL(item.raw)}`}}
+      }
+    }
+  });
+}
+
+function buildResLine(atual, poupar, meta, rMes, totalMeses) {
+  if (poupar <= 0 || totalMeses === Infinity || totalMeses === 0) {
+    const cs2 = getComputedStyle(document.documentElement);
+    const ctx2 = document.getElementById('resLine').getContext('2d');
+    if (resLineChart) resLineChart.destroy();
+    resLineChart = null;
+    return;
+  }
+  const maxM = Math.min(totalMeses + 3, 120);
+  const labels = [];
+  const data = [];
+  let acum = atual;
+  for (let m = 1; m <= maxM; m++) {
+    acum = acum * (1+rMes) + poupar;
+    if (m % 3 === 0 || m === maxM || m === totalMeses) {
+      labels.push(m >= 12 ? `${Math.floor(m/12)}a${m%12?m%12+'m':''}` : `${m}m`);
+      data.push(Math.round(acum));
+    }
+  }
+
+  const cs = getComputedStyle(document.documentElement);
+  const cBlue  = cs.getPropertyValue('--blue').trim();
+  const cGreen = cs.getPropertyValue('--green').trim();
+  const cGrid  = cs.getPropertyValue('--chart-grid').trim();
+  const cTick  = cs.getPropertyValue('--chart-tick').trim();
+  const cBorder= cs.getPropertyValue('--border').trim();
+  const cTooltip = cs.getPropertyValue('--tooltip-bg').trim();
+  const cText  = cs.getPropertyValue('--text').trim();
+  const cMuted = cs.getPropertyValue('--muted').trim();
+
+  const ctx = document.getElementById('resLine').getContext('2d');
+  if (resLineChart) resLineChart.destroy();
+
+  resLineChart = new Chart(ctx, {
+    type:'line',
+    data:{labels, datasets:[
+      { label:'Reserva acumulada', data, borderColor:cBlue, backgroundColor:cBlue+'18',
+        borderWidth:2, pointRadius:2, tension:0.4, fill:true },
+      { label:'Meta', data:Array(data.length).fill(meta), borderColor:cGreen,
+        borderDash:[6,4], borderWidth:1.5, pointRadius:0, fill:false }
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true, position:'bottom',
+          labels:{color:cMuted, font:{family:'DM Mono',size:10}, boxWidth:12, padding:10}},
+        tooltip:{backgroundColor:cTooltip, borderColor:cBorder, borderWidth:1, bodyColor:cText,
+          titleColor:cMuted, titleFont:{family:'DM Mono',size:10}, bodyFont:{family:'DM Mono',size:11},
+          callbacks:{label:item=>`  ${item.dataset.label}: ${fmtBRL(item.raw)}`}}
+      },
+      scales:{
+        x:{grid:{color:cGrid}, ticks:{color:cTick, font:{family:'DM Mono',size:9}}, border:{color:cBorder}},
+        y:{grid:{color:cGrid}, ticks:{color:cTick, font:{family:'DM Mono',size:9},
+            callback:v=>v>=1e3?(v/1e3).toFixed(0)+'k':v}, border:{color:cBorder}}
+      }
+    }
+  });
 }
 
 // ═══════════════════════════════════════════
 // EVENT LISTENERS
 // ═══════════════════════════════════════════
 
-// Number inputs
-document.querySelectorAll('input[type=number]').forEach(el => {
+// Simulador inputs
+document.querySelectorAll('#tab-simulador input[type=number]').forEach(el=>{
   el.addEventListener('input', buildAll);
 });
 
-// CDB IR pills
-document.querySelectorAll('.ir-pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('.ir-pill').forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
-    cdbIRpct = parseFloat(pill.dataset.ir);
-    buildAll();
-  });
-});
+// ── CDB IR auto-mapping from horizon ──
+const CDB_IR_MAP = { 6: 22.5, 12: 20, 24: 17.5, 60: 15, 120: 15, 180: 15, 240: 15 };
+const CDB_IR_DESC = {
+  6:   '≤ 180 dias · alíquota máxima',
+  12:  '181–360 dias',
+  24:  '361–720 dias',
+  60:  'acima de 720 dias',
+  120: 'acima de 720 dias',
+  180: 'acima de 720 dias',
+  240: 'acima de 720 dias'
+};
+
+function updateCdbIrFromMonths(months) {
+  cdbIRpct = CDB_IR_MAP[months] ?? 15;
+  const lbl  = document.getElementById('cdbIrAutoLabel');
+  const desc = document.getElementById('cdbIrAutoDesc');
+  if (lbl)  lbl.textContent  = cdbIRpct.toString().replace('.', ',') + '%';
+  if (desc) desc.textContent = (CDB_IR_DESC[months] ?? 'acima de 720 dias') + ' · ajusta conforme o prazo selecionado no ranking';
+}
 
 // Dividend toggle
 const toggleInput = document.getElementById('reinvestToggle');
-const toggleText  = document.getElementById('toggleText');
-const divDesc     = document.getElementById('divDescription');
-
-toggleInput.addEventListener('change', () => {
+toggleInput.addEventListener('change',()=>{
   reinvestDivs = toggleInput.checked;
   const aporteNote = document.getElementById('aporteNote');
+  const toggleText = document.getElementById('toggleText');
+  const divDesc    = document.getElementById('divDescription');
   if (reinvestDivs) {
     toggleText.textContent = 'Reinvestindo dividendos';
     toggleText.classList.add('on');
-    divDesc.innerHTML = '<span class="tag-on">✦ Ativado:</span> dividendos compram mais ações que geram mais dividendos — efeito bola de neve. Portfólio cresce pelo total return (preço + DY).';
+    divDesc.innerHTML = '<span class="tag-on">✦ Ativado:</span> dividendos compram mais ações → portfólio cresce pelo total return (preço + DY).';
     aporteNote.textContent = '100% reinvestido';
   } else {
     toggleText.textContent = 'Sacando dividendos';
     toggleText.classList.remove('on');
-    divDesc.innerHTML = '<span class="tag-off">✦ Desativado:</span> portfólio cresce apenas pela valorização do preço. Dividendos acumulam como caixa separado (sem rendimento adicional).';
+    divDesc.innerHTML = '<span class="tag-off">✦ Desativado:</span> portfólio cresce apenas pela valorização do preço. Dividendos acumulam como caixa separado.';
     aporteNote.textContent = 'dividendos não reinvestidos';
   }
   buildAll();
 });
 
-// Year tabs
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+// Ranking tabs
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     activeMonths = parseInt(btn.dataset.months);
+    updateCdbIrFromMonths(activeMonths);
     buildRanking();
   });
 });
 
-// ═══════════════════════════════════════════
-// THEME TOGGLE
-// ═══════════════════════════════════════════
-function getSystemTheme() {
-  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-}
+// Reserva inputs
+document.querySelectorAll('#tab-reserva input, #tab-reserva select').forEach(el=>{
+  el.addEventListener('input', calcReserva);
+  el.addEventListener('change', calcReserva);
+});
 
-let currentTheme = getSystemTheme();
-
-function applyTheme(theme) {
-  currentTheme = theme;
-  document.documentElement.setAttribute('data-theme', theme);
-  const icon  = document.getElementById('themeIcon');
-  const label = document.getElementById('themeLabel');
-  if (theme === 'light') {
-    icon.textContent  = '☾';
-    label.textContent = 'Tema escuro';
-  } else {
-    icon.textContent  = '☀︎';
-    label.textContent = 'Tema claro';
-  }
-  buildAll(); // rebuild chart with updated CSS vars
-}
-
-function toggleTheme() {
-  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
-}
-
-// Listen for OS theme changes
-window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
-  // Only auto-switch if user hasn't manually picked
-  if (!document.documentElement.hasAttribute('data-theme')) {
-    applyTheme(e.matches ? 'light' : 'dark');
-  }
+// Filhos toggle label
+document.getElementById('res-filhos').addEventListener('change', function() {
+  document.getElementById('filhosLabel').textContent = this.checked ? 'Sim' : 'Não';
+  document.getElementById('filhosLabel').classList.toggle('on', this.checked);
+  calcReserva();
 });
 
 // ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
 applyTheme('light');
+updateCdbIrFromMonths(activeMonths);
 buildAll();
 </script>
 </body>
