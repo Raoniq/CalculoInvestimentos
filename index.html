@@ -1218,6 +1218,18 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
       <input type="number" id="fi-inflacao" value="4.0" min="0" max="20" step="0.5">
       <span class="input-note">para corrigir o gasto futuro</span>
     </div>
+    <div class="input-group">
+      <label>Aporte cresce com inflação?</label>
+      <div class="toggle-wrap" style="margin-top:4px;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="fi-aporte-inflacao" onchange="calcFire()">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+        <span class="toggle-label-text" id="fi-aporte-inflacao-label">Não</span>
+      </div>
+      <span class="input-note">ativado → salário sobe com inflação e aporte acompanha</span>
+    </div>
   </div>
 
   <!-- SEÇÃO 1: NÚMERO FIRE -->
@@ -1475,19 +1487,22 @@ function displayRate(inv, p) {
 // ═══════════════════════════════════════════
 
 // Compound at GROSS rate (correct: IR only at redemption)
+// simFixed: keeps full float precision throughout; rounds only for display
+// Push at every complete year (m % 12 === 0), and also at months if not a year boundary
 function simFixed(annualRate, inicial, aporte, months) {
   const r = Math.pow(1 + annualRate, 1/12) - 1;
   const out = [];
   let bal = inicial;
   for (let m = 1; m <= months; m++) {
-    bal = bal * (1+r) + aporte;
-    if (m % 12 === 0 || m === months) out.push(Math.round(bal));
+    bal = bal * (1 + r) + aporte;
+    if (m % 12 === 0) out.push(bal);
   }
-  if (months % 12 === 0 && out.length > months/12) out.pop();
+  // If months isn't a multiple of 12, push the partial-year value
+  if (months % 12 !== 0) out.push(bal);
   return out;
 }
 
-// Stock WITHOUT reinvestment
+// Stock WITHOUT reinvestment — float precision, round only at display
 function simStockNoReinvest(dyRate, priceGrowth, inicial, aporte, months) {
   const rPrice = Math.pow(1 + priceGrowth, 1/12) - 1;
   const rDY    = Math.pow(1 + dyRate, 1/12) - 1;
@@ -1495,10 +1510,10 @@ function simStockNoReinvest(dyRate, priceGrowth, inicial, aporte, months) {
   let stock = inicial, cashDivs = 0;
   for (let m = 1; m <= months; m++) {
     cashDivs += stock * rDY;
-    stock = stock * (1+rPrice) + aporte;
-    if (m % 12 === 0 || m === months) out.push(Math.round(stock + cashDivs));
+    stock = stock * (1 + rPrice) + aporte;
+    if (m % 12 === 0) out.push(stock + cashDivs);
   }
-  if (months % 12 === 0 && out.length > months/12) out.pop();
+  if (months % 12 !== 0) out.push(stock + cashDivs);
   return out;
 }
 
@@ -1682,12 +1697,13 @@ function buildRanking() {
         netPocket = fvGross - ir * priceGain;
         irLabel = `IR 15% s/ ganho de preço (${fmtBRL(priceGain)}) · dividendos (caixa) isentos`;
       } else {
-        // Reinvesting: approximate taxable portion as price-growth share of total return
-        const totalAnnual = grossRate(inv, p);
-        const priceFrac   = totalAnnual > 0 ? Math.min(inv.priceGrowth / totalAnnual, 1) : 0;
-        const taxableGain = Math.max(grossGain * priceFrac, 0);
-        netPocket = fvGross - ir * taxableGain;
-        irLabel = `IR 15% s/ ganho de preço (~${(priceFrac*100).toFixed(0)}% do total) · DY isento`;
+        // Reinvesting: compute price-only portfolio explicitly (same as no-reinvest path)
+        // to isolate the taxable gain from price appreciation vs exempt dividend income
+        const priceOnlyData = simFixed(inv.priceGrowth, p.inicial, p.aporte, months);
+        const stockFinal    = priceOnlyData[priceOnlyData.length - 1];
+        const priceGain     = Math.max(stockFinal - totalInvested, 0);
+        netPocket = fvGross - ir * priceGain;
+        irLabel = `IR 15% s/ ganho de preço (${fmtBRL(priceGain)}) · DY reinvestido isento`;
       }
     } else {
       const taxableGain = Math.max(grossGain, 0);
@@ -1985,10 +2001,10 @@ function calcAcoes() {
       const totalRate = (1 + dy/100) * (1 + sc.priceGrowth) - 1;
       const data = simFixed(totalRate, inicial, aporte, months);
       fvGross = data[data.length - 1];
-      // IR: 15% on price-appreciation share of gain
-      const priceFrac = totalRate > 0 ? Math.min(sc.priceGrowth / totalRate, 1) : 0;
-      const priceGain = Math.max((fvGross - totalInv) * priceFrac, 0);
-      stockFinalForIR = priceGain;
+      // Explicit price-only sim to isolate taxable capital gain from exempt DY
+      const priceOnlyData = simFixed(sc.priceGrowth, inicial, aporte, months);
+      const stockFinal    = priceOnlyData[priceOnlyData.length - 1];
+      stockFinalForIR     = Math.max(stockFinal - totalInv, 0);
     } else {
       const stockData = simFixed(sc.priceGrowth, inicial, aporte, months);
       const stockFinal = stockData[stockData.length - 1];
@@ -2369,12 +2385,20 @@ const FIRE_SCENARIOS = [
 ];
 
 function calcFire() {
-  const patrimonio = parseFloat(document.getElementById('fi-patrimonio').value) || 50000;
-  const aporte     = parseFloat(document.getElementById('fi-aporte').value)     || 2000;
-  const gasto      = parseFloat(document.getElementById('fi-gasto').value)      || 10000;
-  const dy         = parseFloat(document.getElementById('fi-dy').value)         || 7.0;
-  const inflacao   = parseFloat(document.getElementById('fi-inflacao').value)   || 4.0;
-  const ajustaInfl = document.getElementById('fi-ajusta-inflacao').checked;
+  const patrimonio     = parseFloat(document.getElementById('fi-patrimonio').value) || 50000;
+  const aporte         = parseFloat(document.getElementById('fi-aporte').value)     || 2000;
+  const gasto          = parseFloat(document.getElementById('fi-gasto').value)      || 10000;
+  const dy             = parseFloat(document.getElementById('fi-dy').value)         || 7.0;
+  const inflacao       = parseFloat(document.getElementById('fi-inflacao').value)   || 4.0;
+  const ajustaInfl     = document.getElementById('fi-ajusta-inflacao').checked;
+  const aporteInflacao = document.getElementById('fi-aporte-inflacao').checked;
+
+  // Update toggle label
+  const aporteInflLbl = document.getElementById('fi-aporte-inflacao-label');
+  if (aporteInflLbl) {
+    aporteInflLbl.textContent = aporteInflacao ? 'Sim' : 'Não';
+    aporteInflLbl.classList.toggle('on', aporteInflacao);
+  }
 
   document.getElementById('fi-inflacao-label').textContent = inflacao.toFixed(1) + '%';
 
@@ -2392,12 +2416,14 @@ function calcFire() {
   function timeToReach(meta) {
     const times = {};
     FIRE_SCENARIOS.forEach(sc => {
-      const totalRate   = (1 + dy/100) * (1 + sc.priceGrowth) - 1;
-      const rMensal     = Math.pow(1 + totalRate, 1/12) - 1;
+      const totalRate = (1 + dy/100) * (1 + sc.priceGrowth) - 1;
+      const rMensal   = Math.pow(1 + totalRate, 1/12) - 1;
+      const rInflMes  = Math.pow(1 + inflacao/100, 1/12) - 1;
       let acum = patrimonio;
       let found = false;
       for (let m = 1; m <= 600; m++) {
-        acum = acum * (1 + rMensal) + aporte;
+        const aporteM = aporteInflacao ? aporte * Math.pow(1 + rInflMes, m) : aporte;
+        acum = acum * (1 + rMensal) + aporteM;
         if (acum >= meta) { times[sc.id] = m; found = true; break; }
       }
       if (!found) times[sc.id] = Infinity;
@@ -2425,10 +2451,10 @@ function calcFire() {
   renderTempos('fi-tempos-4pct', times4pct);
 
   // ── Build freedom curve chart ─────────────────
-  buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl);
+  buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl, aporteInflacao);
 
   // ── Build evolution table (moderado) ──────────
-  buildFireEvoTable(patrimonio, aporte, dy, inflacao, gasto);
+  buildFireEvoTable(patrimonio, aporte, dy, inflacao, gasto, aporteInflacao);
 }
 
 function renderTempos(containerId, times) {
@@ -2453,7 +2479,7 @@ function renderTempos(containerId, times) {
   });
 }
 
-function buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl) {
+function buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl, aporteInflacao) {
   const cs = getComputedStyle(document.documentElement);
   const cGrid    = cs.getPropertyValue('--chart-grid').trim();
   const cTick    = cs.getPropertyValue('--chart-tick').trim();
@@ -2480,19 +2506,24 @@ function buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl) {
     let crossYear = null;
 
     for (let y = 1; y <= MAX_YEARS; y++) {
-      // Simulate 12 months to get portfolio at end of year y
+      // Simulate 12 months, optionally growing aporte with inflation
       for (let mm = 0; mm < 12; mm++) {
-        acum = acum * (1 + rMensal) + aporte;
+        const monthAbsolute = (y - 1) * 12 + mm + 1;
+        const aporteM = aporteInflacao
+          ? aporte * Math.pow(1 + rInflMes, monthAbsolute)
+          : aporte;
+        acum = acum * (1 + rMensal) + aporteM;
       }
       // Monthly dividend income at year y
       const rendaMensal = acum * (dy/100) / 12;
       // Expense at year y (nominal or inflation-adjusted)
-      const gastoAno = ajustaInfl ? gasto * Math.pow(1 + inflacao/100, y) : gasto;
+      // Monthly expense at year y (nominal or inflation-adjusted) — variable named clearly as monthly
+      const gastoMesCorrigido = ajustaInfl ? gasto * Math.pow(1 + inflacao/100, y) : gasto;
 
-      rendaData.push(Math.round(rendaMensal));
+      rendaData.push(rendaMensal); // keep as float; fmtBRL rounds for display
 
-      // Detect crossing
-      if (crossYear === null && rendaMensal >= gastoAno) {
+      // Detect crossing: renda mensal >= gasto mensal corrigido
+      if (crossYear === null && rendaMensal >= gastoMesCorrigido) {
         crossYear = y;
       }
     }
@@ -2596,29 +2627,35 @@ function buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl) {
   lgd.appendChild(expItem);
 }
 
-function buildFireEvoTable(patrimonio, aporte, dy, inflacao, gasto) {
+function buildFireEvoTable(patrimonio, aporte, dy, inflacao, gasto, aporteInflacao) {
   const grid = document.getElementById('fi-evo-grid');
   grid.innerHTML = '';
 
   const sc = FIRE_SCENARIOS.find(s => s.id === 'mod');
   const totalRate = (1 + dy/100) * (1 + sc.priceGrowth) - 1;
   const rMensal   = Math.pow(1 + totalRate, 1/12) - 1;
+  const rInflMes  = Math.pow(1 + inflacao/100, 1/12) - 1;
 
   const milestones = [1, 2, 3, 5, 7, 10, 15, 20, 25, 30];
   let acum = patrimonio;
   let lastYear = 0;
+  let monthCount = 0;
 
   milestones.forEach(y => {
-    // Advance from lastYear to y
-    for (let mm = 0; mm < (y - lastYear) * 12; mm++) {
-      acum = acum * (1 + rMensal) + aporte;
+    const monthsToAdvance = (y - lastYear) * 12;
+    for (let mm = 0; mm < monthsToAdvance; mm++) {
+      monthCount++;
+      const aporteM = aporteInflacao
+        ? aporte * Math.pow(1 + rInflMes, monthCount)
+        : aporte;
+      acum = acum * (1 + rMensal) + aporteM;
     }
     lastYear = y;
 
-    const rendaAnual   = acum * (dy / 100);
-    const rendaMensal  = rendaAnual / 12;
-    const gastoCorr    = gasto * Math.pow(1 + inflacao/100, y);
-    const isIndep      = rendaMensal >= gastoCorr;
+    const rendaAnual  = acum * (dy / 100);
+    const rendaMensal = rendaAnual / 12;
+    const gastoCorr   = gasto * Math.pow(1 + inflacao/100, y);
+    const isIndep     = rendaMensal >= gastoCorr;
 
     const cell = document.createElement('div');
     cell.className = 'fi-evo-cell';
