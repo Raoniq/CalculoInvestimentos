@@ -398,6 +398,69 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 }
 
 /* ═══════════════════════════════════════════
+   INDEPENDÊNCIA FINANCEIRA (FIRE)
+═══════════════════════════════════════════ */
+#tab-fire .header{padding:20px 40px 16px;}
+
+/* Methods explanation bar */
+.fi-methods-bar{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border);border-top:1px solid var(--border);}
+.fi-method-card{padding:16px 40px;border-right:1px solid var(--border);}
+.fi-method-card:last-child{border-right:none;}
+.fi-method-title{font-size:11px;font-weight:600;letter-spacing:.5px;margin-bottom:6px;}
+.fi-method-desc{font-size:10px;color:var(--muted);line-height:1.7;}
+.fi-method-desc code{font-family:'DM Mono',monospace;background:var(--card);padding:1px 5px;border:1px solid var(--border);border-radius:2px;font-size:9px;}
+
+/* FIRE meta cards */
+.fi-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border);}
+.fi-meta-card{padding:24px 40px;border-right:1px solid var(--border);}
+.fi-meta-card:last-child{border-right:none;}
+.fi-meta-badge{display:inline-block;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border:1px solid;margin-bottom:14px;font-family:'DM Mono',monospace;}
+.fi-meta-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.fi-meta-val{font-family:'Fraunces',serif;font-size:36px;font-weight:900;line-height:1;margin-bottom:4px;}
+.fi-meta-sub{font-size:10px;color:var(--muted);margin-bottom:16px;}
+.fi-meta-falta-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.fi-meta-falta{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--text);margin-bottom:14px;}
+
+/* Tempo cards inside meta card */
+.fi-tempos{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--border);padding-top:12px;}
+.fi-tempo-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--card);border:1px solid var(--border);}
+.fi-tempo-cenario{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.fi-tempo-val{font-family:'Fraunces',serif;font-size:14px;font-weight:600;}
+.fi-tempo-val.cons{color:var(--blue);}
+.fi-tempo-val.mod{color:var(--violet);}
+.fi-tempo-val.arr{color:var(--green);}
+.fi-tempo-val.inf{color:var(--orange);font-size:11px;}
+
+/* Nota metodológica */
+.fi-nota{padding:14px 40px;background:var(--panel);border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);line-height:1.7;}
+
+/* Chart area */
+.fi-chart-area{padding:20px 40px;border-bottom:1px solid var(--border);}
+.fi-chart-controls{display:flex;align-items:center;gap:16px;margin-bottom:10px;flex-wrap:wrap;}
+.fi-toggle-inflation{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:11px;color:var(--text);}
+.fi-toggle-inflation input{accent-color:var(--green);width:14px;height:14px;}
+.fi-ctrl-note{font-size:9px;color:var(--muted);}
+.fi-crossing-badges{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;min-height:22px;}
+.fi-crossing-badge{font-family:'DM Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid;}
+.fi-main-chart-wrap{position:relative;height:420px;width:100%;overflow:hidden;}
+.fi-main-chart-wrap canvas{max-width:100%;}
+
+/* Evolution table */
+.fi-evolution-section{border-top:1px solid var(--border);}
+.fi-evo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0;border-top:1px solid var(--border);}
+.fi-evo-cell{padding:14px 18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
+.fi-evo-year{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.fi-evo-portfolio{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--text);}
+.fi-evo-renda{font-size:11px;color:var(--violet);margin-top:2px;}
+.fi-evo-monthly{font-size:9px;color:var(--muted);margin-top:1px;}
+.fi-evo-mark{font-size:8px;font-weight:700;letter-spacing:1px;color:var(--green);margin-top:4px;}
+
+@media(max-width:900px){
+  .fi-methods-bar,.fi-meta-grid{grid-template-columns:1fr;}
+  .fi-method-card,.fi-meta-card{border-right:none;border-bottom:1px solid var(--border);}
+}
+
+/* ═══════════════════════════════════════════
    FOOTER LEGAL
 ═══════════════════════════════════════════ */
 .footer-legal{border-top:2px solid var(--border);background:var(--panel);}
@@ -472,6 +535,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
           <div class="nav-item-text">
             <span class="nav-item-label">Rebalanceamento de Carteira</span>
             <span class="nav-item-desc">3 perfis · o que comprar agora</span>
+          </div>
+        </button>
+        <button class="nav-dropdown-item" id="menu-fire" onclick="showTab('fire')">
+          <span class="nav-icon">🏔️</span>
+          <div class="nav-item-text">
+            <span class="nav-item-label">Independência Financeira</span>
+            <span class="nav-item-desc">Seu número FIRE · Curva da Liberdade</span>
           </div>
         </button>
       </div>
@@ -1108,6 +1178,127 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 </div><!-- /tab-rebalance -->
 
 <!-- ══════════════════════════════════════════
+     TAB 5: INDEPENDÊNCIA FINANCEIRA
+══════════════════════════════════════════ -->
+<div id="tab-fire" style="display:none;">
+
+  <div class="header">
+    <div class="header-eyebrow">Independência Financeira · FIRE</div>
+    <h1>Quando você pode <em>parar?</em></h1>
+    <p class="header-sub">
+      Calcule seu número FIRE — o patrimônio necessário para viver de renda — e veja a curva de dividendos cruzando seus gastos.
+    </p>
+  </div>
+
+  <!-- INPUTS -->
+  <div class="inputs-section-label">Seus Dados</div>
+  <div class="inputs-bar">
+    <div class="input-group">
+      <label>Patrimônio Atual</label>
+      <input type="number" id="fi-patrimonio" value="50000" min="0" step="1000">
+      <span class="input-note">R$ investido hoje</span>
+    </div>
+    <div class="input-group">
+      <label>Aporte Mensal</label>
+      <input type="number" id="fi-aporte" value="2000" min="0" step="100">
+      <span class="input-note">R$ por mês</span>
+    </div>
+    <div class="input-group">
+      <label>Gasto Mensal Desejado</label>
+      <input type="number" id="fi-gasto" value="10000" min="0" step="500">
+      <span class="input-note">R$ de hoje (será corrigido pela inflação)</span>
+    </div>
+    <div class="input-group">
+      <label>DY Esperado da Carteira %</label>
+      <input type="number" id="fi-dy" value="7.0" min="1" max="20" step="0.5">
+      <span class="input-note">dividend yield anual médio esperado</span>
+    </div>
+    <div class="input-group">
+      <label>Inflação Anual % (IPCA)</label>
+      <input type="number" id="fi-inflacao" value="4.0" min="0" max="20" step="0.5">
+      <span class="input-note">para corrigir o gasto futuro</span>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 1: NÚMERO FIRE -->
+  <div class="inputs-section-label">Seção 1 — Seu Número FIRE · Quanto preciso acumular?</div>
+
+  <!-- Explicação dos 2 métodos -->
+  <div class="fi-methods-bar">
+    <div class="fi-method-card">
+      <div class="fi-method-title" style="color:var(--green);">🌱 Pelo DY (Perpetuidade)</div>
+      <div class="fi-method-desc">
+        Vive <strong>só dos dividendos</strong> sem tocar no principal.<br>
+        Fórmula: <code>Meta = Gasto anual ÷ DY</code><br>
+        Mais conservador e adequado ao modelo brasileiro. O patrimônio é preservado para sempre.
+      </div>
+    </div>
+    <div class="fi-method-card">
+      <div class="fi-method-title" style="color:var(--blue);">📐 Regra dos 4% (Estudo Trinity)</div>
+      <div class="fi-method-desc">
+        Retira 4% do patrimônio por ano — inclui <strong>venda parcial de ativos</strong>.<br>
+        Fórmula: <code>Meta = Gasto anual ÷ 0,04 = Gasto × 300</code><br>
+        Modelo americano. Estatisticamente sustentável por 30+ anos. Exige portfólio diversificado.
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards de meta -->
+  <div class="fi-meta-grid">
+    <div class="fi-meta-card" id="fi-card-dy">
+      <div class="fi-meta-badge" style="color:var(--green);border-color:var(--green);background:var(--green-faint);">Pelo DY · Perpetuidade</div>
+      <div class="fi-meta-label">Meta patrimonial</div>
+      <div class="fi-meta-val" id="fi-meta-dy" style="color:var(--green);">—</div>
+      <div class="fi-meta-sub" id="fi-meta-dy-sub"></div>
+      <div class="fi-meta-falta-label">Falta acumular</div>
+      <div class="fi-meta-falta" id="fi-falta-dy">—</div>
+      <div class="fi-tempos" id="fi-tempos-dy"></div>
+    </div>
+    <div class="fi-meta-card" id="fi-card-4pct">
+      <div class="fi-meta-badge" style="color:var(--blue);border-color:var(--blue);background:var(--blue-faint);">Regra dos 4%</div>
+      <div class="fi-meta-label">Meta patrimonial</div>
+      <div class="fi-meta-val" id="fi-meta-4pct" style="color:var(--blue);">—</div>
+      <div class="fi-meta-sub" id="fi-meta-4pct-sub"></div>
+      <div class="fi-meta-falta-label">Falta acumular</div>
+      <div class="fi-meta-falta" id="fi-falta-4pct">—</div>
+      <div class="fi-tempos" id="fi-tempos-4pct"></div>
+    </div>
+  </div>
+
+  <!-- Nota metodológica -->
+  <div class="fi-nota">
+    <strong>⚠ Fase de acumulação vs fase de retirada:</strong>
+    O portfólio cresce pelo <em>total return</em> (valorização de preço + DY reinvestido) durante a acumulação.
+    Na aposentadoria, pelo método do DY, você vive apenas dos dividendos — sem vender ações, preservando o principal.
+    Pelo método dos 4%, você retira 4% ao ano do patrimônio, o que inclui venda gradual de ativos.
+    Os três cenários (conservador/moderado/arrojado) refletem diferentes taxas de valorização de preço (+3%, +7%, +11% ao ano).
+  </div>
+
+  <!-- SEÇÃO 2: CURVA DA LIBERDADE -->
+  <div class="inputs-section-label" style="margin-top:0;">Seção 2 — Curva da Liberdade · Quando os dividendos cobrem seus gastos?</div>
+
+  <div class="fi-chart-area">
+    <div class="fi-chart-controls">
+      <label class="fi-toggle-inflation">
+        <input type="checkbox" id="fi-ajusta-inflacao" checked onchange="calcFire()">
+        <span>Gasto corrigido pela inflação</span>
+      </label>
+      <span class="fi-ctrl-note">quando ativado, a linha de gastos cresce <span id="fi-inflacao-label">4%</span>/ano</span>
+    </div>
+    <div class="fi-crossing-badges" id="fi-crossing-badges"></div>
+    <div class="fi-main-chart-wrap"><canvas id="fireChart"></canvas></div>
+    <div class="legend-grid" id="fi-legend"></div>
+  </div>
+
+  <!-- TABELA DE EVOLUÇÃO -->
+  <div class="fi-evolution-section">
+    <div class="section-label" style="padding:20px 40px 14px;">Evolução da Renda de Dividendos · Cenário Moderado</div>
+    <div class="fi-evo-grid" id="fi-evo-grid"></div>
+  </div>
+
+</div><!-- /tab-fire -->
+
+<!-- ══════════════════════════════════════════
      FOOTER LEGAL (compartilhado)
 ══════════════════════════════════════════ -->
 <footer class="footer-legal">
@@ -1148,7 +1339,8 @@ const TABS = {
   simulador:  { label: 'Simulador de Investimentos' },
   reserva:    { label: 'Reserva de Emergência' },
   acoes:      { label: 'Calculadora de Ações' },
-  rebalance:  { label: 'Rebalanceamento de Carteira' }
+  rebalance:  { label: 'Rebalanceamento de Carteira' },
+  fire:       { label: 'Independência Financeira' }
 };
 
 function toggleMenu() {
@@ -1175,6 +1367,7 @@ function showTab(tab) {
   document.getElementById('tab-reserva').style.display    = tab === 'reserva'    ? '' : 'none';
   document.getElementById('tab-acoes').style.display      = tab === 'acoes'      ? '' : 'none';
   document.getElementById('tab-rebalance').style.display  = tab === 'rebalance'  ? '' : 'none';
+  document.getElementById('tab-fire').style.display       = tab === 'fire'       ? '' : 'none';
 
   Object.keys(TABS).forEach(key => {
     document.getElementById('menu-'+key).classList.toggle('active', key === tab);
@@ -1188,6 +1381,7 @@ function showTab(tab) {
   if (tab === 'simulador') buildAll();
   if (tab === 'acoes')     calcAcoes();
   if (tab === 'rebalance') calcRebalance();
+  if (tab === 'fire')      calcFire();
 }
 
 // ═══════════════════════════════════════════
@@ -2163,6 +2357,283 @@ function buildRbDonuts() {
 }
 
 // ═══════════════════════════════════════════
+// INDEPENDÊNCIA FINANCEIRA (FIRE)
+// ═══════════════════════════════════════════
+let fireChart = null;
+
+// Acumulação scenarios: price growth rates (DY is user input, added on top)
+const FIRE_SCENARIOS = [
+  { id:'cons', label:'Conservador', priceGrowth:0.03, color:'#5b9cf6' },
+  { id:'mod',  label:'Moderado',    priceGrowth:0.07, color:'#a88bfa' },
+  { id:'arr',  label:'Otimista',    priceGrowth:0.11, color:'#3dd68c' }
+];
+
+function calcFire() {
+  const patrimonio = parseFloat(document.getElementById('fi-patrimonio').value) || 50000;
+  const aporte     = parseFloat(document.getElementById('fi-aporte').value)     || 2000;
+  const gasto      = parseFloat(document.getElementById('fi-gasto').value)      || 10000;
+  const dy         = parseFloat(document.getElementById('fi-dy').value)         || 7.0;
+  const inflacao   = parseFloat(document.getElementById('fi-inflacao').value)   || 4.0;
+  const ajustaInfl = document.getElementById('fi-ajusta-inflacao').checked;
+
+  document.getElementById('fi-inflacao-label').textContent = inflacao.toFixed(1) + '%';
+
+  const gastoAnual = gasto * 12;
+
+  // ── FIRE targets ──────────────────────────────
+  // Method 1: By DY (perpetuity) — live only on dividends
+  const metaDY   = gastoAnual / (dy / 100);
+  // Method 2: 4% rule (Trinity study) — withdraw 4%/year
+  const meta4pct = gastoAnual / 0.04;
+
+  // ── Time to reach each target (simulation) ────
+  // Accumulation uses TOTAL return: price appreciation + DY reinvested
+  // Max 50 years = 600 months
+  function timeToReach(meta) {
+    const times = {};
+    FIRE_SCENARIOS.forEach(sc => {
+      const totalRate   = (1 + dy/100) * (1 + sc.priceGrowth) - 1;
+      const rMensal     = Math.pow(1 + totalRate, 1/12) - 1;
+      let acum = patrimonio;
+      let found = false;
+      for (let m = 1; m <= 600; m++) {
+        acum = acum * (1 + rMensal) + aporte;
+        if (acum >= meta) { times[sc.id] = m; found = true; break; }
+      }
+      if (!found) times[sc.id] = Infinity;
+    });
+    return times;
+  }
+
+  const timesDY   = timeToReach(metaDY);
+  const times4pct = timeToReach(meta4pct);
+
+  // ── Update card DY ────────────────────────────
+  document.getElementById('fi-meta-dy').textContent     = fmtBRL(metaDY);
+  document.getElementById('fi-meta-dy-sub').textContent =
+    `Gasto anual R$ ${fmtBRL(gastoAnual).replace('R$ ','')} ÷ DY ${dy}%`;
+  const faltaDY = Math.max(metaDY - patrimonio, 0);
+  document.getElementById('fi-falta-dy').textContent = fmtBRL(faltaDY);
+  renderTempos('fi-tempos-dy', timesDY);
+
+  // ── Update card 4% ────────────────────────────
+  document.getElementById('fi-meta-4pct').textContent     = fmtBRL(meta4pct);
+  document.getElementById('fi-meta-4pct-sub').textContent =
+    `Gasto anual R$ ${fmtBRL(gastoAnual).replace('R$ ','')} ÷ 4% (= × 300)`;
+  const falta4pct = Math.max(meta4pct - patrimonio, 0);
+  document.getElementById('fi-falta-4pct').textContent = fmtBRL(falta4pct);
+  renderTempos('fi-tempos-4pct', times4pct);
+
+  // ── Build freedom curve chart ─────────────────
+  buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl);
+
+  // ── Build evolution table (moderado) ──────────
+  buildFireEvoTable(patrimonio, aporte, dy, inflacao, gasto);
+}
+
+function renderTempos(containerId, times) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '<div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Tempo para chegar lá</div>';
+  FIRE_SCENARIOS.forEach(sc => {
+    const m = times[sc.id];
+    let valText;
+    if (m === Infinity) {
+      valText = `<span class="fi-tempo-val inf">Não alcança em 50a</span>`;
+    } else {
+      const anos = Math.floor(m / 12);
+      const mesesR = m % 12;
+      const label = anos > 0 ? `${anos}a ${mesesR > 0 ? mesesR+'m' : ''}` : `${m} meses`;
+      valText = `<span class="fi-tempo-val ${sc.id}">${label}</span>`;
+    }
+    el.innerHTML += `
+      <div class="fi-tempo-row">
+        <span class="fi-tempo-cenario">${sc.label}</span>
+        ${valText}
+      </div>`;
+  });
+}
+
+function buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl) {
+  const cs = getComputedStyle(document.documentElement);
+  const cGrid    = cs.getPropertyValue('--chart-grid').trim();
+  const cTick    = cs.getPropertyValue('--chart-tick').trim();
+  const cBorder  = cs.getPropertyValue('--border').trim();
+  const cTooltip = cs.getPropertyValue('--tooltip-bg').trim();
+  const cMuted   = cs.getPropertyValue('--muted').trim();
+  const cText    = cs.getPropertyValue('--text').trim();
+  const cOrange  = cs.getPropertyValue('--orange').trim();
+
+  const MAX_YEARS = 40;
+  const labels = Array.from({length: MAX_YEARS}, (_, i) => `${i+1}a`);
+
+  // Build renda mensal curve for each scenario
+  const scenarioDatasets = [];
+  const crossingBadges = [];
+
+  FIRE_SCENARIOS.forEach(sc => {
+    const totalRate = (1 + dy/100) * (1 + sc.priceGrowth) - 1;
+    const rMensal   = Math.pow(1 + totalRate, 1/12) - 1;
+    const rInflMes  = Math.pow(1 + inflacao/100, 1/12) - 1;
+
+    const rendaData = [];
+    let acum = patrimonio;
+    let crossYear = null;
+
+    for (let y = 1; y <= MAX_YEARS; y++) {
+      // Simulate 12 months to get portfolio at end of year y
+      for (let mm = 0; mm < 12; mm++) {
+        acum = acum * (1 + rMensal) + aporte;
+      }
+      // Monthly dividend income at year y
+      const rendaMensal = acum * (dy/100) / 12;
+      // Expense at year y (nominal or inflation-adjusted)
+      const gastoAno = ajustaInfl ? gasto * Math.pow(1 + inflacao/100, y) : gasto;
+
+      rendaData.push(Math.round(rendaMensal));
+
+      // Detect crossing
+      if (crossYear === null && rendaMensal >= gastoAno) {
+        crossYear = y;
+      }
+    }
+
+    scenarioDatasets.push({
+      label: `Renda ${sc.label}`,
+      data: rendaData,
+      borderColor: sc.color,
+      backgroundColor: sc.color + '12',
+      borderWidth: sc.id === 'arr' ? 2.5 : 2,
+      pointRadius: 2, pointHoverRadius: 5,
+      tension: 0.4, fill: false
+    });
+
+    if (crossYear !== null) {
+      const anoAtual = new Date().getFullYear();
+      crossingBadges.push({ label: sc.label, year: crossYear, color: sc.color, calYear: anoAtual + crossYear });
+    } else {
+      crossingBadges.push({ label: sc.label, year: null, color: sc.color });
+    }
+  });
+
+  // Expense line (flat nominal or growing with inflation)
+  const expenseData = Array.from({length: MAX_YEARS}, (_, i) => {
+    return ajustaInfl ? Math.round(gasto * Math.pow(1 + inflacao/100, i+1)) : gasto;
+  });
+
+  scenarioDatasets.push({
+    label: ajustaInfl ? `Gasto corrigido (+${inflacao}%/ano)` : 'Gasto mensal (nominal)',
+    data: expenseData,
+    borderColor: cOrange,
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderDash: [6, 4],
+    pointRadius: 0,
+    tension: 0, fill: false
+  });
+
+  // Render crossing badges
+  const badgesEl = document.getElementById('fi-crossing-badges');
+  badgesEl.innerHTML = '';
+  crossingBadges.forEach(b => {
+    const badge = document.createElement('div');
+    badge.className = 'fi-crossing-badge';
+    badge.style.borderColor = b.color;
+    badge.style.color = b.color;
+    badge.style.background = b.color + '15';
+    badge.textContent = b.year
+      ? `${b.label}: IF em ${b.year}a (${b.calYear})`
+      : `${b.label}: não atinge em 40a`;
+    badgesEl.appendChild(badge);
+  });
+
+  const ctx = document.getElementById('fireChart').getContext('2d');
+  if (fireChart) fireChart.destroy();
+  fireChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: scenarioDatasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: cTooltip, borderColor: cBorder, borderWidth: 1,
+          titleColor: cMuted, bodyColor: cText,
+          titleFont: { family: 'DM Mono', size: 10 },
+          bodyFont: { family: 'DM Mono', size: 11 }, padding: 12,
+          callbacks: {
+            title: items => `Ano ${items[0].dataIndex + 1}`,
+            label: item => `  ${item.dataset.label}: ${fmtBRL(item.raw)}/mês`
+          }
+        }
+      },
+      scales: {
+        x: { grid:{color:cGrid}, ticks:{color:cTick, font:{family:'DM Mono',size:9}, maxTicksLimit:12}, border:{color:cBorder} },
+        y: {
+          grid:{color:cGrid}, border:{color:cBorder},
+          ticks:{
+            color:cTick, font:{family:'DM Mono',size:9},
+            callback: v => v >= 1e6 ? (v/1e6).toFixed(1)+' mi' : v >= 1e3 ? (v/1e3).toFixed(0)+'k' : v
+          },
+          title:{display:true, text:'R$/mês', color:cMuted, font:{family:'DM Mono',size:9}}
+        }
+      }
+    }
+  });
+
+  // Legend
+  const lgd = document.getElementById('fi-legend');
+  lgd.innerHTML = '';
+  FIRE_SCENARIOS.forEach(sc => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<div class="legend-line" style="background:${sc.color}"></div><span>Renda ${sc.label}</span>`;
+    lgd.appendChild(item);
+  });
+  const expItem = document.createElement('div');
+  expItem.className = 'legend-item';
+  expItem.innerHTML = `<div class="legend-line" style="background:repeating-linear-gradient(90deg,${cOrange} 0,${cOrange} 6px,transparent 6px,transparent 10px)"></div><span>${ajustaInfl ? 'Gasto c/ inflação' : 'Gasto nominal'}</span>`;
+  lgd.appendChild(expItem);
+}
+
+function buildFireEvoTable(patrimonio, aporte, dy, inflacao, gasto) {
+  const grid = document.getElementById('fi-evo-grid');
+  grid.innerHTML = '';
+
+  const sc = FIRE_SCENARIOS.find(s => s.id === 'mod');
+  const totalRate = (1 + dy/100) * (1 + sc.priceGrowth) - 1;
+  const rMensal   = Math.pow(1 + totalRate, 1/12) - 1;
+
+  const milestones = [1, 2, 3, 5, 7, 10, 15, 20, 25, 30];
+  let acum = patrimonio;
+  let lastYear = 0;
+
+  milestones.forEach(y => {
+    // Advance from lastYear to y
+    for (let mm = 0; mm < (y - lastYear) * 12; mm++) {
+      acum = acum * (1 + rMensal) + aporte;
+    }
+    lastYear = y;
+
+    const rendaAnual   = acum * (dy / 100);
+    const rendaMensal  = rendaAnual / 12;
+    const gastoCorr    = gasto * Math.pow(1 + inflacao/100, y);
+    const isIndep      = rendaMensal >= gastoCorr;
+
+    const cell = document.createElement('div');
+    cell.className = 'fi-evo-cell';
+    cell.innerHTML = `
+      <div class="fi-evo-year">Ano ${y}</div>
+      <div class="fi-evo-portfolio">${fmtBRL(acum)}</div>
+      <div class="fi-evo-renda">${fmtBRL(rendaAnual)}/ano</div>
+      <div class="fi-evo-monthly">${fmtBRL(rendaMensal)}/mês</div>
+      ${isIndep ? '<div class="fi-evo-mark">✓ INDEPENDÊNCIA</div>' : ''}
+    `;
+    grid.appendChild(cell);
+  });
+}
+
+// ═══════════════════════════════════════════
 // EVENT LISTENERS
 // ═══════════════════════════════════════════
 
@@ -2242,6 +2713,11 @@ document.getElementById('ac-reinvest').addEventListener('change', function() {
   calcAcoes();
 });
 
+// FIRE inputs
+document.querySelectorAll('#tab-fire input[type=number]').forEach(el=>{
+  el.addEventListener('input', calcFire);
+});
+
 // Filhos toggle label
 document.getElementById('res-filhos').addEventListener('change', function() {
   document.getElementById('filhosLabel').textContent = this.checked ? 'Sim' : 'Não';
@@ -2275,9 +2751,12 @@ function onResize() {
     if (donut) { donut.style.width = '0'; donut.style.height = '0'; }
     if (line)  { line.style.width  = '0'; line.style.height  = '0'; }
     if (acCv)  { acCv.style.width  = '0'; acCv.style.height  = '0'; }
+    const fireCv = document.getElementById('fireChart');
+    if (fireCv) { fireCv.style.width = '0'; fireCv.style.height = '0'; }
     if (resDonutChart) resDonutChart.resize();
     if (resLineChart)  resLineChart.resize();
     if (acChart)       acChart.resize();
+    if (fireChart)     fireChart.resize();
   }, 120);
 }
 if (window.ResizeObserver) {
