@@ -604,7 +604,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     </div>
   </div>
 
-  <div class="inputs-section-label">Renda Fixa — Taxas e Impostos</div>
+  <div class="inputs-section-label">Renda Fixa · Taxas e Impostos</div>
   <div class="inputs-bar">
     <div class="input-group" style="min-width:180px;">
       <label style="display:flex;align-items:center;justify-content:space-between;">
@@ -636,7 +636,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
       <span class="input-note rate-result" id="cdbResult" style="display:none;"></span>
     </div>
     <div class="input-group" style="min-width:220px;flex:2;">
-      <label>IR CDB — automático pelo horizonte</label>
+      <label>IR CDB: automático pelo horizonte</label>
       <div style="margin-top:4px;display:flex;flex-direction:column;gap:4px;">
         <span id="cdbIrAutoLabel" style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--teal);">15%</span>
         <span class="input-note" id="cdbIrAutoDesc">acima de 720 dias · ajusta conforme o prazo selecionado no ranking</span>
@@ -670,7 +670,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 
   <div class="main">
     <div class="chart-area">
-      <div class="section-label">Crescimento do Patrimônio — valor bruto acumulado</div>
+      <div class="section-label">Crescimento do Patrimônio · valor bruto acumulado</div>
       <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
       <p class="chart-note">* Renda fixa: curvas mostram o valor bruto que rende juros compostos. IR incide apenas no resgate (não há come-cotas). "No bolso" no ranking desconta o IR. Ações: gráfico em valor total; IR sobre ganho de capital calculado no ranking.</p>
       <div class="legend-grid" id="legendGrid"></div>
@@ -694,17 +694,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     <div class="caveat-card">
       <div class="caveat-badge green">✦ Tesouro IPCA+ <span id="caveatTesRate">7,21%</span></div>
       <div class="caveat-title">Âncora de longo prazo</div>
-      <div class="caveat-body">Taxa real configurável acima. Ex: 2045+ ≈ 7,21% · 2040+ ≈ 7,18%. Garantia soberana. IR 15% só no resgate — sem come-cotas. No vencimento, retorno garantido.</div>
+      <div class="caveat-body">Taxa real configurável acima. Ex: 2045+ ≈ 7,21% · 2040+ ≈ 7,18%. Garantia soberana. IR 15% só no resgate, sem come-cotas. No vencimento, retorno garantido.</div>
     </div>
     <div class="caveat-card">
       <div class="caveat-badge yellow">⚠ LCI/LCA</div>
       <div class="caveat-title">Bom hoje, incerto amanhã</div>
-      <div class="caveat-body">Prazo típico ~3 anos — impossível travar por 20 anos. Renova às taxas futuras. Mude IR para 15% para simular eventual tributação.</div>
+      <div class="caveat-body">Prazo típico ~3 anos; impossível travar por 20 anos. Renova às taxas futuras. Mude IR para 15% para simular eventual tributação.</div>
     </div>
     <div class="caveat-card">
       <div class="caveat-badge teal">◈ CDB</div>
       <div class="caveat-title">IR regressivo · FGC R$250k</div>
-      <div class="caveat-body">IR cai de 22,5% (≤180d) a 15% (720d+). Rende pela taxa bruta — IR incide só no resgate. Atenção ao limite FGC por CPF por instituição.</div>
+      <div class="caveat-body">IR cai de 22,5% (≤180d) a 15% (720d+). Rende pela taxa bruta; IR incide só no resgate. Atenção ao limite FGC por CPF por instituição.</div>
     </div>
     <div class="caveat-card">
       <div class="caveat-badge blue">◈ Ações com Reinvestimento</div>
@@ -747,7 +747,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
         <div class="res-input-group">
           <label>Gasto fixo mensal</label>
           <input type="number" id="res-gasto" value="5000" min="0" step="500">
-          <span class="input-note">R$ — aluguel, comida, contas…</span>
+          <span class="input-note">R$: aluguel, comida, contas...</span>
         </div>
       </div>
 
@@ -770,12 +770,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
         <div class="res-input-group">
           <label>Já tenho guardado</label>
           <input type="number" id="res-atual" value="0" min="0" step="500">
-          <span class="input-note">R$ — reserva atual</span>
+          <span class="input-note">R$: reserva atual</span>
         </div>
         <div class="res-input-group">
           <label>Posso guardar/mês</label>
           <input type="number" id="res-poupar" value="500" min="0" step="100">
-          <span class="input-note">R$ — valor disponível</span>
+          <span class="input-note">R$: valor disponível</span>
         </div>
       </div>
 
@@ -853,7 +853,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
       </div>
       <div class="expert-card">
         <div class="expert-name">Onde investir a reserva</div>
-        <div class="expert-text">Tesouro Selic (resgate D+1) · CDB liquidez diária de banco grande · Fundo DI taxa zero. Nunca em renda variável ou CDB sem liquidez — a reserva precisa estar disponível imediatamente.</div>
+        <div class="expert-text">Tesouro Selic (resgate D+1) · CDB liquidez diária de banco grande · Fundo DI taxa zero. Nunca em renda variável ou CDB sem liquidez; a reserva precisa estar disponível imediatamente.</div>
       </div>
     </div>
   </div>
@@ -994,7 +994,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 
     <!-- GRÁFICO -->
     <div class="ac-chart-area">
-      <div class="section-label">Evolução Patrimonial — <span id="ac-anos-label">20</span> anos</div>
+      <div class="section-label">Evolução Patrimonial · <span id="ac-anos-label">20</span> anos</div>
       <div class="ac-chart-wrap"><canvas id="acChart"></canvas></div>
       <div class="legend-grid" id="ac-legend"></div>
     </div>
@@ -1101,7 +1101,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 
     <!-- Referência Ray Dalio -->
     <div class="rb-dalio-note">
-      <strong>Referência internacional — Ray Dalio (All Weather):</strong>
+      <strong>Referência internacional: Ray Dalio (All Weather):</strong>
       30% Ações · 55% Renda Fixa · 7,5% Ouro · 7,5% Commodities.
       Estratégia de "risco balanceado" voltada para preservação com crescimento moderado.
       <a href="https://www.bridgewater.com" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;">Bridgewater Associates ↗</a>
@@ -1159,7 +1159,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
         <div class="rb-donut-wrap"><canvas id="rbCurrentDonut"></canvas></div>
       </div>
       <div class="rb-donut-area">
-        <div class="rb-chart-title" id="rb-target-title">CARTEIRA ALVO — CONSERVADOR</div>
+        <div class="rb-chart-title" id="rb-target-title">CARTEIRA ALVO: CONSERVADOR</div>
         <div class="rb-donut-wrap"><canvas id="rbTargetDonut"></canvas></div>
       </div>
     </div>
@@ -1168,11 +1168,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
   <!-- NOTA SOBRE RESERVA DE EMERGÊNCIA -->
   <div style="padding:20px 40px;border-top:1px solid var(--border);font-size:10px;color:var(--muted);line-height:1.7;background:var(--panel);">
     <strong style="color:var(--text);">⚠ Atenção:</strong>
-    Os valores acima são a sua <em>carteira de investimentos</em> — não inclua a reserva de emergência nesse cálculo.
+    Os valores acima são a sua <em>carteira de investimentos</em>; não inclua a reserva de emergência nesse cálculo.
     A reserva de emergência (6–12 meses de gastos, em CDB ou Tesouro Selic com liquidez diária) deve estar separada e
     não é considerada parte da carteira de longo prazo. Use a aba <strong>Reserva de Emergência</strong> para calculá-la.
     · <strong>Proteção (Ouro/Dólar)</strong> é diferente de reserva de emergência: é uma camada de proteção patrimonial contra crises e desvalorização cambial,
-    com correlação negativa à bolsa. Recomendação: ouro via ETF <strong>GOLD11</strong> ou fundos referenciados em ouro/dólar.
+    com correlação negativa à bolsa. Recomendação: ouro via ETF <strong>GOLD11</strong> ou fundos referenciados em ouro/dólar. Atenção à inflação norte-americana atual,
+     ouro talvez deva ser considerado mais interessante.
   </div>
 
 </div><!-- /tab-rebalance -->
@@ -1186,7 +1187,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     <div class="header-eyebrow">Independência Financeira · FIRE</div>
     <h1>Quando você pode <em>parar?</em></h1>
     <p class="header-sub">
-      Calcule seu número FIRE — o patrimônio necessário para viver de renda — e veja a curva de dividendos cruzando seus gastos.
+      Calcule seu número FIRE: o patrimônio necessário para viver de renda. Veja a curva de dividendos cruzando seus gastos.
     </p>
   </div>
 
@@ -1195,28 +1196,28 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
   <div class="inputs-bar">
     <div class="input-group">
       <label>Patrimônio Atual</label>
-      <input type="number" id="fi-patrimonio" value="50000" min="0" step="1000">
+      <input type="number" id="fi-patrimonio" value="10000" min="0" step="1000">
       <span class="input-note">R$ investido hoje</span>
     </div>
     <div class="input-group">
       <label>Aporte Mensal</label>
-      <input type="number" id="fi-aporte" value="2000" min="0" step="100">
+      <input type="number" id="fi-aporte" value="1000" min="0" step="100">
       <span class="input-note">R$ por mês</span>
     </div>
     <div class="input-group">
       <label>Gasto Mensal Desejado</label>
-      <input type="number" id="fi-gasto" value="10000" min="0" step="500">
+      <input type="number" id="fi-gasto" value="2000" min="0" step="500">
       <span class="input-note">R$ de hoje (será corrigido pela inflação)</span>
     </div>
     <div class="input-group">
       <label>DY Esperado da Carteira %</label>
-      <input type="number" id="fi-dy" value="7.0" min="1" max="20" step="0.5">
+      <input type="number" id="fi-dy" value="6.0" min="1" max="20" step="0.5">
       <span class="input-note">dividend yield anual médio esperado</span>
     </div>
     <div class="input-group">
       <label>Inflação Anual % (IPCA)</label>
-      <input type="number" id="fi-inflacao" value="4.0" min="0" max="20" step="0.5">
-      <span class="input-note">para corrigir o gasto futuro</span>
+      <input type="number" id="fi-inflacao" value="4.4" min="0" max="20" step="0.5">
+      <span class="input-note">para corrigir o gasto futuro. Considere os 12 últimos meses</span>
     </div>
     <div class="input-group">
       <label>Aporte cresce com inflação?</label>
@@ -1233,7 +1234,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
   </div>
 
   <!-- SEÇÃO 1: NÚMERO FIRE -->
-  <div class="inputs-section-label">Seção 1 — Seu Número FIRE · Quanto preciso acumular?</div>
+  <div class="inputs-section-label">Seção 1: Seu Número FIRE · Quanto preciso acumular?</div>
 
   <!-- Explicação dos 2 métodos -->
   <div class="fi-methods-bar">
@@ -1248,7 +1249,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     <div class="fi-method-card">
       <div class="fi-method-title" style="color:var(--blue);">📐 Regra dos 4% (Estudo Trinity)</div>
       <div class="fi-method-desc">
-        Retira 4% do patrimônio por ano — inclui <strong>venda parcial de ativos</strong>.<br>
+        Retira 4% do patrimônio por ano, inclui <strong>venda parcial de ativos</strong>.<br>
         Fórmula: <code>Meta = Gasto anual ÷ 0,04 = Gasto × 300</code><br>
         Modelo americano. Estatisticamente sustentável por 30+ anos. Exige portfólio diversificado.
       </div>
@@ -1281,13 +1282,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
   <div class="fi-nota">
     <strong>⚠ Fase de acumulação vs fase de retirada:</strong>
     O portfólio cresce pelo <em>total return</em> (valorização de preço + DY reinvestido) durante a acumulação.
-    Na aposentadoria, pelo método do DY, você vive apenas dos dividendos — sem vender ações, preservando o principal.
+    Na aposentadoria, pelo método do DY, você vive apenas dos dividendos, sem vender ações, preservando o principal.
     Pelo método dos 4%, você retira 4% ao ano do patrimônio, o que inclui venda gradual de ativos.
     Os três cenários (conservador/moderado/arrojado) refletem diferentes taxas de valorização de preço (+3%, +7%, +11% ao ano).
   </div>
 
   <!-- SEÇÃO 2: CURVA DA LIBERDADE -->
-  <div class="inputs-section-label" style="margin-top:0;">Seção 2 — Curva da Liberdade · Quando os dividendos cobrem seus gastos?</div>
+  <div class="inputs-section-label" style="margin-top:0;">Seção 2: Curva da Liberdade · Quando os dividendos cobrem seus gastos?</div>
 
   <div class="fi-chart-area">
     <div class="fi-chart-controls">
@@ -1321,12 +1322,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     </div>
     <div class="footer-legal-block">
       <h4>© Direitos Autorais e Propriedade Intelectual</h4>
-      <p>Todo o conteúdo deste site — incluindo código-fonte, design, interface, textos e lógica de cálculo — é de propriedade exclusiva de <strong>Raoni Queiroz</strong> e está protegido pela Lei nº 9.610/1998 (Lei de Direitos Autorais) e pela legislação de propriedade intelectual brasileira. É expressamente proibida a cópia, reprodução, distribuição ou uso comercial de qualquer parte deste material sem autorização prévia e por escrito. Violações estão sujeitas às penalidades civis e criminais previstas em lei.</p>
+      <p>Todo o conteúdo deste site (incluindo código-fonte, design, interface, textos e lógica de cálculo) é de propriedade exclusiva de <strong>Raoni Queiroz</strong> e está protegido pela Lei nº 9.610/1998 (Lei de Direitos Autorais) e pela legislação de propriedade intelectual brasileira. É expressamente proibida a cópia, reprodução, distribuição ou uso comercial de qualquer parte deste material sem autorização prévia e por escrito. Violações estão sujeitas às penalidades civis e criminais previstas em lei.</p>
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 <strong>Raoni Queiroz</strong> — Todos os direitos reservados.</span>
-    <span class="footer-copy">Simulação educacional — não é recomendação de investimento · fev/2026</span>
+    <span class="footer-copy">© 2026 <strong>Raoni Queiroz</strong> · Todos os direitos reservados.</span>
+    <span class="footer-copy">Simulação educacional, não é recomendação de investimento · fev/2026</span>
   </div>
 </footer>
 
@@ -1420,11 +1421,11 @@ const INVESTMENTS = [
     color:'#f5c518', risk:'Baixo*', riskClass:'warn', note:'taxa e IR ajustáveis · renovação periódica · sem come-cotas' },
   { id:'cdb', name:'CDB (configurável)', shortName:'CDB', type:'cdb',
     color:'#2dd4bf', risk:'Baixo', riskClass:'pos', note:'IR regressivo · rende bruto até resgate · FGC R$250k/inst.' },
-  { id:'acoes_cons', name:'Ações — Conservador', shortName:'Ações Conserv.', type:'stock', priceGrowth:0.03,
+  { id:'acoes_cons', name:'Ações Conservador', shortName:'Ações Conserv.', type:'stock', priceGrowth:0.03,
     color:'#5b9cf6', risk:'Médio-Alto', riskClass:'risk', note:'DY + valoriz. 3%/ano (ciclo fraco)' },
-  { id:'acoes_mod', name:'Ações — Moderado (ITUB4)', shortName:'Ações Moder.', type:'stock', priceGrowth:0.07,
+  { id:'acoes_mod', name:'Ações Moderado (ITUB4)', shortName:'Ações Moder.', type:'stock', priceGrowth:0.07,
     color:'#a88bfa', risk:'Alto', riskClass:'risk', note:'DY + valoriz. 7%/ano (histórico médio)' },
-  { id:'acoes_otm', name:'Ações — Otimista (ITUB4 bull)', shortName:'Ações Otim.', type:'stock', priceGrowth:0.11,
+  { id:'acoes_otm', name:'Ações Otimista (ITUB4 bull)', shortName:'Ações Otim.', type:'stock', priceGrowth:0.11,
     color:'#f26065', risk:'Alto', riskClass:'risk', note:'DY + valoriz. 11%/ano (melhor histórico)' }
 ];
 
@@ -1453,7 +1454,7 @@ function getParams() {
 // RATES
 // ═══════════════════════════════════════════
 
-// Gross rate — what actually compounds in the account (no IR deducted)
+// Gross rate: what actually compounds in the account (no IR deducted)
 function grossRate(inv, p) {
   switch(inv.type) {
     case 'tesouro': return (1 + p.tesReal/100) * (1 + p.ipca/100) - 1;  // nominal bruto
@@ -1477,9 +1478,9 @@ function irRate(inv, p) {
   }
 }
 
-// Display rate label — always gross, clearly labeled
+// Display rate label: always gross, clearly labeled
 function displayRate(inv, p) {
-  return grossRate(inv, p) * 100;  // always gross — IR shown separately in "no bolso"
+  return grossRate(inv, p) * 100;  // always gross, IR shown separately in "no bolso"
 }
 
 // ═══════════════════════════════════════════
@@ -1502,7 +1503,7 @@ function simFixed(annualRate, inicial, aporte, months) {
   return out;
 }
 
-// Stock WITHOUT reinvestment — float precision, round only at display
+// Stock WITHOUT reinvestment, float precision, round only at display
 function simStockNoReinvest(dyRate, priceGrowth, inicial, aporte, months) {
   const rPrice = Math.pow(1 + priceGrowth, 1/12) - 1;
   const rDY    = Math.pow(1 + dyRate, 1/12) - 1;
@@ -1517,13 +1518,13 @@ function simStockNoReinvest(dyRate, priceGrowth, inicial, aporte, months) {
   return out;
 }
 
-// Get series — ALL fixed income uses grossRate now (IR at redemption, not every year)
+// Get series: ALL fixed income uses grossRate now (IR at redemption, not every year)
 function getSeriesData(inv, p, months) {
   if (inv.type === 'stock') {
     if (reinvestDivs) return simFixed((1+p.dy/100)*(1+inv.priceGrowth)-1, p.inicial, p.aporte, months);
     return simStockNoReinvest(p.dy/100, inv.priceGrowth, p.inicial, p.aporte, months);
   }
-  // Fixed income: always compound at gross rate — IR only at final redemption
+  // Fixed income: always compound at gross rate, IR only at final redemption
   return simFixed(grossRate(inv, p), p.inicial, p.aporte, months);
 }
 
@@ -1679,7 +1680,7 @@ function buildRanking() {
   const totalInvested = p.inicial + p.aporte * months;
 
   const results = INVESTMENTS.map(inv => {
-    // All series use grossRate — IR only at redemption
+    // All series use grossRate, IR only at redemption
     const data = getSeriesData(inv, p, months);
     const fvGross = data[data.length - 1];
     const grossGain = fvGross - totalInvested;
@@ -1737,7 +1738,7 @@ function buildRanking() {
       if (ir === 0) {
         rateLabel = `${r.rate.toFixed(1)}% a.a. bruto = líquido (isento)`;
       } else {
-        // Net is not simply rate*(1-ir) — only gains are taxed, not principal.
+        // Net is not simply rate*(1-ir): only gains are taxed, not principal.
         // Show bruto and note IR at redemption.
         rateLabel = `${r.rate.toFixed(1)}% a.a. bruto · IR ${(ir*100).toFixed(1)}% no resgate`;
       }
@@ -1846,7 +1847,7 @@ function calcReserva() {
   if (falta <= 0) {
     tempoEl.textContent = '✓ Meta atingida!';
     tempoEl.className = 'res-result-value ok';
-    tempoSub.textContent = 'parabéns — mantenha a reserva';
+    tempoSub.textContent = 'parabéns, mantenha a reserva';
   } else if (meses === Infinity) {
     tempoEl.textContent = '—';
     tempoEl.className = 'res-result-value warn';
@@ -2251,7 +2252,7 @@ function setRbProfile(p) {
   ['cons','mod','arr'].forEach(k => {
     document.getElementById('rbp-'+k).classList.toggle('active', k === p);
   });
-  document.getElementById('rb-target-title').textContent = `CARTEIRA ALVO — ${RB_TARGETS_LABELS[p].toUpperCase()}`;
+  document.getElementById('rb-target-title').textContent = `CARTEIRA ALVO: ${RB_TARGETS_LABELS[p].toUpperCase()}`;
   buildRbDiag();
   buildRbDonuts();
 }
@@ -2299,7 +2300,7 @@ function buildRbDiag() {
     let deltaClass, deltaText, amountText;
     if (Math.abs(diff) < 1.5) {
       deltaClass = 'ok'; deltaText = '✓ Balanceado';
-      amountText = 'Diferença < 1,5% — sem necessidade de ação';
+      amountText = 'Diferença < 1,5%; sem necessidade de ação';
     } else if (diff > 0) {
       deltaClass = 'buy'; deltaText = `+${diff.toFixed(1)}% a comprar`;
       amountText = `Comprar ~${fmtBRL(diffVal)}`;
@@ -2405,9 +2406,9 @@ function calcFire() {
   const gastoAnual = gasto * 12;
 
   // ── FIRE targets ──────────────────────────────
-  // Method 1: By DY (perpetuity) — live only on dividends
+  // Method 1: By DY (perpetuity), live only on dividends
   const metaDY   = gastoAnual / (dy / 100);
-  // Method 2: 4% rule (Trinity study) — withdraw 4%/year
+  // Method 2: 4% rule (Trinity study), withdraw 4%/year
   const meta4pct = gastoAnual / 0.04;
 
   // ── Time to reach each target (simulation) ────
@@ -2517,7 +2518,7 @@ function buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl, apo
       // Monthly dividend income at year y
       const rendaMensal = acum * (dy/100) / 12;
       // Expense at year y (nominal or inflation-adjusted)
-      // Monthly expense at year y (nominal or inflation-adjusted) — variable named clearly as monthly
+      // Monthly expense at year y (nominal or inflation-adjusted), named clearly as monthly
       const gastoMesCorrigido = ajustaInfl ? gasto * Math.pow(1 + inflacao/100, y) : gasto;
 
       rendaData.push(rendaMensal); // keep as float; fmtBRL rounds for display
@@ -2770,7 +2771,7 @@ updateCdbIrFromMonths(activeMonths);
 buildAll();
 rebuildProfiles();
 
-// Fix chart resize on browser zoom — full rebuild with debounce
+// Fix chart resize on browser zoom, full rebuild with debounce
 let resizeTimer = null;
 function onResize() {
   clearTimeout(resizeTimer);
