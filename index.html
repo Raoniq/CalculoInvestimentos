@@ -455,6 +455,51 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .fi-evo-monthly{font-size:9px;color:var(--muted);margin-top:1px;}
 .fi-evo-mark{font-size:8px;font-weight:700;letter-spacing:1px;color:var(--green);margin-top:4px;}
 
+/* Armadilha da Inflação */
+.fi-trap-intro{padding:14px 40px 16px;font-size:11px;color:var(--muted);line-height:1.8;
+  border-bottom:1px solid var(--border);background:var(--panel);}
+.fi-trap-intro strong{color:var(--text);}
+.fi-trap-rf-input-wrap{display:inline-flex;align-items:center;gap:6px;margin-left:16px;
+  font-size:10px;color:var(--muted);border:1px solid var(--border);
+  padding:3px 10px;background:var(--card);}
+.fi-trap-rf-input-wrap input{background:transparent;border:none;outline:none;
+  color:var(--text);font-family:'Fraunces',serif;font-size:15px;font-weight:600;
+  width:44px;text-align:center;}
+
+.fi-trap-grid{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border);}
+
+.fi-trap-blank{background:var(--panel);}
+.fi-trap-head{display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:12px 16px;border-left:1px solid var(--border);border-bottom:1px solid var(--border);
+  font-size:10px;font-weight:600;text-align:center;background:var(--card);}
+.fi-trap-head span{font-size:8px;font-weight:400;color:var(--muted);letter-spacing:.3px;}
+.fi-trap-head-rv{color:#3dd68c;}
+.fi-trap-head-rf{color:#a78bfa;}
+
+.fi-trap-row-label{padding:10px 40px;font-size:9px;color:var(--muted);letter-spacing:.5px;
+  display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);background:var(--panel);}
+.fi-trap-row-label em{color:var(--text);font-style:normal;font-weight:600;}
+.fi-trap-row-label small{font-size:8px;color:var(--muted);opacity:.7;}
+.fi-trap-cell{padding:10px 24px;border-left:1px solid var(--border);border-bottom:1px solid var(--border);
+  font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--text);
+  display:flex;align-items:center;justify-content:center;text-align:center;}
+.fi-trap-cell-rv{color:#3dd68c;}
+.fi-trap-cell-rf{color:#a78bfa;}
+.fi-trap-highlight{font-size:20px;}
+.fi-trap-danger{color:var(--orange)!important;}
+.fi-trap-span{grid-column:2/-1;color:var(--orange);font-size:15px;}
+.fi-trap-verdict{font-size:13px;letter-spacing:.5px;}
+.fi-trap-verdict-label{font-weight:700;color:var(--text);}
+
+.fi-trap-footnote{padding:12px 40px;font-size:10px;color:var(--muted);
+  line-height:1.8;border-bottom:1px solid var(--border);background:var(--panel);}
+
+@media(max-width:700px){
+  .fi-trap-grid{grid-template-columns:1fr;}
+  .fi-trap-head,.fi-trap-cell,.fi-trap-span{border-left:none;}
+  .fi-trap-blank{display:none;}
+}
+
 @media(max-width:900px){
   .fi-methods-bar,.fi-meta-grid{grid-template-columns:1fr;}
   .fi-method-card,.fi-meta-card{border-right:none;border-bottom:1px solid var(--border);}
@@ -1233,10 +1278,58 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     </div>
   </div>
 
-  <!-- SEÇÃO 1: NÚMERO FIRE -->
-  <div class="inputs-section-label">Seção 1: Seu Número FIRE · Quanto preciso acumular?</div>
+  <!-- ARMADILHA DA INFLAÇÃO — PRIMEIRO, PARA NÃO PASSAR DESPERCEBIDO -->
+  <div class="inputs-section-label">A Armadilha da Inflação · Por que ações precisam de mais capital mas são melhores no longo prazo</div>
 
-  <!-- Explicação dos 2 métodos -->
+  <div class="fi-trap-intro">
+    Renda fixa a <strong id="trap-rf-rate-label">11%</strong> parece precisar de menos patrimônio que ações com DY de <strong id="trap-dy-label">7%</strong>.
+    Mas essa comparação é uma <strong style="color:var(--orange);">foto de hoje</strong>, não um filme de 20 anos.
+    <br><br>
+    A tabela abaixo simula a <strong>fase de aposentadoria</strong>: você já chegou na meta, parou de aportar e vive da renda. Na perpetuidade, você retira 100% dos juros todo mês para cobrir seus gastos, então nada é reinvestido e o principal da Renda Fixa fica estagnado. Nas ações, o preço das empresas cresce independentemente dos dividendos retirados, fazendo o patrimônio aumentar.
+    <span class="fi-trap-rf-input-wrap">
+      Renda Fixa comparativa: <input type="number" id="trap-rf-taxa" value="11.0" min="1" max="25" step="0.5" oninput="calcFire()"> % líquido
+    </span>
+  </div>
+
+  <div class="fi-trap-grid">
+    <div class="fi-trap-head fi-trap-blank"></div>
+    <div class="fi-trap-head fi-trap-head-rv">📈 Ações e FIIs<span>DY <span id="trap-head-dy">7%</span> + valorização</span></div>
+    <div class="fi-trap-head fi-trap-head-rf">🏦 Renda Fixa<span>Taxa líquida <span id="trap-head-rf">11%</span></span></div>
+
+    <div class="fi-trap-row-label">Patrimônio necessário <em>hoje</em></div>
+    <div class="fi-trap-cell fi-trap-cell-rv" id="trap-pat-rv">...</div>
+    <div class="fi-trap-cell fi-trap-cell-rf" id="trap-pat-rf">...</div>
+
+    <div class="fi-trap-row-label">Renda mensal <em>hoje</em></div>
+    <div class="fi-trap-cell fi-trap-cell-rv" id="trap-renda-hoje-rv">...</div>
+    <div class="fi-trap-cell fi-trap-cell-rf" id="trap-renda-hoje-rf">...</div>
+
+    <div class="fi-trap-row-label">Patrimônio em <em>20 anos</em> <small>(cenário moderado)</small></div>
+    <div class="fi-trap-cell fi-trap-cell-rv fi-trap-highlight" id="trap-pat20-rv">...</div>
+    <div class="fi-trap-cell fi-trap-cell-rf" id="trap-pat20-rf">...</div>
+
+    <div class="fi-trap-row-label">Renda mensal em <em>20 anos</em> <small>(nominal)</small></div>
+    <div class="fi-trap-cell fi-trap-cell-rv fi-trap-highlight" id="trap-renda20-rv">...</div>
+    <div class="fi-trap-cell fi-trap-cell-rf" id="trap-renda20-rf">...</div>
+
+    <div class="fi-trap-row-label">Poder de compra em <em>20 anos</em> <small>(em R$ de hoje)</small></div>
+    <div class="fi-trap-cell fi-trap-cell-rv fi-trap-highlight" id="trap-real20-rv">...</div>
+    <div class="fi-trap-cell fi-trap-cell-rf fi-trap-danger" id="trap-real20-rf">...</div>
+
+    <div class="fi-trap-row-label">Seu gasto em <em>20 anos</em> <small>(corrigido pelo IPCA)</small></div>
+    <div class="fi-trap-cell fi-trap-span fi-trap-gasto20" id="trap-gasto20">...</div>
+    <div class="fi-trap-cell" style="display:none;"></div>
+
+    <div class="fi-trap-row-label fi-trap-verdict-label">Cobre seus gastos em 20 anos?</div>
+    <div class="fi-trap-cell fi-trap-cell-rv fi-trap-verdict" id="trap-verdict-rv">...</div>
+    <div class="fi-trap-cell fi-trap-cell-rf fi-trap-verdict" id="trap-verdict-rf">...</div>
+  </div>
+
+  <div class="fi-trap-footnote" id="fi-trap-footnote"></div>
+
+  <!-- SEÇÃO 1: NÚMERO FIRE -->
+  <div class="inputs-section-label">Seção 1 · Quanto preciso acumular?</div>
+
   <div class="fi-methods-bar">
     <div class="fi-method-card">
       <div class="fi-method-title" style="color:var(--green);">🌱 Pelo DY (Perpetuidade)</div>
@@ -1251,44 +1344,42 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
       <div class="fi-method-desc">
         Retira 4% do patrimônio por ano, inclui <strong>venda parcial de ativos</strong>.<br>
         Fórmula: <code>Meta = Gasto anual ÷ 0,04 = Gasto × 300</code><br>
-        Modelo americano. Estatisticamente sustentável por 30+ anos. Exige portfólio diversificado.
+        Modelo americano. Estatisticamente sustentável por 30 anos ou mais.
       </div>
     </div>
   </div>
 
-  <!-- Cards de meta -->
   <div class="fi-meta-grid">
     <div class="fi-meta-card" id="fi-card-dy">
       <div class="fi-meta-badge" style="color:var(--green);border-color:var(--green);background:var(--green-faint);">Pelo DY · Perpetuidade</div>
       <div class="fi-meta-label">Meta patrimonial</div>
-      <div class="fi-meta-val" id="fi-meta-dy" style="color:var(--green);">—</div>
+      <div class="fi-meta-val" id="fi-meta-dy" style="color:var(--green);">...</div>
       <div class="fi-meta-sub" id="fi-meta-dy-sub"></div>
       <div class="fi-meta-falta-label">Falta acumular</div>
-      <div class="fi-meta-falta" id="fi-falta-dy">—</div>
+      <div class="fi-meta-falta" id="fi-falta-dy">...</div>
       <div class="fi-tempos" id="fi-tempos-dy"></div>
     </div>
     <div class="fi-meta-card" id="fi-card-4pct">
       <div class="fi-meta-badge" style="color:var(--blue);border-color:var(--blue);background:var(--blue-faint);">Regra dos 4%</div>
       <div class="fi-meta-label">Meta patrimonial</div>
-      <div class="fi-meta-val" id="fi-meta-4pct" style="color:var(--blue);">—</div>
+      <div class="fi-meta-val" id="fi-meta-4pct" style="color:var(--blue);">...</div>
       <div class="fi-meta-sub" id="fi-meta-4pct-sub"></div>
       <div class="fi-meta-falta-label">Falta acumular</div>
-      <div class="fi-meta-falta" id="fi-falta-4pct">—</div>
+      <div class="fi-meta-falta" id="fi-falta-4pct">...</div>
       <div class="fi-tempos" id="fi-tempos-4pct"></div>
     </div>
   </div>
 
-  <!-- Nota metodológica -->
   <div class="fi-nota">
-    <strong>⚠ Fase de acumulação vs fase de retirada:</strong>
+    <strong>Fase de acumulação vs fase de retirada:</strong>
     O portfólio cresce pelo <em>total return</em> (valorização de preço + DY reinvestido) durante a acumulação.
-    Na aposentadoria, pelo método do DY, você vive apenas dos dividendos, sem vender ações, preservando o principal.
+    Na aposentadoria pelo método do DY, você vive apenas dos dividendos sem vender ações, preservando o principal.
     Pelo método dos 4%, você retira 4% ao ano do patrimônio, o que inclui venda gradual de ativos.
-    Os três cenários (conservador/moderado/arrojado) refletem diferentes taxas de valorização de preço (+3%, +7%, +11% ao ano).
+    Os três cenários (conservador, moderado, otimista) refletem taxas de valorização de preço de +3%, +7% e +11% ao ano.
   </div>
 
   <!-- SEÇÃO 2: CURVA DA LIBERDADE -->
-  <div class="inputs-section-label" style="margin-top:0;">Seção 2: Curva da Liberdade · Quando os dividendos cobrem seus gastos?</div>
+  <div class="inputs-section-label" style="margin-top:0;">Seção 2 · Curva da Liberdade · Quando os dividendos cobrem seus gastos?</div>
 
   <div class="fi-chart-area">
     <div class="fi-chart-controls">
@@ -1303,7 +1394,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     <div class="legend-grid" id="fi-legend"></div>
   </div>
 
-  <!-- TABELA DE EVOLUÇÃO -->
   <div class="fi-evolution-section">
     <div class="section-label" style="padding:20px 40px 14px;">Evolução da Renda de Dividendos · Cenário Moderado</div>
     <div class="fi-evo-grid" id="fi-evo-grid"></div>
@@ -2456,6 +2546,9 @@ function calcFire() {
 
   // ── Build evolution table (moderado) ──────────
   buildFireEvoTable(patrimonio, aporte, dy, inflacao, gasto, aporteInflacao);
+
+  // ── Armadilha da Inflação ─────────────────────
+  buildInflationTrap(dy, inflacao, gasto);
 }
 
 function renderTempos(containerId, times) {
@@ -2669,6 +2762,85 @@ function buildFireEvoTable(patrimonio, aporte, dy, inflacao, gasto, aporteInflac
     `;
     grid.appendChild(cell);
   });
+}
+
+// ─────────────────────────────────────────────
+// ARMADILHA DA INFLAÇÃO
+// ─────────────────────────────────────────────
+function buildInflationTrap(dy, inflacao, gasto) {
+  const rfTaxa   = parseFloat(document.getElementById('trap-rf-taxa').value) || 11.0;
+  const gastoAnual = gasto * 12;
+  const ANOS = 20;
+
+  // Patrimônios necessários hoje (perpetuidade pelo DY/taxa)
+  const patRV = gastoAnual / (dy / 100);
+  const patRF = gastoAnual / (rfTaxa / 100);
+
+  // Renda mensal hoje
+  const rendaHojeRV = patRV * (dy / 100) / 12;   // = gasto (por definição)
+  const rendaHojeRF = patRF * (rfTaxa / 100) / 12; // = gasto (por definição)
+
+  // Em 20 anos: cenário moderado RV (+7% preço + DY reinvestido = total return ~14,49%)
+  const rvTotalReturn = (1 + dy/100) * (1 + 0.07) - 1;
+  const rVMes = Math.pow(1 + rvTotalReturn, 1/12) - 1;
+  // Simula 20 anos sem aportes (simulamos o patrimônio já acumulado)
+  const patRV20 = patRV * Math.pow(1 + rvTotalReturn, ANOS);
+  const rendaRV20 = patRV20 * (dy / 100) / 12;
+
+  // Em 20 anos: RF — sem price growth, só juros sobre o mesmo montante
+  // Patrimônio nominal cresce pelos juros reinvestidos (mas dono retira tudo os juros na perpetuidade)
+  // Na perpetuidade pura, o patrimônio principal não cresce — o dono gasta tudo que rende
+  // Então patRF em 20 anos = patRF (nominal, sem crescimento real)
+  const rendaRF20 = patRF * (rfTaxa / 100) / 12; // mesma renda nominal (perpétua)
+
+  // Poder de compra real em 20 anos (deflacionado pela inflação)
+  const fatorInfla = Math.pow(1 + inflacao/100, ANOS);
+  const realRV20 = rendaRV20 / fatorInfla;  // em R$ de hoje
+  const realRF20 = rendaRF20 / fatorInfla;  // em R$ de hoje
+
+  // Gasto desejado daqui a 20 anos (nominal, corrigido pelo IPCA)
+  const gasto20nominal = gasto * fatorInfla;
+
+  // Preenche a grid
+  document.getElementById('trap-rf-rate-label').textContent = rfTaxa.toFixed(1) + '%';
+  document.getElementById('trap-dy-label').textContent      = dy.toFixed(1) + '%';
+  document.getElementById('trap-head-dy').textContent       = dy.toFixed(1) + '%';
+  document.getElementById('trap-head-rf').textContent       = rfTaxa.toFixed(1) + '%';
+
+  document.getElementById('trap-pat-rv').textContent       = fmtBRL(patRV);
+  document.getElementById('trap-pat-rf').textContent       = fmtBRL(patRF);
+  document.getElementById('trap-renda-hoje-rv').textContent = fmtBRL(rendaHojeRV) + '/mês';
+  document.getElementById('trap-renda-hoje-rf').textContent = fmtBRL(rendaHojeRF) + '/mês';
+
+  document.getElementById('trap-pat20-rv').textContent  = fmtBRL(patRV20);
+  document.getElementById('trap-pat20-rf').textContent  = fmtBRL(patRF) + ' (sem crescimento)';
+
+  document.getElementById('trap-renda20-rv').textContent = fmtBRL(rendaRV20) + '/mês';
+  document.getElementById('trap-renda20-rf').textContent = fmtBRL(rendaRF20) + '/mês';
+
+  document.getElementById('trap-real20-rv').textContent = fmtBRL(realRV20) + '/mês';
+  document.getElementById('trap-real20-rf').textContent = fmtBRL(realRF20) + '/mês';
+
+  document.getElementById('trap-gasto20').textContent = fmtBRL(gasto20nominal) + '/mês';
+
+  // Vereditos
+  const cobriuRV = rendaRV20 >= gasto20nominal;
+  const cobriuRF = rendaRF20 >= gasto20nominal;
+
+  const vRV = document.getElementById('trap-verdict-rv');
+  const vRF = document.getElementById('trap-verdict-rf');
+  vRV.textContent   = cobriuRV ? '✓ Sim' : '✗ Não';
+  vRV.style.color   = cobriuRV ? 'var(--green)' : 'var(--red)';
+  vRF.textContent   = cobriuRF ? '✓ Sim' : '✗ Não';
+  vRF.style.color   = cobriuRF ? 'var(--green)' : 'var(--orange)';
+
+  // Nota de rodapé dinâmica
+  const perda = ((1 - realRF20/gasto) * 100).toFixed(0);
+  const ganho = ((realRV20/gasto - 1) * 100).toFixed(0);
+  document.getElementById('fi-trap-footnote').innerHTML =
+    `<strong>Em resumo:</strong> Com Renda Fixa a ${rfTaxa}% líquido e inflação a ${inflacao}%, sua renda de ${fmtBRL(gasto)}/mês perde <strong style="color:var(--orange);">${perda}% do poder de compra</strong> em ${ANOS} anos, porque você consome todos os juros sem reinvestir nada. ` +
+    `Com ações e DY de ${dy}%, o patrimônio cresce e sua renda real <strong style="color:var(--green);">ganha ${ganho}% de poder de compra</strong> no mesmo período. ` +
+    `O maior patrimônio inicial exigido pelas ações é o <em>preço da proteção contra a inflação</em>.`;
 }
 
 // ═══════════════════════════════════════════
