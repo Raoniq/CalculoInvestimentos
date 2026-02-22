@@ -163,8 +163,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 /* ═══════════════════════════════════════════
    MAIN GRID (chart + sidebar)
 ═══════════════════════════════════════════ */
-.main{display:flex;flex-direction:column;}
-.chart-area{padding:28px 40px 16px;}
+.main{display:grid;grid-template-columns:1fr 360px;border-bottom:1px solid var(--border);align-items:stretch;}
+.chart-area{padding:24px 28px 16px;border-right:1px solid var(--border);}
 .section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
   margin-bottom:18px;display:flex;align-items:center;gap:12px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
@@ -180,35 +180,35 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .legend-line{width:20px;height:2px;border-radius:1px;flex-shrink:0;}
 
 /* SIDEBAR */
-.sidebar{padding:0 40px 28px;}
-.milestone-tabs{display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap;}
-.tab-btn{flex:1;min-width:36px;background:var(--card);border:1px solid var(--border);color:var(--muted);
-  font-family:'DM Mono',monospace;font-size:11px;padding:7px 4px;cursor:pointer;transition:all .2s;text-align:center;}
+.sidebar{padding:20px 20px 24px;overflow-y:auto;align-content:start;}
+.ranking-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;}
+.ranking-header .section-label{margin-bottom:0;font-size:7px;}
+.milestone-tabs{display:flex;gap:3px;flex-wrap:wrap;}
+.tab-btn{flex:1;min-width:28px;background:var(--card);border:1px solid var(--border);color:var(--muted);
+  font-family:'DM Mono',monospace;font-size:10px;padding:5px 3px;cursor:pointer;transition:all .2s;text-align:center;}
 .tab-btn.active{background:var(--green-faint);border-color:var(--green);color:var(--green);}
 .tab-btn:hover:not(.active){border-color:var(--border2);color:var(--text);}
-.ranking{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
-.ranking-header{display:flex;align-items:baseline;gap:16px;margin-bottom:14px;border-top:1px solid var(--border);padding-top:20px;}
-.ranking-header .section-label{margin-bottom:0;flex-shrink:0;}
+.ranking{display:flex;flex-direction:column;gap:6px;}
 
 /* RANK CARDS */
-.rank-card{background:var(--card);border:1px solid var(--border);padding:12px 14px;position:relative;transition:border-color .2s;}
+.rank-card{background:var(--card);border:1px solid var(--border);padding:9px 12px;position:relative;transition:border-color .2s;}
 .rank-card:hover{border-color:var(--border2);}
 .rank-card.rank-1{border-color:rgba(61,214,140,.3);background:var(--green-faint);}
 .rank-card.rank-2{border-color:rgba(91,156,246,.2);}
-.rank-pos{position:absolute;top:8px;right:10px;font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:var(--border2);line-height:1;}
+.rank-pos{position:absolute;top:6px;right:8px;font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:var(--border2);line-height:1;}
 .rank-card.rank-1 .rank-pos{color:rgba(61,214,140,.15);}
-.rank-name{font-size:10px;color:var(--text);margin-bottom:1px;display:flex;align-items:center;gap:6px;padding-right:30px;}
+.rank-name{font-size:10px;color:var(--text);margin-bottom:1px;display:flex;align-items:center;gap:6px;padding-right:26px;}
 .rank-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.rank-rate{font-size:9px;color:var(--muted);margin-bottom:8px;}
-.rank-fv{font-family:'Fraunces',serif;font-size:20px;font-weight:600;line-height:1;}
-.rank-fv small{font-size:11px;font-weight:300;margin-right:2px;}
-.rank-net{display:flex;flex-direction:column;gap:1px;margin-top:4px;padding-top:5px;border-top:1px solid var(--border);}
-.rank-net-val{font-size:11px;color:var(--muted);}
+.rank-rate{font-size:9px;color:var(--muted);margin-bottom:5px;}
+.rank-fv{font-family:'Fraunces',serif;font-size:18px;font-weight:600;line-height:1;}
+.rank-fv small{font-size:10px;font-weight:300;margin-right:2px;}
+.rank-net{display:flex;flex-direction:column;gap:1px;margin-top:4px;padding-top:4px;border-top:1px solid var(--border);}
+.rank-net-val{font-size:10px;color:var(--muted);}
 .rank-net-label{font-size:8px;color:var(--border2);letter-spacing:.5px;}
-.rank-detail{display:flex;gap:10px;margin-top:7px;flex-wrap:wrap;}
+.rank-detail{display:flex;gap:8px;margin-top:5px;flex-wrap:wrap;}
 .rank-stat{display:flex;flex-direction:column;gap:2px;}
-.rank-stat-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
-.rank-stat-val{font-size:10px;color:var(--text);}
+.rank-stat-label{font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.rank-stat-val{font-size:9px;color:var(--text);}
 .rank-stat-val.pos{color:var(--green);}
 .rank-stat-val.warn{color:var(--yellow);}
 .rank-stat-val.risk{color:var(--orange);}
@@ -293,15 +293,16 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 /* ═══════════════════════════════════════════
    CALCULADORA DE AÇÕES
 ═══════════════════════════════════════════ */
-.ac-main{display:grid;grid-template-columns:360px 1fr;min-height:520px;border-bottom:1px solid var(--border);}
-.ac-scenarios{padding:28px 24px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:12px;}
-.ac-chart-area{padding:28px 40px;}
+.ac-main{display:flex;flex-direction:column;border-bottom:1px solid var(--border);}
+.ac-chart-area{padding:20px 32px 16px;border-bottom:1px solid var(--border);}
 .ac-chart-wrap{position:relative;height:240px;width:100%;overflow:hidden;}
 .ac-chart-wrap canvas{max-width:100%;}
+.ac-scenarios{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
 
-.ac-scenario-card{background:var(--card);border:1px solid var(--border);padding:14px 16px;transition:border-color .2s;}
-.ac-scenario-card:hover{border-color:var(--border2);}
-.ac-scenario-card.rank-1{border-color:rgba(61,214,140,.3);background:var(--green-faint);}
+.ac-scenario-card{background:var(--card);border-right:1px solid var(--border);padding:16px 20px;transition:background .2s;}
+.ac-scenario-card:last-of-type{border-right:none;}
+.ac-scenario-card:hover{background:var(--panel);}
+.ac-scenario-card.rank-1{background:var(--green-faint);}
 
 .ac-sc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .ac-sc-badge{font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border:1px solid;font-family:'DM Mono',monospace;}
@@ -325,8 +326,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .ac-div-monthly{font-size:9px;color:var(--muted);margin-top:2px;}
 
 @media(max-width:900px){
-  .ac-main{grid-template-columns:1fr;}
-  .ac-scenarios{border-right:none;border-bottom:1px solid var(--border);}
+  .ac-scenarios{grid-template-columns:1fr;}
 }
 
 /* ═══════════════════════════════════════════
@@ -534,8 +534,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
    RESPONSIVE
 ═══════════════════════════════════════════ */
 @media(max-width:900px){
-  .chart-area{border-right:none;}
-  .ranking{grid-template-columns:1fr 1fr;}
+  .main{grid-template-columns:1fr;}
+  .chart-area{border-right:none;border-bottom:1px solid var(--border);}
+  .sidebar{padding:20px;}
+  .ranking{flex-direction:row;flex-wrap:wrap;}
+  .ranking .rank-card{flex:1;min-width:200px;}
   .res-grid{grid-template-columns:1fr;}
   .res-inputs{border-right:none;border-bottom:1px solid var(--border);}
   .footer-legal-main{grid-template-columns:1fr;}
@@ -987,10 +990,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 
   <!-- CARDS DE CENÁRIO + GRÁFICO -->
   <div class="ac-main">
-    <!-- CENÁRIOS -->
-    <div class="ac-scenarios">
-      <div class="section-label">Três Cenários · <span id="ac-ticker-label">PETR4</span></div>
+    <!-- GRÁFICO — topo, largura total -->
+    <div class="ac-chart-area">
+      <div class="section-label">Evolução Patrimonial · <span id="ac-ticker-label">PETR4</span> · <span id="ac-anos-label">20</span> anos</div>
+      <div class="ac-chart-wrap"><canvas id="acChart"></canvas></div>
+      <div class="legend-grid" id="ac-legend"></div>
+    </div>
 
+    <!-- 3 CENÁRIOS em linha -->
+    <div class="ac-scenarios">
       <div class="ac-scenario-card" id="ac-card-cons">
         <div class="ac-sc-header">
           <span class="ac-sc-badge" style="background:var(--blue-faint);color:var(--blue);border-color:var(--blue);">Conservador</span>
@@ -1044,20 +1052,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
         </div>
         <div class="ac-sc-detail" id="ac-detail-otm"></div>
       </div>
-
-      <!-- IR note -->
-      <div style="font-size:9px;color:var(--muted);line-height:1.7;margin-top:10px;padding:10px;border:1px solid var(--border);background:var(--panel);">
-        <strong style="color:var(--text);">IR sobre ações:</strong>
-        Dividendos são isentos de IR. Ganho de capital na venda: 15% para operações comuns (até R$20k/mês isentos),
-        20% para day-trade. O cálculo aqui aplica 15% apenas sobre o ganho de preço (valorização).
-      </div>
     </div>
 
-    <!-- GRÁFICO -->
-    <div class="ac-chart-area">
-      <div class="section-label">Evolução Patrimonial · <span id="ac-anos-label">20</span> anos</div>
-      <div class="ac-chart-wrap"><canvas id="acChart"></canvas></div>
-      <div class="legend-grid" id="ac-legend"></div>
+    <!-- IR note — full width below cards -->
+    <div style="font-size:9px;color:var(--muted);line-height:1.7;padding:10px 20px;border-top:1px solid var(--border);background:var(--panel);">
+      <strong style="color:var(--text);">IR sobre ações:</strong>
+      Dividendos são isentos de IR. Ganho de capital na venda: 15% para operações comuns (até R$20k/mês isentos),
+      20% para day-trade. O cálculo aqui aplica 15% apenas sobre o ganho de preço (valorização).
     </div>
   </div>
 
