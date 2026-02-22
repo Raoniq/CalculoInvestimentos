@@ -168,7 +168,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
   margin-bottom:18px;display:flex;align-items:center;gap:12px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-.chart-wrap{position:relative;height:360px;width:100%;overflow:hidden;}
+.chart-wrap{position:relative;height:240px;width:100%;overflow:hidden;}
 .chart-wrap canvas{max-width:100%;}
 .chart-note{font-size:9px;color:var(--muted);margin-top:8px;font-style:italic;}
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .ac-main{display:grid;grid-template-columns:360px 1fr;min-height:520px;border-bottom:1px solid var(--border);}
 .ac-scenarios{padding:28px 24px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:12px;}
 .ac-chart-area{padding:28px 40px;}
-.ac-chart-wrap{position:relative;height:380px;width:100%;overflow:hidden;}
+.ac-chart-wrap{position:relative;height:240px;width:100%;overflow:hidden;}
 .ac-chart-wrap canvas{max-width:100%;}
 
 .ac-scenario-card{background:var(--card);border:1px solid var(--border);padding:14px 16px;transition:border-color .2s;}
@@ -444,7 +444,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .fi-ctrl-note{font-size:9px;color:var(--muted);}
 .fi-crossing-badges{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;min-height:22px;}
 .fi-crossing-badge{font-family:'DM Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid;}
-.fi-main-chart-wrap{position:relative;height:420px;width:100%;overflow:hidden;}
+.fi-main-chart-wrap{position:relative;height:260px;width:100%;overflow:hidden;}
 .fi-main-chart-wrap canvas{max-width:100%;}
 
 /* Evolution table */
@@ -1561,15 +1561,16 @@ const INVESTMENTS = [
 // ═══════════════════════════════════════════
 function getParams() {
   const selic   = parseFloat(document.getElementById('selic').value)       || 15.0;
+  const cdi     = Math.max(selic - 0.10, 0); // CDI ≈ Selic - 0,10% (spread histórico interbancário)
   const tesReal = parseFloat(document.getElementById('tesouRoReal').value) || 7.21;
   const lciRaw  = parseFloat(document.getElementById('lciRate').value)     || 14.0;
   const cdbRaw  = parseFloat(document.getElementById('cdbRate').value)     || 13.5;
-  const lciGross = lciMode === 'pos' ? (lciRaw / 100) * selic : lciRaw;
-  const cdbGross = cdbMode === 'pos' ? (cdbRaw / 100) * selic : cdbRaw;
+  const lciGross = lciMode === 'pos' ? (lciRaw / 100) * cdi : lciRaw;
+  const cdbGross = cdbMode === 'pos' ? (cdbRaw / 100) * cdi : cdbRaw;
   return {
     inicial: parseFloat(document.getElementById('inicial').value) || 10000,
     aporte:  parseFloat(document.getElementById('aporte').value)  || 1000,
-    selic, tesReal,
+    selic, cdi, tesReal,
     ipca:    parseFloat(document.getElementById('ipca').value)    || 4.0,
     dy:      parseFloat(document.getElementById('dy').value)      || 6.0,
     lciGross, lciIR: parseFloat(document.getElementById('lciIR').value) || 0,
@@ -1673,6 +1674,7 @@ function fmtFV(v) {
 // ═══════════════════════════════════════════
 function updateRateHints() {
   const selic   = parseFloat(document.getElementById('selic').value)   || 15.0;
+  const cdi     = Math.max(selic - 0.10, 0);
   const tesReal = parseFloat(document.getElementById('tesouRoReal').value) || 7.21;
   const lciRaw  = parseFloat(document.getElementById('lciRate').value)  || 14.0;
   const cdbRaw  = parseFloat(document.getElementById('cdbRate').value)  || 13.5;
@@ -1683,14 +1685,14 @@ function updateRateHints() {
   if (lciMode === 'pos') {
     lciNote.textContent = '% do CDI';
     lciRes.style.display = 'block';
-    lciRes.textContent = `= ${((lciRaw/100)*selic).toFixed(2)}% bruto a.a. (Selic ${selic}%)`;
+    lciRes.textContent = `= ${((lciRaw/100)*cdi).toFixed(2)}% bruto a.a. (CDI ${cdi.toFixed(2)}% · Selic ${selic}% - 0,10%)`;
   } else { lciNote.textContent = 'bruto prefixado a.a.'; lciRes.style.display = 'none'; }
   const cdbNote = document.getElementById('cdbRateNote');
   const cdbRes  = document.getElementById('cdbResult');
   if (cdbMode === 'pos') {
     cdbNote.textContent = '% do CDI';
     cdbRes.style.display = 'block';
-    cdbRes.textContent = `= ${((cdbRaw/100)*selic).toFixed(2)}% bruto a.a. (Selic ${selic}%)`;
+    cdbRes.textContent = `= ${((cdbRaw/100)*cdi).toFixed(2)}% bruto a.a. (CDI ${cdi.toFixed(2)}% · Selic ${selic}% - 0,10%)`;
   } else { cdbNote.textContent = 'bruto prefixado a.a.'; cdbRes.style.display = 'none'; }
 }
 
