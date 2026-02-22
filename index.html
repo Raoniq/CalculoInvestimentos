@@ -648,6 +648,23 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
   .pj-consenso-block{flex:1;min-width:130px;}
   .meta-result-card{border-right:none;border-bottom:1px solid var(--border);}
 }
+/* ═══════════════════════════════════════════
+   BRAPI AUTOCOMPLETE
+═══════════════════════════════════════════ */
+.pj-autocomplete{position:absolute;top:100%;left:0;right:0;z-index:999;background:var(--card);border:1px solid var(--border2);border-top:none;max-height:240px;overflow-y:auto;display:none;}
+.pj-autocomplete.open{display:block;}
+.pj-ac-item{padding:8px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border);transition:background .15s;}
+.pj-ac-item:last-child{border-bottom:none;}
+.pj-ac-item:hover,.pj-ac-item.active{background:var(--panel);}
+.pj-ac-ticker{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--text);}
+.pj-ac-price{font-family:'Fraunces',serif;font-size:10px;color:var(--green);margin-left:auto;flex-shrink:0;}
+.pj-ac-name{font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.pj-ac-loading{padding:10px 12px;font-size:10px;color:var(--muted);text-align:center;}
+.pj-ac-empty{padding:10px 12px;font-size:10px;color:var(--muted);text-align:center;}
+.pj-api-badge{font-size:8px;letter-spacing:.5px;background:var(--green-faint);color:var(--green);border:1px solid var(--green);padding:1px 5px;border-radius:6px;vertical-align:middle;margin-left:4px;}
+.pj-fetch-status{font-size:9px;margin-top:3px;}
+.pj-fetch-status.ok{color:var(--green);}
+.pj-fetch-status.err{color:var(--orange);}
 </style>
 </head>
 <body>
@@ -1659,15 +1676,19 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 
   <div class="inputs-section-label">Dados da Empresa</div>
   <div class="inputs-bar">
-    <div class="input-group">
+    <div class="input-group" style="position:relative;">
       <label>Ticker</label>
-      <input type="text" id="pj-ticker" value="ITUB4" maxlength="8" oninput="this.value=this.value.toUpperCase();calcPreco()">
-      <span class="input-note">código da ação (ex: PETR4)</span>
+      <input type="text" id="pj-ticker" value="" maxlength="8" autocomplete="off"
+        oninput="this.value=this.value.toUpperCase();onTickerInput(this.value)"
+        onkeydown="onTickerKeydown(event)"
+        placeholder="Ex: ITUB4, PETR4...">
+      <span class="input-note" id="pj-ticker-note">digite o ticker para buscar automaticamente</span>
+      <div class="pj-autocomplete" id="pj-autocomplete"></div>
     </div>
     <div class="input-group">
-      <label>Preço Atual (R$)</label>
+      <label>Preço Atual (R$) <span id="pj-preco-badge" class="pj-api-badge" style="display:none;">via Brapi</span></label>
       <input type="number" id="pj-preco" value="26.93" min="0.01" step="0.01" oninput="calcPreco()">
-      <span class="input-note">cotação atual</span>
+      <span class="input-note" id="pj-preco-note">cotação atual</span>
     </div>
     <div class="input-group">
       <label>LPA (R$)</label>
@@ -3564,6 +3585,198 @@ function printPreco() {
   showTab('preco');
   setTimeout(() => window.print(), 150);
 }
+
+// ═══════════════════════════════════════════
+// BRAPI — AUTOCOMPLETE + QUOTE FETCH
+// ═══════════════════════════════════════════
+const BRAPI_TOKEN = 'kSsTDFRo9nP5Uiez2nT7yk';
+const BRAPI_BASE  = 'https://brapi.dev/api';
+let acDebounce    = null;
+let acIndex       = -1;
+let acResults     = [];
+
+// Lista local de tickers populares para o autocomplete inicial
+// (evita dependência do endpoint /v2/stocks que tem CORS restrito)
+const TICKERS_BR = [
+  // Ibovespa e principais ações
+  'ABCB3','ABCB4','ABEV3','AERI3','AGRO3','ALPA4','ALUP11','AMBP3','ANIM3',
+  'ARML3','ARZZ3','ASAI3','AURE3','AZUL4','B3SA3','BBAS3','BBDC3','BBDC4',
+  'BBSE3','BPAC11','BPAN4','BRAP4','BRFS3','BRKM5','BRSR6','CAJU3','CAML3',
+  'CASH3','CBAV3','CCRO3','CEAB3','CIEL3','CLSA3','CMIG3','CMIG4','COGN3',
+  'CPFE3','CPLE3','CPLE6','CRFB3','CSAN3','CSMG3','CSNA3','CURY3','CVCB3',
+  'CXSE3','CYRE3','DIRR3','DXCO3','ECOR3','EGIE3','ELET3','ELET6','EMBR3',
+  'ENBR3','ENEV3','ENGI11','EQTL3','ESPA3','EVEN3','EZTC3','FESA4','FLRY3',
+  'FRAS3','GFSA3','GGBR3','GGBR4','GMAT3','GOAU3','GOAU4','GOLL4','GRND3',
+  'GUAR3','HAPV3','HBOR3','HBSA3','HJBR3','HYPE3','IGTI11','INTB3','IRBR3',
+  'ISAE3','ISAE4','ITSA3','ITSA4','ITUB3','ITUB4','JBSS3','JHSF3','JSLG3',
+  'KEPL3','KLBN11','KLBN3','KLBN4','LAVV3','LEVE3','LIGT3','LJQQ3','LREN3',
+  'LUPA3','LWSA3','MATD3','MBLY3','MDIA3','MELK3','MGLU3','MILS3','MOVI3',
+  'MRFG3','MRVE3','MULT3','MYPK3','NATU3','NTCO3','NUBANK','ODPV3','ONCO3',
+  'ORVR3','PCAR3','PDTC3','PETR3','PETR4','PETZ3','PLPL3','PNVL3','POMO3',
+  'POMO4','PORT3','PRIO3','PTBL3','PTBR3','QUAL3','RAIZ4','RADL3','RAIL3',
+  'RAPT3','RAPT4','RDOR3','RECV3','RENT3','ROMI3','RRRP3','RSID3','SANB11',
+  'SANB3','SANB4','SAPR11','SAPR3','SAPR4','SBFG3','SBSP3','SEER3','SEQL3',
+  'SIMH3','SLCE3','SMFT3','SMTO3','SOMA3','SQIA3','SRNA3','STBP3','STTE3',
+  'SULA11','SULA3','SUZB3','TAEE11','TAEE3','TAEE4','TASA3','TASA4','TEND3',
+  'TGMA3','TIMS3','TOTS3','TRAD3','TRIS3','TRPL3','TRPL4','TTEN3','UGPA3',
+  'UNIP3','UNIP6','USIM3','USIM5','VALE3','VAMO3','VBBR3','VITT3','VIVT3',
+  'VLID3','VULC3','WEGE3','WEST3','WIZC3','YDUQ3','ZAMP3',
+  // FIIs
+  'AFHI11','AIEC11','ALZR11','ARCT11','ARRI11','ATSA11','BCIA11','BCFF11',
+  'BCRI11','BLMG11','BNFS11','BPFF11','BRCO11','BRCR11','BRIP11','BTRA11',
+  'BTCI11','BTLG11','CARE11','CPTS11','CPTI11','CRFF11','CVBI11','CXAG11',
+  'CXCE11','DEVA11','DEVO11','DONE11','EDGA11','ELDO11','FAMB11B','FCFL11',
+  'FEXC11','FIIB11','FIIP11B','FINF11','FISC11','FIVN11','FLMA11','FMOF11',
+  'FOFT11','FONE11','FORT11','FVPQ11','GALG11','GARE11','GCRI11','GLOG11',
+  'GTWR11','HABT11','HCTR11','HFOF11','HGBS11','HGCR11','HGLG11','HGPO11',
+  'HGRE11','HGRU11','HOSI11','HPDP11','HRDF11','HSAF11','HSML11','HUSC11',
+  'IRDM11','ITIP11','JFLL11','JPPA11','JREC11','JSAF11','JSRE11','KFOF11',
+  'KINP11','KNHF11','KNIP11','KNRE11','KORE11','LGCP11','LPLP11','LVBI11',
+  'MALL11','MAPT11','MCCI11','MCHF11','MFAI11','MFII11','MGFF11','MORC11',
+  'MORE11','MXRF11','NBII11','NEWL11','NSLU11','NTNS11','NUSC11','NVHO11',
+  'OUJP11','OVVI11','PATC11','PATL11','PEBB11','PLRI11','PMIS11','PORD11',
+  'PVBI11','RBCO11','RBED11','RBFF11','RBHG11','RBLG11','RBRD11','RBRP11',
+  'RBRY11','RBVA11','RCFA11','RCRI11','RECR11','REIT11','RELG11','RNDP11',
+  'RNGO11','ROOF11','RPRI11','RSPD11','RZAK11','RZTR11','SARE11','SADI11',
+  'SDIL11','SEQR11','SIOS11','SNCI11','SNFF11','SPTW11','STRX11','SVYS11',
+  'TGAR11','THRA11','TICO11','TRBL11','TRXF11','TVRI11','URPR11','VCRR11',
+  'VGIP11','VGIR11','VGHF11','VIDR11','VILG11','VISC11','VINO11','VOTS11',
+  'VRTA11','VSLH11','VTLT11','VUFI11','WPLZ11','XPCA11','XPCI11','XPML11',
+  'XPLG11','XPPR11','XPSF11','YCHY11'
+];
+
+function onTickerInput(val) {
+  calcPreco();
+  clearTimeout(acDebounce);
+  const drop = document.getElementById('pj-autocomplete');
+  if (val.length < 2) { closeDrop(); return; }
+
+  // Filtra lista local imediatamente (sem chamada de rede)
+  const matches = TICKERS_BR.filter(t => t.startsWith(val)).slice(0, 8);
+  acResults = matches.map(t => ({ stock: t }));
+  acIndex   = -1;
+
+  if (!matches.length) { closeDrop(); return; }
+
+  drop.innerHTML = matches.map((t, i) => `
+    <div class="pj-ac-item" data-i="${i}" onmousedown="selectTicker(${i})">
+      <span class="pj-ac-ticker">${t}</span>
+    </div>`).join('');
+  drop.classList.add('open');
+
+  // Depois do debounce, busca cotação em tempo real para enriquecer a lista
+  acDebounce = setTimeout(() => enrichWithQuotes(matches, val), 600);
+}
+
+async function enrichWithQuotes(tickers, query) {
+  if (window.location.protocol === 'file:') return; // sem fetch em file://
+  // Busca até 5 tickers em lote para pegar nomes e preços
+  const sample = tickers.slice(0, 5).join(',');
+  try {
+    const res  = await fetch(`${BRAPI_BASE}/quote/${encodeURIComponent(sample)}?token=${BRAPI_TOKEN}`);
+    const data = await res.json();
+    const map  = {};
+    (data.results || []).forEach(r => { map[r.symbol] = r; });
+
+    const drop = document.getElementById('pj-autocomplete');
+    if (!drop.classList.contains('open')) return;
+
+    drop.innerHTML = tickers.map((t, i) => {
+      const info  = map[t];
+      const name  = info?.shortName || info?.longName || '';
+      const price = info?.regularMarketPrice ? `R$ ${info.regularMarketPrice.toFixed(2)}` : '';
+      return `<div class="pj-ac-item" data-i="${i}" onmousedown="selectTicker(${i})">
+        <span class="pj-ac-ticker">${t}</span>
+        <span class="pj-ac-name">${name}</span>
+        <span class="pj-ac-price">${price}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    // silently keep the basic list already shown
+  }
+}
+
+function onTickerKeydown(e) {
+  const drop  = document.getElementById('pj-autocomplete');
+  const items = drop.querySelectorAll('.pj-ac-item');
+  if (!drop.classList.contains('open') || !items.length) return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    acIndex = Math.min(acIndex + 1, items.length - 1);
+    items.forEach((el, i) => el.classList.toggle('active', i === acIndex));
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    acIndex = Math.max(acIndex - 1, 0);
+    items.forEach((el, i) => el.classList.toggle('active', i === acIndex));
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (acIndex >= 0) selectTicker(acIndex);
+    else fetchQuoteForTicker(document.getElementById('pj-ticker').value);
+  } else if (e.key === 'Escape') {
+    closeDrop();
+  }
+}
+
+function closeDrop() {
+  const drop = document.getElementById('pj-autocomplete');
+  drop.classList.remove('open');
+  drop.innerHTML = '';
+  acResults = [];
+  acIndex   = -1;
+}
+
+async function selectTicker(i) {
+  const stock = acResults[i];
+  if (!stock) return;
+  document.getElementById('pj-ticker').value = stock.stock;
+  closeDrop();
+  await fetchQuoteForTicker(stock.stock);
+}
+
+async function fetchQuoteForTicker(ticker) {
+  if (!ticker || ticker.length < 3) return;
+  const note  = document.getElementById('pj-ticker-note');
+  const pNote = document.getElementById('pj-preco-note');
+  const badge = document.getElementById('pj-preco-badge');
+
+  // fetch só funciona em HTTP/HTTPS, não em file://
+  if (window.location.protocol === 'file:') {
+    note.textContent = '⚠ Cotação automática não funciona ao abrir o arquivo diretamente. Use GitHub Pages, Live Server ou python3 -m http.server.';
+    note.className   = 'input-note pj-fetch-status err';
+    return;
+  }
+
+  note.textContent = 'Buscando cotação...';
+  note.className   = 'input-note pj-fetch-status';
+  badge.style.display = 'none';
+
+  try {
+    const url = `${BRAPI_BASE}/quote/${encodeURIComponent(ticker.toUpperCase())}?token=${BRAPI_TOKEN}`;
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const r    = data?.results?.[0];
+    if (!r?.regularMarketPrice) throw new Error('sem preço');
+
+    document.getElementById('pj-preco').value = r.regularMarketPrice.toFixed(2);
+    badge.style.display = '';
+    note.textContent = `${r.symbol} · ${r.shortName || r.longName || ''}`;
+    note.className   = 'input-note pj-fetch-status ok';
+    pNote.textContent = `Cotação automática · ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+    calcPreco();
+  } catch(e) {
+    note.textContent = `Ticker não encontrado ou erro na busca (${e.message}). Insira o preço manualmente.`;
+    note.className   = 'input-note pj-fetch-status err';
+    calcPreco();
+  }
+}
+
+// Close autocomplete clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('#pj-ticker') && !e.target.closest('#pj-autocomplete')) {
+    closeDrop();
+  }
+});
 
 // ═══════════════════════════════════════════
 // EVENT LISTENERS
