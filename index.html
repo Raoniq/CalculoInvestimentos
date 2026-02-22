@@ -842,7 +842,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     <div class="chart-area">
       <div class="section-label">Crescimento do Patrimônio · valor bruto acumulado</div>
       <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
-      <p class="chart-note">* Renda fixa: curvas mostram o valor bruto que rende juros compostos. IR incide apenas no resgate (não há come-cotas). "No bolso" no ranking desconta o IR. Ações: gráfico em valor total; IR sobre ganho de capital calculado no ranking.</p>
+      <p class="chart-note">* Renda fixa: curvas mostram o valor bruto que rende juros compostos. IR incide apenas no resgate (sem come-cotas). "No bolso" no ranking desconta o IR automaticamente pelo prazo. Ações: gráfico em valor total (bruto); o IR no ranking é uma estimativa simplificada — alíquota fixa de 15% sobre o ganho de preço, sem considerar isenção de R$20k/mês nem compensação de perdas. Dividendos tratados como isentos (Lei 9.249/95). Retornos em termos nominais, sem ajuste pela inflação.</p>
       <div class="legend-grid" id="legendGrid"></div>
     </div>
     <div class="sidebar">
@@ -2179,7 +2179,7 @@ function buildRanking() {
         const stockFinal = stockOnlyData[stockOnlyData.length - 1];
         const priceGain  = Math.max(stockFinal - totalInvested, 0);
         netPocket = fvGross - ir * priceGain;
-        irLabel = `IR 15% s/ ganho de preço (${fmtBRL(priceGain)}) · dividendos (caixa) isentos`;
+        irLabel = `IR 15% s/ ganho de preço (${fmtBRL(priceGain)}) · dividendos (caixa) isentos · estimativa simplificada`;
       } else {
         // Reinvesting: compute price-only portfolio explicitly (same as no-reinvest path)
         // to isolate the taxable gain from price appreciation vs exempt dividend income
@@ -2187,7 +2187,7 @@ function buildRanking() {
         const stockFinal    = priceOnlyData[priceOnlyData.length - 1];
         const priceGain     = Math.max(stockFinal - totalInvested, 0);
         netPocket = fvGross - ir * priceGain;
-        irLabel = `IR 15% s/ ganho de preço (${fmtBRL(priceGain)}) · DY reinvestido isento`;
+        irLabel = `IR 15% s/ ganho de preço (${fmtBRL(priceGain)}) · DY reinvestido isento · estimativa simplificada`;
       }
     } else {
       const taxableGain = Math.max(grossGain, 0);
@@ -3604,12 +3604,12 @@ toggleInput.addEventListener('change',()=>{
   if (reinvestDivs) {
     toggleText.textContent = 'Reinvestindo dividendos';
     toggleText.classList.add('on');
-    divDesc.innerHTML = '<span class="tag-on">✦ Ativado:</span> dividendos compram mais ações → portfólio cresce pelo total return (preço + DY).';
+    divDesc.innerHTML = '<span class="tag-on">✦ Ativado:</span> dividendos compram mais ações → portfólio cresce pelo total return (preço + DY). DY distribuído de forma linear mensal (aproximação padrão de simuladores de longo prazo).';
     aporteNote.textContent = '100% reinvestido';
   } else {
     toggleText.textContent = 'Sacando dividendos';
     toggleText.classList.remove('on');
-    divDesc.innerHTML = '<span class="tag-off">✦ Desativado:</span> portfólio cresce apenas pela valorização do preço. Dividendos acumulam como caixa separado.';
+    divDesc.innerHTML = '<span class="tag-off">✦ Desativado:</span> portfólio cresce pela valorização do preço. Dividendos acumulam como caixa separado. <em>Estimativa simplificada:</em> IR de 15% só sobre ganho de preço na venda, sem isenção de R$20k/mês nem compensação de perdas. Dividendos tratados como isentos.';
     aporteNote.textContent = 'dividendos não reinvestidos';
   }
   buildAll();
