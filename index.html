@@ -651,7 +651,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 /* ═══════════════════════════════════════════
    BRAPI AUTOCOMPLETE
 ═══════════════════════════════════════════ */
-.pj-autocomplete{position:absolute;top:100%;left:0;right:0;z-index:999;background:var(--card);border:1px solid var(--border2);border-top:none;max-height:240px;overflow-y:auto;display:none;}
+.pj-autocomplete{position:fixed;z-index:9999;background:var(--card);border:1px solid var(--border2);max-height:240px;overflow-y:auto;display:none;box-shadow:0 8px 24px rgba(0,0,0,.3);}
 .pj-autocomplete.open{display:block;}
 .pj-ac-item{padding:8px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border);transition:background .15s;}
 .pj-ac-item:last-child{border-bottom:none;}
@@ -1676,14 +1676,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 
   <div class="inputs-section-label">Dados da Empresa</div>
   <div class="inputs-bar">
-    <div class="input-group" style="position:relative;">
+    <div class="input-group" id="pj-ticker-group">
       <label>Ticker</label>
       <input type="text" id="pj-ticker" value="" maxlength="8" autocomplete="off"
         oninput="this.value=this.value.toUpperCase();onTickerInput(this.value)"
         onkeydown="onTickerKeydown(event)"
         placeholder="Ex: ITUB4, PETR4...">
       <span class="input-note" id="pj-ticker-note">digite o ticker para buscar automaticamente</span>
-      <div class="pj-autocomplete" id="pj-autocomplete"></div>
     </div>
     <div class="input-group">
       <label>Preço Atual (R$) <span id="pj-preco-badge" class="pj-api-badge" style="display:none;">via Brapi</span></label>
@@ -3662,6 +3661,7 @@ function onTickerInput(val) {
     <div class="pj-ac-item" data-i="${i}" onmousedown="selectTicker(${i})">
       <span class="pj-ac-ticker">${t}</span>
     </div>`).join('');
+  positionDrop();
   drop.classList.add('open');
 
   // Depois do debounce, busca cotação em tempo real para enriquecer a lista
@@ -3717,6 +3717,15 @@ function onTickerKeydown(e) {
   }
 }
 
+function positionDrop() {
+  const input = document.getElementById('pj-ticker');
+  const rect  = input.getBoundingClientRect();
+  const drop  = document.getElementById('pj-autocomplete');
+  drop.style.top   = (rect.bottom + 2) + 'px';
+  drop.style.left  = rect.left + 'px';
+  drop.style.width = rect.width + 'px';
+}
+
 function closeDrop() {
   const drop = document.getElementById('pj-autocomplete');
   drop.classList.remove('open');
@@ -3770,6 +3779,10 @@ async function fetchQuoteForTicker(ticker) {
     calcPreco();
   }
 }
+
+// Reposition dropdown on scroll or resize
+window.addEventListener('scroll', () => { if(document.getElementById('pj-autocomplete').classList.contains('open')) positionDrop(); }, true);
+window.addEventListener('resize', () => { if(document.getElementById('pj-autocomplete').classList.contains('open')) positionDrop(); });
 
 // Close autocomplete clicking outside
 document.addEventListener('click', e => {
@@ -3911,5 +3924,6 @@ if (window.ResizeObserver) {
 }
 window.addEventListener('resize', onResize);
 </script>
+<div class="pj-autocomplete" id="pj-autocomplete"></div>
 </body>
 </html>
