@@ -163,8 +163,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 /* ═══════════════════════════════════════════
    MAIN GRID (chart + sidebar)
 ═══════════════════════════════════════════ */
-.main{display:grid;grid-template-columns:1fr 320px;min-height:500px;}
-.chart-area{padding:28px 40px;border-right:1px solid var(--border);}
+.main{display:flex;flex-direction:column;}
+.chart-area{padding:28px 40px 16px;}
 .section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
   margin-bottom:18px;display:flex;align-items:center;gap:12px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
@@ -180,13 +180,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .legend-line{width:20px;height:2px;border-radius:1px;flex-shrink:0;}
 
 /* SIDEBAR */
-.sidebar{padding:28px 20px;}
+.sidebar{padding:0 40px 28px;}
 .milestone-tabs{display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap;}
 .tab-btn{flex:1;min-width:36px;background:var(--card);border:1px solid var(--border);color:var(--muted);
   font-family:'DM Mono',monospace;font-size:11px;padding:7px 4px;cursor:pointer;transition:all .2s;text-align:center;}
 .tab-btn.active{background:var(--green-faint);border-color:var(--green);color:var(--green);}
 .tab-btn:hover:not(.active){border-color:var(--border2);color:var(--text);}
-.ranking{display:flex;flex-direction:column;gap:7px;}
+.ranking{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+.ranking-header{display:flex;align-items:baseline;gap:16px;margin-bottom:14px;border-top:1px solid var(--border);padding-top:20px;}
+.ranking-header .section-label{margin-bottom:0;flex-shrink:0;}
 
 /* RANK CARDS */
 .rank-card{background:var(--card);border:1px solid var(--border);padding:12px 14px;position:relative;transition:border-color .2s;}
@@ -455,7 +457,19 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .fi-evo-monthly{font-size:9px;color:var(--muted);margin-top:1px;}
 .fi-evo-mark{font-size:8px;font-weight:700;letter-spacing:1px;color:var(--green);margin-top:4px;}
 
-/* Armadilha da Inflação */
+/* FIRE IR banner */
+.fi-ir-banner{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);}
+.fi-ir-item{display:flex;gap:14px;padding:16px 40px;align-items:flex-start;}
+.fi-ir-item:first-child{border-right:1px solid var(--border);}
+.fi-ir-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.fi-ir-title{font-size:10px;color:var(--text);margin-bottom:5px;letter-spacing:.2px;}
+.fi-ir-title strong{font-weight:700;}
+.fi-ir-desc{font-size:9px;color:var(--muted);line-height:1.7;}
+.fi-ir-green{background:rgba(61,214,140,.04);}
+.fi-ir-orange{background:rgba(251,146,60,.04);}
+.fi-ir-green .fi-ir-title strong{color:var(--green);}
+.fi-ir-orange .fi-ir-title strong{color:var(--orange);}
+@media(max-width:700px){.fi-ir-banner{grid-template-columns:1fr;}.fi-ir-item:first-child{border-right:none;border-bottom:1px solid var(--border);}}
 .fi-trap-intro{padding:14px 40px 16px;font-size:11px;color:var(--muted);line-height:1.8;
   border-bottom:1px solid var(--border);background:var(--panel);}
 .fi-trap-intro strong{color:var(--text);}
@@ -520,8 +534,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
    RESPONSIVE
 ═══════════════════════════════════════════ */
 @media(max-width:900px){
-  .main{grid-template-columns:1fr;}
-  .chart-area{border-right:none;border-bottom:1px solid var(--border);}
+  .chart-area{border-right:none;}
+  .ranking{grid-template-columns:1fr 1fr;}
   .res-grid{grid-template-columns:1fr;}
   .res-inputs{border-right:none;border-bottom:1px solid var(--border);}
   .footer-legal-main{grid-template-columns:1fr;}
@@ -721,15 +735,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
       <div class="legend-grid" id="legendGrid"></div>
     </div>
     <div class="sidebar">
-      <div class="section-label" style="margin-bottom:14px;">Ranking no horizonte</div>
-      <div class="milestone-tabs">
-        <button class="tab-btn" data-months="6">6m</button>
-        <button class="tab-btn" data-months="12">1a</button>
-        <button class="tab-btn" data-months="24">2a</button>
-        <button class="tab-btn" data-months="60">5a</button>
-        <button class="tab-btn active" data-months="120">10a</button>
-        <button class="tab-btn" data-months="180">15a</button>
-        <button class="tab-btn" data-months="240">20a</button>
+      <div class="ranking-header">
+        <div class="section-label" style="margin-bottom:0;">Ranking no horizonte</div>
+        <div class="milestone-tabs">
+          <button class="tab-btn" data-months="6">6m</button>
+          <button class="tab-btn" data-months="12">1a</button>
+          <button class="tab-btn" data-months="24">2a</button>
+          <button class="tab-btn" data-months="60">5a</button>
+          <button class="tab-btn active" data-months="120">10a</button>
+          <button class="tab-btn" data-months="180">15a</button>
+          <button class="tab-btn" data-months="240">20a</button>
+        </div>
       </div>
       <div class="ranking" id="rankingList"></div>
     </div>
@@ -1279,6 +1295,24 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     </div>
   </div>
 
+  <!-- IR BANNER -->
+  <div class="fi-ir-banner">
+    <div class="fi-ir-item fi-ir-green">
+      <span class="fi-ir-icon">📈</span>
+      <div>
+        <div class="fi-ir-title">Dividendos de Ações e FIIs · <strong>Isentos de IR</strong></div>
+        <div class="fi-ir-desc">Pela Lei 9.249/95, dividendos distribuídos por empresas brasileiras não sofrem tributação, independentemente do valor. R$ 10 mil ou R$ 200 mil por mês: zero imposto. O campo "DY" já representa o valor líquido que entra na sua conta.</div>
+      </div>
+    </div>
+    <div class="fi-ir-item fi-ir-orange">
+      <span class="fi-ir-icon">🏦</span>
+      <div>
+        <div class="fi-ir-title">Juros de Renda Fixa · <strong>IR retido na fonte</strong></div>
+        <div class="fi-ir-desc">CDB, Tesouro Direto e similares têm IR regressivo: 22,5% (até 180 dias), 20% (até 360 dias), 17,5% (até 720 dias) e 15% (acima de 720 dias). A tabela comparativa usa a taxa que você informar como líquida — certifique-se de descontar o IR antes de digitar. Ex: CDB a 13% bruto por mais de 2 anos ≈ 11% líquido.</div>
+      </div>
+    </div>
+  </div>
+
   <!-- ARMADILHA DA INFLAÇÃO — PRIMEIRO, PARA NÃO PASSAR DESPERCEBIDO -->
   <div class="inputs-section-label">A Armadilha da Inflação · Por que ações precisam de mais capital mas são melhores no longo prazo</div>
 
@@ -1378,6 +1412,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     Na aposentadoria pelo método do DY, você vive apenas dos dividendos sem vender ações, preservando o principal.
     Pelo método dos 4%, você retira 4% ao ano do patrimônio, o que inclui venda gradual de ativos.
     Os três cenários (conservador, moderado, otimista) refletem taxas de valorização de preço de +3%, +7% e +11% ao ano.
+    <strong>Sobre IR:</strong> dividendos de ações e FIIs são isentos de IR. O DY informado já é o valor líquido. Para a Renda Fixa comparativa, informe sempre a taxa já descontado o imposto.
   </div>
 
   <!-- SEÇÃO 2: CURVA DA LIBERDADE -->
