@@ -12,7 +12,7 @@
 ═══════════════════════════════════════════ */
 :root {
   --bg:#070809;--panel:#0d0f12;--card:#111418;--border:#1c2028;--border2:#252a33;
-  --text:#dde2ea;--muted:#556070;--footer-text:#252e3a;
+  --text:#dde2ea;--muted:#7a8b9e;--footer-text:#252e3a;
   --chart-grid:#0c1016;--chart-tick:#2a3545;--tooltip-bg:#111418;
   --green:#3dd68c;--green-faint:rgba(61,214,140,.08);
   --yellow:#f5c518;--yellow-faint:rgba(245,197,24,.08);
@@ -122,13 +122,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .inputs-bar{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--border);}
 .input-group{display:flex;flex-direction:column;gap:5px;padding:14px 22px;border-right:1px solid var(--border);flex:1;min-width:120px;}
 .input-group label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-.input-group input[type=number]{background:transparent;border:none;color:var(--text);
+.input-group input[type=number]{background:transparent;border:none;color:var(--text);padding:4px 0;
   font-family:'Fraunces',serif;font-size:20px;font-weight:600;width:100%;outline:none;cursor:pointer;
   -moz-appearance:textfield;}
 .input-group input[type=number]::-webkit-inner-spin-button,
 .input-group input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .input-group input[type=number]:focus{color:var(--green);}
-.input-note{font-size:9px;color:var(--muted);}
+.input-note{font-size:10px;color:var(--muted);line-height:1.4;}
 
 /* MODE PILLS */
 .mode-pill{font-size:8px;padding:2px 6px;border:1px solid var(--border);background:var(--card);
@@ -249,7 +249,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .res-input-group input[type=number]::-webkit-inner-spin-button,
 .res-input-group input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .res-input-group input[type=number]:focus{border-color:var(--blue);}
-.res-input-group .input-note{font-size:9px;color:var(--muted);}
+.res-input-group .input-note{font-size:10px;color:var(--muted);line-height:1.4;}
 
 /* Filhos toggle */
 .filhos-toggle-row{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:12px 16px;background:var(--card);border:1px solid var(--border);}
@@ -553,6 +553,22 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
   .res-result-grid{grid-template-columns:1fr;}
   .res-result-item{border-right:none;border-bottom:1px solid var(--border);}
 }
+.pj-print-bar{display:flex;align-items:center;gap:16px;padding:16px 28px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.pj-print-btn{background:var(--green-faint);color:var(--green);border:1px solid var(--green);padding:8px 18px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:background .2s;}
+.pj-print-btn:hover{background:var(--green);color:var(--bg);}
+.pj-print-hint{font-size:9px;color:var(--muted);}
+@media print{
+  .page-nav,.nav-right,.theme-btn,.pj-print-bar,.div-toggle-bar,.inputs-bar,.inputs-section-label,.fi-nota,#tab-simulador,#tab-reserva,#tab-acoes,#tab-rebalance,#tab-fire,#tab-meta,footer{display:none!important;}
+  #tab-preco{display:block!important;}
+  .pj-methods-grid,.pj-consenso-bar,.pj-indicators-grid{break-inside:avoid;}
+  body{background:#fff;color:#111;}
+  .pj-method-card,.pj-consenso-block,.pj-indicator{border-color:#ddd;}
+}
+.pj-sector-warning{padding:12px 28px;border-bottom:1px solid var(--border);background:var(--orange-faint);}
+.pj-sector-warning-inner{display:flex;align-items:flex-start;gap:10px;max-width:900px;}
+.pj-sector-warning-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.pj-sector-warning-text{font-size:10px;color:var(--text);line-height:1.7;}
+.pj-sector-warning-text strong{color:var(--orange);}
 .pj-dpa-tip{font-size:9px;color:var(--muted);line-height:1.7;margin-top:8px;padding:10px 12px;background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--yellow);}
 .pj-dpa-tip strong{color:var(--text);}
 
@@ -604,10 +620,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .pj-margem{font-family:'Fraunces',serif;font-size:18px;font-weight:600;}
 .pj-margem.positiva{color:var(--green);}
 .pj-margem.negativa{color:var(--orange);}
-.pj-veredicto{font-size:10px;font-weight:600;letter-spacing:.3px;padding-top:2px;}
-.pj-veredicto.compra{color:var(--green);}
-.pj-veredicto.cara{color:var(--orange);}
-.pj-veredicto.neutra{color:var(--yellow);}
+.pj-veredicto{font-size:10px;font-weight:700;letter-spacing:.4px;padding:3px 9px;border-radius:10px;display:inline-block;margin-top:3px;}
+.pj-veredicto.compra{background:var(--green-faint);color:var(--green);border:1px solid var(--green);}
+.pj-veredicto.cara{background:var(--orange-faint);color:var(--orange);border:1px solid var(--orange);}
+.pj-veredicto.neutra{background:var(--yellow-faint);color:var(--yellow);border:1px solid var(--yellow);}
 
 .pj-consenso-bar{background:var(--card);border-bottom:1px solid var(--border);}
 .pj-consenso-inner{display:flex;justify-content:center;}
@@ -1677,6 +1693,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     </div>
   </div>
 
+  <!-- AVISO SETORIAL -->
+  <div class="pj-sector-warning" id="pj-sector-warning" style="display:none;"></div>
+
   <!-- 3 MÉTODOS -->
   <div class="pj-methods-grid">
 
@@ -1758,6 +1777,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     Graham funciona melhor para empresas com lucros previsíveis e lucros positivos.
     Nenhum modelo substitui uma análise completa. Use como ponto de partida e não como decisão de investimento.
     <strong>Este conteúdo não é recomendação de compra ou venda de ativos.</strong>
+  </div>
+
+  <div class="pj-print-bar">
+    <button class="pj-print-btn" onclick="printPreco()">⬇ Salvar relatório como PDF</button>
+    <span class="pj-print-hint">Abre a janela de impressão do navegador. Escolha "Salvar como PDF" no destino.</span>
   </div>
 
 </div><!-- /tab-preco -->
@@ -3430,20 +3454,46 @@ function calcPreco() {
     return { txt: 'Muito cara', cls: 'cara' };
   }
 
-  function renderMethod(prefix, justo) {
-    document.getElementById(`pj-${prefix}-val`).textContent = justo > 0 ? `R$ ${justo.toFixed(2)}` : 'N/A';
+  function renderMethod(prefix, justo, naAplic) {
+    const valEl = document.getElementById(`pj-${prefix}-val`);
+    const mel   = document.getElementById(`pj-${prefix}-margem`);
+    const vel   = document.getElementById(`pj-${prefix}-veredicto`);
+    if (naAplic) {
+      valEl.textContent = 'Não aplicável'; valEl.style.color = 'var(--muted)';
+      mel.textContent = ''; mel.className = 'pj-margem';
+      vel.textContent = 'Sem dados'; vel.className = 'pj-veredicto';
+      return;
+    }
+    valEl.style.color = '';
+    valEl.textContent = justo > 0 ? `R$ ${justo.toFixed(2)}` : 'N/A';
     const m = margem(justo);
-    const mel = document.getElementById(`pj-${prefix}-margem`);
     mel.textContent = m.txt; mel.className = `pj-margem ${m.cls}`;
     const v = veredito(justo);
-    const vel = document.getElementById(`pj-${prefix}-veredicto`);
     vel.textContent = v.txt; vel.className = `pj-veredicto ${v.cls}`;
   }
 
-  renderMethod('bazin', bazin);
-  renderMethod('graham', graham);
+  renderMethod('bazin',  bazin,  dpa <= 0);
+  renderMethod('graham', graham, lpa <= 0 || vpa <= 0);
 
-  // Consenso (média dos válidos)
+  // Sector warnings
+  const warnings = [];
+  const pvpCalc = vpa > 0 ? preco / vpa : 0;
+  if (pvpCalc > 0 && pvpCalc < 0.7) warnings.push({ title: 'Possível banco ou financeira', msg: 'P/VP muito baixo (abaixo de 0,7) é comum em bancos e financeiras, onde a alavancagem distorce o patrimônio líquido. O modelo de Graham pode subestimar o valor real nesse setor.' });
+  if (dpa <= 0) warnings.push({ title: 'Empresa sem dividendos', msg: 'Bazin não se aplica a empresas que não distribuem proventos. Comum em techs, startups e empresas farmacêuticas em expansão que reinvestem todo o lucro. Considere usar P/L e crescimento de receita como guia.' });
+  const plCalc = lpa > 0 ? preco / lpa : 0;
+  if (lpa <= 0) warnings.push({ title: 'LPA negativo ou zero', msg: 'Empresa com prejuízo. Graham não se aplica. Verifique se é uma situação pontual (despesa não recorrente) ou tendência. Setores como energia renovável e farmacêutico em P&D costumam ter LPA negativo temporário.' });
+  if (plCalc > 0 && plCalc > 40) warnings.push({ title: 'P/L muito elevado', msg: 'P/L acima de 40 pode indicar empresa de crescimento (tech, farmácia) onde o mercado paga prêmio por expectativa futura. Bazin e Graham são modelos de valor e podem sinalizar "cara" mesmo que o crescimento justifique o preço.' });
+
+  const wb = document.getElementById('pj-sector-warning');
+  if (warnings.length > 0) {
+    wb.style.display = '';
+    wb.innerHTML = warnings.map(w => `<div class="pj-sector-warning-inner"><div class="pj-sector-warning-icon">⚠️</div><div class="pj-sector-warning-text"><strong>${w.title}:</strong> ${w.msg}</div></div>`).join('');
+  } else {
+    wb.style.display = 'none';
+    wb.innerHTML = '';
+  }
+
+  // Consenso — detecta divergência quando métodos apontam em direções opostas
   const validos = [bazin, graham].filter(v => v > 0);
   const media = validos.length > 0 ? validos.reduce((a, b) => a + b, 0) / validos.length : 0;
 
@@ -3457,9 +3507,32 @@ function calcPreco() {
     uEl.style.color = parseFloat(up) >= 0 ? 'var(--green)' : 'var(--orange)';
   } else { uEl.textContent = 'N/A'; uEl.style.color = ''; }
 
-  const cv = veredito(media);
   const cEl = document.getElementById('pj-consenso-geral');
-  cEl.textContent = cv.txt; cEl.className = `pj-consenso-val pj-veredicto ${cv.cls}`;
+  // Divergência: ambos válidos mas um acima e outro abaixo do preço atual,
+  // e a diferença entre eles é maior que 30% do preço
+  const ambosValidos = bazin > 0 && graham > 0;
+  const diverge = ambosValidos && Math.abs(bazin - graham) / preco > 0.3
+    && ((bazin > preco && graham < preco) || (bazin < preco && graham > preco));
+
+  if (diverge) {
+    cEl.textContent = 'Métodos divergem';
+    cEl.className = 'pj-consenso-val pj-veredicto neutra';
+    // add divergence to warnings banner
+    const divWarn = document.getElementById('pj-diverge-warn');
+    if (!divWarn) {
+      const dw = document.createElement('div');
+      dw.id = 'pj-diverge-warn';
+      dw.className = 'pj-sector-warning-inner';
+      dw.innerHTML = `<div class="pj-sector-warning-icon">🔀</div><div class="pj-sector-warning-text"><strong>Métodos divergem:</strong> Bazin e Graham chegaram a conclusões opostas sobre o preço atual. Isso costuma ocorrer quando a empresa tem perfil de crescimento (Graham valoriza ativos, Bazin valoriza dividendos). Não há consenso com os dados atuais. Analise cada método separadamente.</div>`;
+      wb.style.display = '';
+      wb.appendChild(dw);
+    }
+  } else {
+    document.getElementById('pj-diverge-warn')?.remove();
+    const cv = veredito(media);
+    cEl.textContent = cv.txt;
+    cEl.className = `pj-consenso-val pj-veredicto ${cv.cls}`;
+  }
 
   // Indicadores
   const pl  = lpa  > 0 ? preco / lpa  : 0;
@@ -3481,6 +3554,15 @@ function calcPreco() {
       <div class="pj-ind-ref">${ind.ref}</div>`;
     igrid.appendChild(d);
   });
+}
+
+// ═══════════════════════════════════════════
+// PRINT / PDF
+// ═══════════════════════════════════════════
+function printPreco() {
+  // Ensure the preco tab is visible then print
+  showTab('preco');
+  setTimeout(() => window.print(), 150);
 }
 
 // ═══════════════════════════════════════════
