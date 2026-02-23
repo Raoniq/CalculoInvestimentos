@@ -553,12 +553,60 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
   .res-result-grid{grid-template-columns:1fr;}
   .res-result-item{border-right:none;border-bottom:1px solid var(--border);}
 }
+/* ═══════════════════════════════════════════
+   APORTES SAZONAIS
+═══════════════════════════════════════════ */
+.sazonal-month{display:flex;flex-direction:column;gap:4px;}
+.sazonal-month label{font-size:8px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;}
+.sazonal-month input{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:14px;width:90px;padding:2px 0 4px;}
+.sazonal-month input:focus{outline:none;border-color:var(--green);color:var(--green);}
+.sazonal-month.destaque label{color:var(--yellow);}
+.sazonal-month.destaque input{border-color:var(--yellow);}
+
+/* ═══════════════════════════════════════════
+   RENDA DE DIVIDENDOS
+═══════════════════════════════════════════ */
+.dv-metas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));border-top:1px solid var(--border);border-left:1px solid var(--border);}
+.dv-meta-card{padding:16px 20px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
+.dv-meta-renda{font-size:10px;color:var(--muted);margin-bottom:4px;}
+.dv-meta-patrim{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--text);}
+.dv-meta-anos{font-size:9px;color:var(--green);margin-top:4px;}
+.dv-meta-anos.longe{color:var(--orange);}
+
+/* ═══════════════════════════════════════════
+   COMPARADOR RENDA FIXA
+═══════════════════════════════════════════ */
+.crf-options-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0;border-top:1px solid var(--border);border-left:1px solid var(--border);}
+.crf-option{padding:20px 24px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;}
+.crf-option-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.crf-option-color{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.crf-option-title{font-size:11px;font-weight:600;letter-spacing:.5px;flex:1;}
+.crf-remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 4px;line-height:1;}
+.crf-remove-btn:hover{color:var(--orange);}
+.crf-option select,.crf-option input[type=number]{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;width:100%;padding:3px 0 5px;margin-bottom:8px;}
+.crf-option select{cursor:pointer;}
+.crf-option select:focus,.crf-option input[type=number]:focus{outline:none;border-color:var(--green);color:var(--green);}
+.crf-option-label{font-size:9px;color:var(--muted);margin-bottom:2px;display:block;}
+.crf-table-wrap{overflow-x:auto;padding:0 40px 8px;}
+.crf-table{width:100%;border-collapse:collapse;font-size:10px;font-family:'DM Mono',monospace;}
+.crf-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--muted);letter-spacing:.5px;font-size:9px;white-space:nowrap;}
+.crf-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.crf-table tr:hover td{background:var(--panel);}
+.crf-table .crf-winner{background:var(--green-faint);}
+.crf-table .crf-winner td:first-child{border-left:3px solid var(--green);}
+.crf-val-pos{color:var(--green);font-weight:600;}
+.crf-val-neg{color:var(--orange);}
+.crf-badge{font-size:8px;padding:2px 7px;border-radius:8px;font-weight:700;letter-spacing:.3px;}
+.crf-badge.melhor{background:var(--green-faint);color:var(--green);border:1px solid var(--green);}
+.crf-badge.ok{background:var(--panel);color:var(--muted);border:1px solid var(--border);}
+@media(max-width:768px){.crf-table-wrap{padding:0 12px 8px;}.crf-options-grid{grid-template-columns:1fr;}}
+
 .pj-print-bar{display:flex;align-items:center;gap:16px;padding:16px 28px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
 .pj-print-btn{background:var(--green-faint);color:var(--green);border:1px solid var(--green);padding:8px 18px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:background .2s;}
 .pj-print-btn:hover{background:var(--green);color:var(--bg);}
 .pj-print-hint{font-size:9px;color:var(--muted);}
 @media print{
-  .page-nav,.nav-right,.theme-btn,.pj-print-bar,.div-toggle-bar,.inputs-bar,.inputs-section-label,.fi-nota,#tab-simulador,#tab-reserva,#tab-acoes,#tab-rebalance,#tab-fire,#tab-meta,footer{display:none!important;}
+  .page-nav,.nav-right,.theme-btn,.pj-print-bar,.div-toggle-bar,.inputs-bar,.inputs-section-label,.fi-nota,#tab-simulador,#tab-reserva,#tab-acoes,#tab-rebalance,#tab-fire,#tab-meta,#tab-divs,#tab-crf,footer{display:none!important;}
   #tab-preco{display:block!important;}
   .pj-methods-grid,.pj-consenso-bar,.pj-indicators-grid{break-inside:avoid;}
   body{background:#fff;color:#111;}
@@ -665,6 +713,51 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .pj-fetch-status{font-size:9px;margin-top:3px;}
 .pj-fetch-status.ok{color:var(--green);}
 .pj-fetch-status.err{color:var(--orange);}
+
+/* ═══════════════════════════════════════════
+   APORTES SAZONAIS
+═══════════════════════════════════════════ */
+.sazonal-summary{padding:6px 40px 10px;font-size:10px;color:var(--muted);display:flex;gap:24px;flex-wrap:wrap;}
+.sazonal-summary strong{color:var(--text);}
+
+/* ═══════════════════════════════════════════
+   RENDA DE DIVIDENDOS
+═══════════════════════════════════════════ */
+.dv-result-card{padding:20px 24px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
+.dv-result-card:last-child{border-right:none;}
+.dv-result-label{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.dv-result-val{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--text);line-height:1;}
+.dv-result-sub{font-size:9px;color:var(--muted);margin-top:4px;}
+.dv-meta-card{padding:16px 20px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;}
+.dv-meta-card:last-child{border-right:none;}
+.dv-meta-renda{font-size:10px;letter-spacing:.5px;color:var(--muted);}
+.dv-meta-patrimonio{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--green);}
+.dv-meta-anos{font-size:9px;color:var(--muted);}
+.dv-progress-wrap{padding:20px 40px 8px;}
+.dv-progress-bar-bg{height:6px;background:var(--border);border-radius:3px;overflow:hidden;max-width:820px;}
+.dv-progress-bar-fill{height:100%;background:var(--green);border-radius:3px;transition:width .5s;}
+
+/* ═══════════════════════════════════════════
+   COMPARADOR RENDA FIXA
+═══════════════════════════════════════════ */
+.crf-option-card{padding:20px 24px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
+.crf-opt-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.crf-opt-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.crf-opt-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 4px;line-height:1;}
+.crf-opt-remove:hover{color:var(--orange);}
+.crf-opt-row{display:flex;flex-direction:column;gap:3px;}
+.crf-opt-row label{font-size:8px;color:var(--muted);letter-spacing:.5px;}
+.crf-opt-row input[type=text],.crf-opt-row input[type=number]{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:15px;width:100%;padding:2px 0 4px;}
+.crf-opt-row input:focus{outline:none;border-color:var(--green);color:var(--green);}
+.crf-opt-row select{background:var(--panel);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:4px 8px;width:100%;}
+.crf-opt-pills{display:flex;gap:4px;margin-top:2px;}
+.crf-pill{font-size:9px;padding:2px 8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;border-radius:3px;}
+.crf-pill.active{background:var(--green-faint);color:var(--green);border-color:var(--green);}
+.crf-isento-badge{font-size:8px;padding:2px 6px;background:var(--green-faint);color:var(--green);border:1px solid var(--green);border-radius:4px;align-self:flex-start;}
+.crf-winner-badge{display:inline-block;background:var(--green-faint);color:var(--green);border:1px solid var(--green);font-size:9px;padding:2px 8px;border-radius:10px;}
+.crf-table .rank-1{color:var(--green);font-weight:700;}
+.crf-table .rank-2{color:var(--yellow);}
+.crf-table .rank-3{color:var(--muted);}
 </style>
 </head>
 <body>
@@ -722,6 +815,20 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
           <div class="nav-item-text">
             <span class="nav-item-label">Preço Justo</span>
             <span class="nav-item-desc">Bazin e Graham</span>
+          </div>
+        </button>
+        <button class="nav-dropdown-item" id="menu-divs" onclick="showTab('divs')">
+          <span class="nav-icon">🌿</span>
+          <div class="nav-item-text">
+            <span class="nav-item-label">Renda de Dividendos</span>
+            <span class="nav-item-desc">Quanto sua carteira paga por mês</span>
+          </div>
+        </button>
+        <button class="nav-dropdown-item" id="menu-crf" onclick="showTab('crf')">
+          <span class="nav-icon">📊</span>
+          <div class="nav-item-text">
+            <span class="nav-item-label">Comparador de Renda Fixa</span>
+            <span class="nav-item-desc">CDB · LCI/LCA · Tesouro lado a lado</span>
           </div>
         </button>
         <button class="nav-dropdown-item" id="menu-fire" onclick="showTab('fire')">
@@ -855,6 +962,28 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     </div>
   </div>
 
+
+  <div class="div-toggle-bar" style="background:var(--bg);border-top:1px solid var(--border);">
+    <span class="div-toggle-label">Aportes Sazonais</span>
+    <div class="toggle-wrap">
+      <label class="toggle-switch">
+        <input type="checkbox" id="sazonalToggle">
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+      <span class="toggle-label-text" id="sazonalText" style="color:var(--muted);">Desativado · aporte fixo todo mês</span>
+    </div>
+    <div class="div-description" id="sazonalDesc" style="color:var(--muted);font-size:9px;">
+      Ative para personalizar o aporte de cada mês — útil para 13º, bônus, férias ou meses com gastos extras.
+    </div>
+  </div>
+  <div id="sazonal-grid" style="display:none;">
+    <div class="inputs-section-label">Valor do aporte em cada mês do ano</div>
+    <div class="inputs-bar" id="sazonal-inputs-bar" style="flex-wrap:wrap;"></div>
+    <div style="padding:8px 40px 4px;font-size:9px;color:var(--muted);">
+      Média mensal: <strong id="sazonal-media">R$ 0</strong> · Total anual: <strong id="sazonal-total">R$ 0</strong>
+    </div>
+  </div>
   <div class="main">
     <div class="chart-area">
       <div class="section-label">Crescimento do Patrimônio · valor bruto acumulado</div>
@@ -1849,6 +1978,8 @@ const TABS = {
   acoes:      { label: 'Calculadora de Ações' },
   rebalance:  { label: 'Rebalanceamento de Carteira' },
   fire:       { label: 'Independência Financeira' },
+  divs:       { label: 'Renda de Dividendos' },
+  crf:        { label: 'Comparador de Renda Fixa' },
   meta:       { label: 'Meta Patrimonial' },
   preco:      { label: 'Preço Justo' }
 };
@@ -1878,6 +2009,8 @@ function showTab(tab) {
   document.getElementById('tab-acoes').style.display      = tab === 'acoes'      ? '' : 'none';
   document.getElementById('tab-rebalance').style.display  = tab === 'rebalance'  ? '' : 'none';
   document.getElementById('tab-fire').style.display       = tab === 'fire'       ? '' : 'none';
+  document.getElementById('tab-divs').style.display       = tab === 'divs'       ? '' : 'none';
+  document.getElementById('tab-crf').style.display        = tab === 'crf'        ? '' : 'none';
   document.getElementById('tab-meta').style.display       = tab === 'meta'       ? '' : 'none';
   document.getElementById('tab-preco').style.display      = tab === 'preco'      ? '' : 'none';
 
@@ -1896,6 +2029,8 @@ function showTab(tab) {
   if (tab === 'fire')      calcFire();
   if (tab === 'meta')      calcMeta();
   if (tab === 'preco')     calcPreco();
+  if (tab === 'divs')      calcDivs();
+  if (tab === 'crf')       { renderCRFOptions(); calcCRF(); }
 }
 
 // ═══════════════════════════════════════════
@@ -1992,28 +2127,31 @@ function displayRate(inv, p) {
 // Compound at GROSS rate (correct: IR only at redemption)
 // simFixed: keeps full float precision throughout; rounds only for display
 // Push at every complete year (m % 12 === 0), and also at months if not a year boundary
-function simFixed(annualRate, inicial, aporte, months) {
+function simFixed(annualRate, inicial, aporteParam, months) {
   const r = Math.pow(1 + annualRate, 1/12) - 1;
+  const isArr = Array.isArray(aporteParam);
   const out = [];
   let bal = inicial;
   for (let m = 1; m <= months; m++) {
-    bal = bal * (1 + r) + aporte;
+    const ap = isArr ? aporteParam[(m-1) % 12] : aporteParam;
+    bal = bal * (1 + r) + ap;
     if (m % 12 === 0) out.push(bal);
   }
-  // If months isn't a multiple of 12, push the partial-year value
   if (months % 12 !== 0) out.push(bal);
   return out;
 }
 
 // Stock WITHOUT reinvestment, float precision, round only at display
-function simStockNoReinvest(dyRate, priceGrowth, inicial, aporte, months) {
+function simStockNoReinvest(dyRate, priceGrowth, inicial, aporteParam, months) {
   const rPrice = Math.pow(1 + priceGrowth, 1/12) - 1;
   const rDY    = Math.pow(1 + dyRate, 1/12) - 1;
+  const isArr  = Array.isArray(aporteParam);
   const out = [];
   let stock = inicial, cashDivs = 0;
   for (let m = 1; m <= months; m++) {
+    const ap = isArr ? aporteParam[(m-1) % 12] : aporteParam;
     cashDivs += stock * rDY;
-    stock = stock * (1 + rPrice) + aporte;
+    stock = stock * (1 + rPrice) + ap;
     if (m % 12 === 0) out.push(stock + cashDivs);
   }
   if (months % 12 !== 0) out.push(stock + cashDivs);
@@ -2022,11 +2160,18 @@ function simStockNoReinvest(dyRate, priceGrowth, inicial, aporte, months) {
 
 // Get series: ALL fixed income uses grossRate now (IR at redemption, not every year)
 function getSeriesData(inv, p, months) {
+  const saz = getSazonalAportes();
+  if (saz) {
+    if (inv.type === 'stock') {
+      if (reinvestDivs) return simFixedSazonal((1+p.dy/100)*(1+inv.priceGrowth)-1, p.inicial, saz, months);
+      return simStockNoReinvestSazonal(p.dy/100, inv.priceGrowth, p.inicial, saz, months);
+    }
+    return simFixedSazonal(grossRate(inv, p), p.inicial, saz, months);
+  }
   if (inv.type === 'stock') {
     if (reinvestDivs) return simFixed((1+p.dy/100)*(1+inv.priceGrowth)-1, p.inicial, p.aporte, months);
     return simStockNoReinvest(p.dy/100, inv.priceGrowth, p.inicial, p.aporte, months);
   }
-  // Fixed income: always compound at gross rate, IR only at final redemption
   return simFixed(grossRate(inv, p), p.inicial, p.aporte, months);
 }
 
@@ -2078,7 +2223,13 @@ function updateHeader() {
     return 'R$ '+v.toFixed(0);
   };
   document.getElementById('h1Inicial').textContent = fmt(p.inicial);
-  document.getElementById('h1Aporte').textContent  = fmt(p.aporte);
+  if (sazonalAtivo) {
+    const saz = getSazonalAportes();
+    const media = saz ? saz.reduce((a,b)=>a+b,0)/12 : p.aporte;
+    document.getElementById('h1Aporte').textContent = fmt(media) + ' médio';
+  } else {
+    document.getElementById('h1Aporte').textContent = fmt(p.aporte);
+  }
 }
 
 function setMode(instrument, mode) {
@@ -2180,7 +2331,7 @@ function buildLegend() {
 function buildRanking() {
   const p = getParams();
   const months = activeMonths;
-  const totalInvested = p.inicial + p.aporte * months;
+  const totalInvested = getTotalInvested(p.inicial, months, getSazonalAportes());
 
   const results = INVESTMENTS.map(inv => {
     // All series use grossRate, IR only at redemption
@@ -2292,6 +2443,15 @@ function buildRanking() {
 function buildAll() {
   updateRateHints();
   updateHeader();
+  // Inject sazonal media into header display when active
+  if (sazonalAtivo) {
+    const saz = getSazonalAportes();
+    if (saz) {
+      const media = saz.reduce((a,b)=>a+b,0) / 12;
+      const fmt = v => v >= 1000 ? 'R$ '+(v/1000).toFixed(1).replace('.',',')+'k' : 'R$ '+v.toFixed(0);
+      document.getElementById('h1Aporte').textContent = fmt(media)+'/mês médio';
+    }
+  }
   buildChart();
   buildLegend();
   buildRanking();
@@ -3791,6 +3951,428 @@ document.addEventListener('click', e => {
   }
 });
 
+
+// ═══════════════════════════════════════════
+// APORTES SAZONAIS
+// ═══════════════════════════════════════════
+let sazonalAtivo = false;
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const MESES_DESTAQUE = [6, 11]; // Julho (férias) e Dezembro (13°) — índices 0-based
+
+function buildSazonalGrid() {
+  const bar = document.getElementById('sazonal-inputs-bar');
+  if (bar.children.length > 0) return; // já construído
+  const base = parseFloat(document.getElementById('aporte').value) || 1000;
+  bar.innerHTML = '';
+  MESES.forEach((m, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'input-group sazonal-month' + (MESES_DESTAQUE.includes(i) ? ' destaque' : '');
+    // Julho e Dezembro com valor dobrado como sugestão inicial
+    const suggested = MESES_DESTAQUE.includes(i) ? base * 2 : base;
+    wrap.innerHTML = `<label>${m}${MESES_DESTAQUE.includes(i) ? ' ★' : ''}</label>
+      <input type="number" id="saz-${i}" value="${suggested}" min="0" step="100" oninput="updateSazonalStats();buildAll()">`;
+    bar.appendChild(wrap);
+  });
+  updateSazonalStats();
+}
+
+function updateSazonalStats() {
+  const vals = getSazonalAportes();
+  const total = vals.reduce((a, b) => a + b, 0);
+  const media = total / 12;
+  document.getElementById('sazonal-media').textContent = 'R$ ' + Math.round(media).toLocaleString('pt-BR');
+  document.getElementById('sazonal-total').textContent = 'R$ ' + Math.round(total).toLocaleString('pt-BR');
+}
+
+function getSazonalAportes() {
+  if (!sazonalAtivo) return null;
+  return MESES.map((_, i) => parseFloat(document.getElementById('saz-' + i)?.value) || 0);
+}
+
+// Versão de simFixed que aceita array de aportes mensais
+// Para cada mês m (1-based), usa aportes[(m-1) % 12]
+function simFixedSazonal(annualRate, inicial, aporteArray, months) {
+  const r = Math.pow(1 + annualRate, 1/12) - 1;
+  const out = [];
+  let bal = inicial;
+  for (let m = 1; m <= months; m++) {
+    const ap = aporteArray[(m - 1) % 12];
+    bal = bal * (1 + r) + ap;
+    if (m % 12 === 0) out.push(bal);
+  }
+  if (months % 12 !== 0) out.push(bal);
+  return out;
+}
+
+function simStockNoReinvestSazonal(dyRate, priceGrowth, inicial, aporteArray, months) {
+  const rPrice = Math.pow(1 + priceGrowth, 1/12) - 1;
+  const rDY    = Math.pow(1 + dyRate, 1/12) - 1;
+  const out = [];
+  let stock = inicial, cashDivs = 0;
+  for (let m = 1; m <= months; m++) {
+    const ap = aporteArray[(m - 1) % 12];
+    cashDivs += stock * rDY;
+    stock = stock * (1 + rPrice) + ap;
+    if (m % 12 === 0) out.push(stock + cashDivs);
+  }
+  if (months % 12 !== 0) out.push(stock + cashDivs);
+  return out;
+}
+
+// Total investido com aportes sazonais (para ranking)
+function getTotalInvested(inicial, months, sazonalArr) {
+  if (!sazonalArr) {
+    const aporte = parseFloat(document.getElementById('aporte').value) || 1000;
+    return inicial + aporte * months;
+  }
+  let total = inicial;
+  for (let m = 0; m < months; m++) {
+    total += sazonalArr[m % 12];
+  }
+  return total;
+}
+
+document.getElementById('sazonalToggle').addEventListener('change', function() {
+  sazonalAtivo = this.checked;
+  const grid = document.getElementById('sazonal-grid');
+  const label = document.getElementById('sazonalText');
+  if (sazonalAtivo) {
+    grid.style.display = '';
+    buildSazonalGrid();
+    label.textContent = 'Ativado · aportes personalizados por mês';
+    label.style.color = 'var(--yellow)';
+  } else {
+    grid.style.display = 'none';
+    label.textContent = 'Desativado · aporte fixo todo mês';
+    label.style.color = 'var(--muted)';
+  }
+  buildAll();
+});
+
+// ═══════════════════════════════════════════
+// RENDA DE DIVIDENDOS
+// ═══════════════════════════════════════════
+let divChart = null;
+
+function calcDivs() {
+  const patrimonio  = parseFloat(document.getElementById('dv-patrimonio').value)  || 0;
+  const dy          = parseFloat(document.getElementById('dv-dy').value)           || 0;
+  const aporte      = parseFloat(document.getElementById('dv-aporte').value)       || 0;
+  const crescAnual  = parseFloat(document.getElementById('dv-crescimento').value)  || 0;
+  const ipca        = parseFloat(document.getElementById('dv-ipca').value)         || 4;
+  const meta        = parseFloat(document.getElementById('dv-meta').value)         || 5000;
+  const irPct       = parseFloat(document.getElementById('dv-ir').value)           || 0;
+
+  const rMensal     = Math.pow(1 + crescAnual / 100, 1/12) - 1;
+  const fatorIR     = 1 - irPct / 100;
+  const dyMensal    = dy / 100 / 12; // DY mensal simples (distribuição linear)
+
+  // Renda atual
+  const rendaBruta  = patrimonio * dyMensal;
+  const rendaLiq    = rendaBruta * fatorIR;
+
+  // Patrimônio necessário para meta
+  const patrimNecBruto = meta / fatorIR / dyMensal; // P × DY/12 × (1-IR) = meta => P = meta / fatorIR / dyMensal
+  const distancia = patrimNecBruto - patrimonio;
+
+  // Meses para atingir meta (simulação mês a mês)
+  let mesesParaMeta = null;
+  if (patrimonio >= patrimNecBruto) {
+    mesesParaMeta = 0;
+  } else if (rMensal > 0 || aporte > 0) {
+    let p = patrimonio;
+    for (let m = 1; m <= 600; m++) {
+      p = p * (1 + rMensal) + aporte;
+      if (p * dyMensal * fatorIR >= meta) { mesesParaMeta = m; break; }
+    }
+  }
+
+  // Projeção 20 anos mês a mês
+  const meses   = 240;
+  const labels  = [];
+  const seriesRenda = [];
+  const seriesRendaReal = [];
+  const inflMensal = Math.pow(1 + ipca / 100, 1/12) - 1;
+  let p = patrimonio;
+  for (let m = 1; m <= meses; m++) {
+    p = p * (1 + rMensal) + aporte;
+    const rMes = p * dyMensal * fatorIR;
+    const rReal = rMes / Math.pow(1 + inflMensal, m); // poder de compra de hoje
+    if (m % 12 === 0) {
+      labels.push(`${m/12}a`);
+      seriesRenda.push(parseFloat(rMes.toFixed(2)));
+      seriesRendaReal.push(parseFloat(rReal.toFixed(2)));
+    }
+  }
+
+  // Resultados grid
+  const grid = document.getElementById('dv-results-grid');
+  const anos = mesesParaMeta !== null ? (mesesParaMeta === 0 ? 'Já atingida!' : `${(mesesParaMeta/12).toFixed(1)} anos`) : 'Mais de 50 anos';
+  const fmt = v => v >= 1e6 ? 'R$ '+(v/1e6).toFixed(2).replace('.',',')+' mi' : v >= 1e3 ? 'R$ '+(v/1e3).toFixed(0)+' mil' : 'R$ '+Math.round(v);
+  const fmtM = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0});
+
+  grid.innerHTML = `
+    <div class="meta-result-card"><div class="meta-result-eyebrow">Renda mensal atual</div>
+      <div class="meta-result-val" style="color:var(--green);">${fmtM(Math.round(rendaLiq))}</div>
+      <div class="meta-result-sub">líquido${irPct>0?' após IR de '+irPct+'%':' (isento)'}</div></div>
+    <div class="meta-result-card"><div class="meta-result-eyebrow">Renda anual atual</div>
+      <div class="meta-result-val">${fmt(rendaLiq * 12)}</div>
+      <div class="meta-result-sub">dividendos anuais esperados</div></div>
+    <div class="meta-result-card"><div class="meta-result-eyebrow">Patrimônio para meta</div>
+      <div class="meta-result-val">${fmt(patrimNecBruto)}</div>
+      <div class="meta-result-sub">para receber R$ ${meta.toLocaleString('pt-BR')}/mês</div></div>
+    <div class="meta-result-card"><div class="meta-result-eyebrow">Falta acumular</div>
+      <div class="meta-result-val" style="color:${distancia <= 0 ? 'var(--green)':'var(--orange)'};">${distancia <= 0 ? '✓ Meta atingida' : fmt(distancia)}</div>
+      <div class="meta-result-sub">diferença para o patrimônio alvo</div></div>
+    <div class="meta-result-card"><div class="meta-result-eyebrow">Prazo para meta</div>
+      <div class="meta-result-val">${anos}</div>
+      <div class="meta-result-sub">com aporte de R$ ${aporte.toLocaleString('pt-BR')}/mês</div></div>`;
+
+  // Chart
+  const cs = getComputedStyle(document.documentElement);
+  const cGrid = cs.getPropertyValue('--chart-grid').trim();
+  const cText = cs.getPropertyValue('--text').trim();
+  if (divChart) divChart.destroy();
+  const ctx = document.getElementById('divChart')?.getContext('2d');
+  if (!ctx) return;
+  divChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Renda mensal líquida', data: seriesRenda, borderColor: '#4caf7d', backgroundColor: '#4caf7d15', tension: 0.3, fill: true, pointRadius: 0 },
+        { label: 'Renda real (poder de compra hoje)', data: seriesRendaReal, borderColor: '#f0c040', backgroundColor: 'transparent', tension: 0.3, borderDash: [5,4], pointRadius: 0 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: cText, font: { family: 'DM Mono', size: 10 } } },
+        tooltip: { callbacks: { label: ctx => ' R$ ' + Math.round(ctx.raw).toLocaleString('pt-BR') } } },
+      scales: {
+        x: { grid: { color: cGrid }, ticks: { color: cText, font: { size: 9 } } },
+        y: { grid: { color: cGrid }, ticks: { color: cText, font: { size: 9 },
+          callback: v => 'R$ ' + (v >= 1000 ? (v/1000).toFixed(0)+'k' : v) } }
+      }
+    }
+  });
+
+  // Metas grid — patrimônio necessário para rendas de R$1k a R$30k
+  const metasAlvo = [1000, 2000, 3000, 5000, 8000, 10000, 15000, 20000, 30000];
+  const mgrid = document.getElementById('dv-metas-grid');
+  mgrid.innerHTML = metasAlvo.map(alvo => {
+    const pNec = alvo / fatorIR / dyMensal;
+    let mPrazo = null;
+    if (patrimonio >= pNec) { mPrazo = 0; }
+    else if (rMensal > 0 || aporte > 0) {
+      let pp = patrimonio;
+      for (let m = 1; m <= 600; m++) {
+        pp = pp * (1 + rMensal) + aporte;
+        if (pp * dyMensal * fatorIR >= alvo) { mPrazo = m; break; }
+      }
+    }
+    const prazoTxt = mPrazo === null ? '>50a' : mPrazo === 0 ? '✓ Agora' : (mPrazo/12).toFixed(1)+'a';
+    const longe = mPrazo === null || mPrazo > 300;
+    return `<div class="dv-meta-card">
+      <div class="dv-meta-renda">Renda de R$ ${alvo.toLocaleString('pt-BR')}/mês</div>
+      <div class="dv-meta-patrim">${fmt(pNec)}</div>
+      <div class="dv-meta-anos ${longe?'longe':''}">${prazoTxt} com aportes atuais</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+// COMPARADOR DE RENDA FIXA
+// ═══════════════════════════════════════════
+let crfChart = null;
+const CRF_COLORS = ['#4caf7d','#5ec8e0','#f0c040','#e07050','#9b8ee0','#e05090'];
+const CRF_TIPOS = [
+  { val: 'cdb-pre',     label: 'CDB Prefixado',          irTab: true,  isento: false },
+  { val: 'cdb-cdi',     label: 'CDB % do CDI',           irTab: true,  isento: false },
+  { val: 'lci-pre',     label: 'LCI Prefixada',           irTab: false, isento: true  },
+  { val: 'lci-cdi',     label: 'LCI % do CDI',            irTab: false, isento: true  },
+  { val: 'lca-pre',     label: 'LCA Prefixada',           irTab: false, isento: true  },
+  { val: 'lca-cdi',     label: 'LCA % do CDI',            irTab: false, isento: true  },
+  { val: 'tes-selic',   label: 'Tesouro Selic',           irTab: true,  isento: false },
+  { val: 'tes-ipca',    label: 'Tesouro IPCA+',           irTab: true,  isento: false },
+  { val: 'tes-pre',     label: 'Tesouro Prefixado',       irTab: true,  isento: false },
+];
+
+// IR tabela regressiva pelo prazo em meses
+function crfIR(meses, tipo) {
+  const t = CRF_TIPOS.find(x => x.val === tipo);
+  if (!t) return 0.15;
+  if (t.isento) return 0;
+  if (t.irFixo !== undefined) return t.irFixo;
+  // tabela regressiva CDB
+  if (meses <= 6)  return 0.225;
+  if (meses <= 12) return 0.20;
+  if (meses <= 24) return 0.175;
+  return 0.15;
+}
+
+// Taxa efetiva anual dado tipo e valor inserido
+function crfTaxaEfetiva(tipo, valor, cdi, ipca) {
+  switch(tipo) {
+    case 'cdb-pre':   return valor / 100;
+    case 'cdb-cdi':   return cdi * valor / 100 / 100;
+    case 'lci-pre':   return valor / 100;
+    case 'lci-cdi':   return cdi * valor / 100 / 100;
+    case 'lca-pre':   return valor / 100;
+    case 'lca-cdi':   return cdi * valor / 100 / 100;
+    case 'tes-selic':  return cdi / 100; // Selic ≈ CDI
+    case 'tes-ipca':   return (1 + ipca/100) * (1 + valor/100) - 1; // IPCA + spread real
+    case 'tes-pre':    return valor / 100;
+    default: return valor / 100;
+  }
+}
+
+let crfOptions = [
+  { tipo: 'cdb-pre',  valor: 13.5, nome: 'CDB Prefixado' },
+  { tipo: 'lci-cdi',  valor: 93,   nome: 'LCI 93% CDI'   },
+  { tipo: 'tes-ipca', valor: 7.21, nome: 'Tesouro IPCA+' },
+];
+
+function renderCRFOptions() {
+  const grid = document.getElementById('crf-options-grid');
+  grid.innerHTML = '';
+  crfOptions.forEach((opt, i) => {
+    const tipos = CRF_TIPOS.map(t => `<option value="${t.val}" ${t.val===opt.tipo?'selected':''}>${t.label}</option>`).join('');
+    const cor = CRF_COLORS[i % CRF_COLORS.length];
+    const tipoObj = CRF_TIPOS.find(t => t.val === opt.tipo) || CRF_TIPOS[0];
+    const placeholder = opt.tipo.includes('cdi') ? '% do CDI (ex: 93)' :
+                        opt.tipo === 'tes-ipca'  ? '% real a.a. (ex: 7.21)' : '% a.a. (ex: 13.5)';
+    const canRemove = crfOptions.length > 2;
+    const div = document.createElement('div');
+    div.className = 'crf-option';
+    div.innerHTML = `
+      <div class="crf-option-header">
+        <div class="crf-option-color" style="background:${cor};"></div>
+        <span class="crf-option-title">Opção ${i+1}</span>
+        ${canRemove ? `<button class="crf-remove-btn" onclick="removeCRFOption(${i})" title="Remover">✕</button>` : ''}
+      </div>
+      <span class="crf-option-label">Tipo de investimento</span>
+      <select onchange="crfOptions[${i}].tipo=this.value;crfOptions[${i}].nome=this.options[this.selectedIndex].text;renderCRFOptions();calcCRF();">${tipos}</select>
+      <span class="crf-option-label">${placeholder}</span>
+      <input type="number" value="${opt.valor}" min="0" step="0.25"
+        oninput="crfOptions[${i}].valor=parseFloat(this.value)||0;calcCRF();" placeholder="${placeholder}">`;
+    grid.appendChild(div);
+  });
+}
+
+function addCRFOption() {
+  if (crfOptions.length >= 6) return;
+  crfOptions.push({ tipo: 'cdb-pre', valor: 13.0, nome: 'CDB Prefixado' });
+  renderCRFOptions();
+  calcCRF();
+}
+
+function removeCRFOption(i) {
+  crfOptions.splice(i, 1);
+  renderCRFOptions();
+  calcCRF();
+}
+
+function calcCRF() {
+  const capital = parseFloat(document.getElementById('crf-capital').value) || 50000;
+  const meses   = parseInt(document.getElementById('crf-prazo').value)     || 24;
+  const cdi     = parseFloat(document.getElementById('crf-cdi').value)     || 14.75;
+  const ipca    = parseFloat(document.getElementById('crf-ipca').value)     || 4.0;
+
+  const fmtBR  = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  const fmtPct = v => v.toFixed(2).replace('.', ',') + '%';
+  const inflAcum = Math.pow(1 + ipca / 100, meses / 12) - 1; // inflação acumulada no período
+
+  const results = crfOptions.map((opt, i) => {
+    const taxaAnual    = crfTaxaEfetiva(opt.tipo, opt.valor, cdi, ipca);
+    const taxaMensal   = Math.pow(1 + taxaAnual, 1/12) - 1;
+
+    // Simula mês a mês (sem aportes no comparador — aplicação única)
+    let bal = capital;
+    const serie = [capital];
+    for (let m = 1; m <= meses; m++) {
+      bal = bal * (1 + taxaMensal);
+      serie.push(bal);
+    }
+    const bruto     = bal;
+    const ganho     = bruto - capital;
+    const irAliq    = crfIR(meses, opt.tipo);
+    const irValor   = ganho * irAliq;
+    const liquido   = bruto - irValor;
+    const ganhoLiq  = liquido - capital;
+    // Retorno real: liquido descontado pela inflação do período
+    const liquidoReal = liquido / (1 + inflAcum);
+    const ganhoReal   = liquidoReal - capital;
+
+    return {
+      opt, i, taxaAnual, bruto, ganho, irAliq, irValor, liquido,
+      ganhoLiq, liquidoReal, ganhoReal, serie,
+      cor: CRF_COLORS[i % CRF_COLORS.length]
+    };
+  });
+
+  // Melhor líquido
+  const melhorLiq = Math.max(...results.map(r => r.liquido));
+
+  // Tabela
+  const tbody = document.getElementById('crf-tbody');
+  tbody.innerHTML = results.map(r => {
+    const isWinner = r.liquido === melhorLiq;
+    const isento  = CRF_TIPOS.find(t => t.val === r.opt.tipo)?.isento;
+    return `<tr class="${isWinner ? 'crf-winner' : ''}">
+      <td style="display:flex;align-items:center;gap:8px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:${r.cor};display:inline-block;flex-shrink:0;"></span>
+        <strong>${r.opt.nome}</strong>
+      </td>
+      <td>${fmtPct(r.taxaAnual * 100)} a.a. nominal</td>
+      <td>${fmtBR(r.bruto)}</td>
+      <td class="crf-val-neg">${isento ? '—' : '−' + fmtBR(r.irValor) + ' (' + fmtPct(r.irAliq * 100) + ')'}</td>
+      <td><strong class="crf-val-pos">${fmtBR(r.liquido)}</strong></td>
+      <td class="crf-val-pos">+${fmtBR(r.ganhoLiq)}</td>
+      <td>${fmtBR(r.liquidoReal)} <span style="font-size:8px;color:var(--muted);">(hoje)</span></td>
+      <td><span class="crf-badge ${isWinner ? 'melhor' : 'ok'}">${isWinner ? '★ Melhor' : '—'}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Gráfico
+  const cs = getComputedStyle(document.documentElement);
+  const cGrid = cs.getPropertyValue('--chart-grid').trim();
+  const cText = cs.getPropertyValue('--text').trim();
+  if (crfChart) crfChart.destroy();
+  const ctx2 = document.getElementById('crfChart')?.getContext('2d');
+  if (!ctx2) return;
+  // Labels: a cada mês ou a cada 3 meses se prazo > 36
+  const step = meses > 36 ? 6 : meses > 12 ? 3 : 1;
+  const labels2 = results[0].serie.map((_, m) => m % step === 0 ? (m === 0 ? 'Hoje' : m + 'm') : '').map((l, m) => m % step === 0 ? l : null).filter((l, m) => m % step === 0);
+  const filteredSeries = results.map(r => r.serie.filter((_, m) => m % step === 0));
+
+  crfChart = new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: labels2,
+      datasets: results.map((r, i) => ({
+        label: r.opt.nome,
+        data: filteredSeries[i],
+        borderColor: r.cor,
+        backgroundColor: 'transparent',
+        tension: 0.3,
+        pointRadius: 0,
+        borderWidth: 2
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: cText, font: { family: 'DM Mono', size: 10 } } },
+        tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': R$ ' + Math.round(ctx.raw).toLocaleString('pt-BR') } } },
+      scales: {
+        x: { grid: { color: cGrid }, ticks: { color: cText, font: { size: 9 } } },
+        y: { grid: { color: cGrid }, ticks: { color: cText, font: { size: 9 },
+          callback: v => 'R$ ' + (v >= 1000 ? (v/1000).toFixed(0)+'k' : v) },
+          min: capital * 0.99 }
+      }
+    }
+  });
+}
+
 // ═══════════════════════════════════════════
 // EVENT LISTENERS
 // ═══════════════════════════════════════════
@@ -3925,5 +4507,152 @@ if (window.ResizeObserver) {
 window.addEventListener('resize', onResize);
 </script>
 <div class="pj-autocomplete" id="pj-autocomplete"></div>
+
+<!-- ══════════════════════════════════════════
+     TAB: RENDA DE DIVIDENDOS
+══════════════════════════════════════════ -->
+<div id="tab-divs" style="display:none;">
+  <div class="header" id="tab-divs-header">
+    <div class="header-eyebrow">Planejamento · Renda de Dividendos</div>
+    <h1>Quanto sua carteira<br><em>paga por mês?</em></h1>
+    <p class="header-sub">Calcule a renda passiva da sua carteira atual e descubra quanto patrimônio você precisa para atingir uma meta de renda mensal via dividendos.</p>
+  </div>
+
+  <div class="inputs-section-label">Sua Carteira Atual</div>
+  <div class="inputs-bar">
+    <div class="input-group">
+      <label>Patrimônio investido (R$)</label>
+      <input type="number" id="dv-patrimonio" value="100000" min="0" step="5000" oninput="calcDivs()">
+      <span class="input-note">valor total aplicado hoje</span>
+    </div>
+    <div class="input-group">
+      <label>DY médio da carteira % a.a.</label>
+      <input type="number" id="dv-dy" value="8" min="0" max="30" step="0.5" oninput="calcDivs()">
+      <span class="input-note">dividend yield médio ponderado</span>
+    </div>
+    <div class="input-group">
+      <label>Aporte mensal (R$)</label>
+      <input type="number" id="dv-aporte" value="1000" min="0" step="100" oninput="calcDivs()">
+      <span class="input-note">quanto você investe por mês</span>
+    </div>
+    <div class="input-group">
+      <label>Crescimento do patrimônio % a.a.</label>
+      <input type="number" id="dv-crescimento" value="10" min="0" max="30" step="0.5" oninput="calcDivs()">
+      <span class="input-note">valorização esperada (preço + reinvestimento)</span>
+    </div>
+    <div class="input-group">
+      <label>IPCA % a.a.</label>
+      <input type="number" id="dv-ipca" value="4.0" min="0" max="20" step="0.5" oninput="calcDivs()">
+      <span class="input-note">para calcular poder de compra real</span>
+    </div>
+  </div>
+
+  <div class="inputs-section-label">Sua Meta de Renda Passiva</div>
+  <div class="inputs-bar">
+    <div class="input-group">
+      <label>Meta de renda mensal (R$)</label>
+      <input type="number" id="dv-meta" value="5000" min="0" step="500" oninput="calcDivs()">
+      <span class="input-note">quanto você quer receber por mês em dividendos</span>
+    </div>
+    <div class="input-group">
+      <label>IR sobre dividendos %</label>
+      <input type="number" id="dv-ir" value="0" min="0" max="30" step="2.5" oninput="calcDivs()">
+      <span class="input-note">0% = isenção atual (Lei 9.249/95) · altere se mudar a legislação</span>
+    </div>
+  </div>
+
+  <!-- Resultados principais -->
+  <div class="meta-results-grid" id="dv-results-grid" style="border-bottom:1px solid var(--border);"></div>
+
+  <!-- Gráfico projeção -->
+  <div class="meta-chart-section">
+    <div class="section-label" style="width:100%;max-width:820px;">Projeção de renda mensal ao longo do tempo</div>
+    <div class="meta-chart-wrap"><canvas id="divChart"></canvas></div>
+    <p class="chart-note" style="width:100%;max-width:820px;">* Projeção assume DY constante sobre patrimônio crescendo pelo crescimento informado mais aportes mensais. Dividendos não reinvestidos. Estimativa educacional.</p>
+  </div>
+
+  <!-- Patrimônio necessário para renda alvo -->
+  <div class="inputs-section-label">Quanto patrimônio você precisa para cada meta de renda?</div>
+  <div class="dv-metas-grid" id="dv-metas-grid"></div>
+
+  <div class="fi-nota">
+    <strong>Premissas:</strong> DY constante ao longo do tempo (simplificação). Na prática o DY oscila com o preço da ação e a política de dividendos da empresa.
+    Dividendos atualmente isentos de IR para pessoa física no Brasil (Lei 9.249/95), mas a legislação pode mudar — use o campo de IR para simular diferentes cenários.
+    <strong>Não é recomendação de investimento.</strong>
+  </div>
+</div><!-- /tab-divs -->
+
+<!-- ══════════════════════════════════════════
+     TAB: COMPARADOR DE RENDA FIXA
+══════════════════════════════════════════ -->
+<div id="tab-crf" style="display:none;">
+  <div class="header" id="tab-crf-header">
+    <div class="header-eyebrow">Renda Fixa · Comparador Detalhado</div>
+    <h1>CDB, LCI, Tesouro —<br><em>quem ganha?</em></h1>
+    <p class="header-sub">Compare até 4 aplicações lado a lado. IR pelo prazo (tabela regressiva), isenção de LCI/LCA e inflação já considerados. Resultado líquido real.</p>
+  </div>
+
+  <div class="inputs-section-label">Parâmetros da Comparação</div>
+  <div class="inputs-bar">
+    <div class="input-group">
+      <label>Capital inicial (R$)</label>
+      <input type="number" id="crf-capital" value="50000" min="1000" step="5000" oninput="calcCRF()">
+      <span class="input-note">valor que você vai aplicar</span>
+    </div>
+    <div class="input-group">
+      <label>Prazo (meses)</label>
+      <input type="number" id="crf-prazo" value="24" min="1" max="360" step="6" oninput="calcCRF()">
+      <span class="input-note">período da aplicação</span>
+    </div>
+    <div class="input-group">
+      <label>CDI % a.a.</label>
+      <input type="number" id="crf-cdi" value="14.75" min="0" max="30" step="0.25" oninput="calcCRF()">
+      <span class="input-note">base para cálculos pós-fixados</span>
+    </div>
+    <div class="input-group">
+      <label>IPCA % a.a.</label>
+      <input type="number" id="crf-ipca" value="4.0" min="0" max="20" step="0.5" oninput="calcCRF()">
+      <span class="input-note">para calcular retorno real</span>
+    </div>
+  </div>
+
+  <div class="inputs-section-label">Opções para Comparar</div>
+  <div class="crf-options-grid" id="crf-options-grid"></div>
+  <div style="padding:8px 40px;">
+    <button class="pj-print-btn" onclick="addCRFOption()" style="background:var(--panel);color:var(--text);border-color:var(--border2);">+ Adicionar opção</button>
+  </div>
+
+  <!-- Tabela comparativa -->
+  <div class="inputs-section-label">Resultado Comparativo</div>
+  <div class="crf-table-wrap">
+    <table class="crf-table" id="crf-table">
+      <thead>
+        <tr>
+          <th>Investimento</th>
+          <th>Taxa efetiva</th>
+          <th>Bruto final</th>
+          <th>IR</th>
+          <th>Líquido</th>
+          <th>Ganho líquido</th>
+          <th>Retorno real</th>
+          <th>Melhor?</th>
+        </tr>
+      </thead>
+      <tbody id="crf-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Gráfico -->
+  <div class="meta-chart-section">
+    <div class="section-label" style="width:100%;max-width:900px;">Crescimento do patrimônio mês a mês</div>
+    <div style="height:220px;width:100%;max-width:900px;"><canvas id="crfChart"></canvas></div>
+  </div>
+
+  <div class="fi-nota">
+    <strong>IR Tabela Regressiva (CDB e Tesouro Direto):</strong> até 180 dias = 22,5% · 181–360 dias = 20% · 361–720 dias = 17,5% · acima de 720 dias = 15%.
+    LCI, LCA, CRI e CRA isentos de IR (pessoas físicas). Tesouro Direto segue a mesma tabela regressiva do CDB — não há come-cotas desde 2023.
+    Retorno real = líquido descontado pelo IPCA do período. <strong>Não é recomendação de investimento.</strong>
+  </div>
+</div><!-- /tab-crf -->
 </body>
 </html>
