@@ -782,6 +782,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
             <span class="nav-item-desc">Ações, Tesouro, CDB, LCI/LCA</span>
           </div>
         </button>
+        <button class="nav-dropdown-item" id="menu-crf" onclick="showTab('crf')">
+          <span class="nav-icon">📊</span>
+          <div class="nav-item-text">
+            <span class="nav-item-label">Comparador de Renda Fixa</span>
+            <span class="nav-item-desc">CDB · LCI/LCA · Tesouro lado a lado</span>
+          </div>
+        </button>
         <button class="nav-dropdown-item" id="menu-reserva" onclick="showTab('reserva')">
           <span class="nav-icon">🛡️</span>
           <div class="nav-item-text">
@@ -824,13 +831,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
             <span class="nav-item-desc">Quanto sua carteira paga por mês</span>
           </div>
         </button>
-        <button class="nav-dropdown-item" id="menu-crf" onclick="showTab('crf')">
-          <span class="nav-icon">📊</span>
-          <div class="nav-item-text">
-            <span class="nav-item-label">Comparador de Renda Fixa</span>
-            <span class="nav-item-desc">CDB · LCI/LCA · Tesouro lado a lado</span>
-          </div>
-        </button>
+
         <button class="nav-dropdown-item" id="menu-fire" onclick="showTab('fire')">
           <span class="nav-icon">🏔️</span>
           <div class="nav-item-text">
@@ -864,6 +865,21 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     </p>
   </div>
 
+  <div class="div-toggle-bar" style="border-bottom:none;">
+    <span class="div-toggle-label">Aportes Sazonais</span>
+    <div class="toggle-wrap">
+      <label class="toggle-switch">
+        <input type="checkbox" id="sazonalToggle">
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+      <span class="toggle-label-text" id="sazonalText" style="color:var(--muted);">Desativado</span>
+    </div>
+    <div class="div-description" id="sazonalDesc" style="color:var(--muted);font-size:9px;">
+      Ative para definir aportes diferentes em cada mês do ano — ideal para incluir 13º salário, bônus e variações sazonais.
+    </div>
+  </div>
+
   <div class="inputs-section-label">Parâmetros Gerais</div>
   <div class="inputs-bar">
     <div class="input-group">
@@ -871,7 +887,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
       <input type="number" id="inicial" value="10000" min="0" step="1000">
       <span class="input-note">saldo atual</span>
     </div>
-    <div class="input-group">
+    <div class="input-group" id="aporte-fixo-group">
       <label>Aporte Mensal</label>
       <input type="number" id="aporte" value="1000" min="0" step="100">
       <span class="input-note" id="aporteNote">100% reinvestido</span>
@@ -895,6 +911,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
       <label>DY das Ações %</label>
       <input type="number" id="dy" value="6" min="0" max="20" step="0.5">
       <span class="input-note">dividend yield anual</span>
+    </div>
+  </div>
+
+  <div id="sazonal-grid" style="display:none;">
+    <div class="inputs-section-label" style="display:flex;align-items:center;justify-content:space-between;padding-right:40px;">
+      <span>Aporte em cada mês do ano</span>
+      <button onclick="resetSazonal()" style="font-size:9px;background:none;border:1px solid var(--border);color:var(--muted);padding:2px 8px;cursor:pointer;font-family:'DM Mono',monospace;">↺ Resetar pelo aporte acima</button>
+    </div>
+    <div class="inputs-bar" id="sazonal-inputs-bar" style="flex-wrap:wrap;"></div>
+    <div style="padding:8px 40px 4px;font-size:9px;color:var(--muted);">
+      Média mensal: <strong id="sazonal-media">R$ 0</strong> · Total anual: <strong id="sazonal-total">R$ 0</strong>
     </div>
   </div>
 
@@ -962,28 +989,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     </div>
   </div>
 
-
-  <div class="div-toggle-bar" style="background:var(--bg);border-top:1px solid var(--border);">
-    <span class="div-toggle-label">Aportes Sazonais</span>
-    <div class="toggle-wrap">
-      <label class="toggle-switch">
-        <input type="checkbox" id="sazonalToggle">
-        <div class="toggle-track"></div>
-        <div class="toggle-thumb"></div>
-      </label>
-      <span class="toggle-label-text" id="sazonalText" style="color:var(--muted);">Desativado · aporte fixo todo mês</span>
-    </div>
-    <div class="div-description" id="sazonalDesc" style="color:var(--muted);font-size:9px;">
-      Ative para personalizar o aporte de cada mês — útil para 13º, bônus, férias ou meses com gastos extras.
-    </div>
-  </div>
-  <div id="sazonal-grid" style="display:none;">
-    <div class="inputs-section-label">Valor do aporte em cada mês do ano</div>
-    <div class="inputs-bar" id="sazonal-inputs-bar" style="flex-wrap:wrap;"></div>
-    <div style="padding:8px 40px 4px;font-size:9px;color:var(--muted);">
-      Média mensal: <strong id="sazonal-media">R$ 0</strong> · Total anual: <strong id="sazonal-total">R$ 0</strong>
-    </div>
-  </div>
   <div class="main">
     <div class="chart-area">
       <div class="section-label">Crescimento do Patrimônio · valor bruto acumulado</div>
@@ -1938,6 +1943,151 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 <!-- ══════════════════════════════════════════
      FOOTER LEGAL (compartilhado)
 ══════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════
+     TAB: RENDA DE DIVIDENDOS
+══════════════════════════════════════════ -->
+<div id="tab-divs" style="display:none;">
+  <div class="header" id="tab-divs-header">
+    <div class="header-eyebrow">Planejamento · Renda de Dividendos</div>
+    <h1>Quanto sua carteira<br><em>paga por mês?</em></h1>
+    <p class="header-sub">Calcule a renda passiva da sua carteira atual e descubra quanto patrimônio você precisa para atingir uma meta de renda mensal via dividendos.</p>
+  </div>
+
+  <div class="inputs-section-label">Sua Carteira Atual</div>
+  <div class="inputs-bar">
+    <div class="input-group">
+      <label>Patrimônio investido (R$)</label>
+      <input type="number" id="dv-patrimonio" value="100000" min="0" step="5000" oninput="calcDivs()">
+      <span class="input-note">valor total aplicado hoje</span>
+    </div>
+    <div class="input-group">
+      <label>DY médio da carteira % a.a.</label>
+      <input type="number" id="dv-dy" value="8" min="0" max="30" step="0.5" oninput="calcDivs()">
+      <span class="input-note">dividend yield médio ponderado</span>
+    </div>
+    <div class="input-group">
+      <label>Aporte mensal (R$)</label>
+      <input type="number" id="dv-aporte" value="1000" min="0" step="100" oninput="calcDivs()">
+      <span class="input-note">quanto você investe por mês</span>
+    </div>
+    <div class="input-group">
+      <label>Valorização anual da carteira % a.a.</label>
+      <input type="number" id="dv-crescimento" value="10" min="0" max="30" step="0.5" oninput="calcDivs()">
+      <span class="input-note">quanto o valor das suas cotas cresce por ano (preço). Referências: FIIs ≈ 5–8% · Ações de dividendos ≈ 8–12% · Use 0% para cenário conservador.</span>
+    </div>
+    <div class="input-group">
+      <label>IPCA % a.a.</label>
+      <input type="number" id="dv-ipca" value="4.0" min="0" max="20" step="0.5" oninput="calcDivs()">
+      <span class="input-note">para calcular poder de compra real</span>
+    </div>
+  </div>
+
+  <div class="inputs-section-label">Sua Meta de Renda Passiva</div>
+  <div class="inputs-bar">
+    <div class="input-group">
+      <label>Meta de renda mensal (R$)</label>
+      <input type="number" id="dv-meta" value="5000" min="0" step="500" oninput="calcDivs()">
+      <span class="input-note">quanto você quer receber por mês em dividendos</span>
+    </div>
+    <div class="input-group">
+      <label>IR sobre dividendos %</label>
+      <input type="number" id="dv-ir" value="0" min="0" max="30" step="2.5" oninput="calcDivs()">
+      <span class="input-note">0% = isenção atual (Lei 9.249/95) · altere se mudar a legislação</span>
+    </div>
+  </div>
+
+  <!-- Resultados principais -->
+  <div class="meta-results-grid" id="dv-results-grid" style="border-bottom:1px solid var(--border);"></div>
+
+  <!-- Gráfico projeção -->
+  <div class="meta-chart-section">
+    <div class="section-label" style="width:100%;max-width:820px;">Projeção de renda mensal ao longo do tempo</div>
+    <div class="meta-chart-wrap"><canvas id="divChart"></canvas></div>
+    <p class="chart-note" style="width:100%;max-width:820px;">* Projeção assume DY constante sobre patrimônio crescendo pelo crescimento informado mais aportes mensais. Dividendos não reinvestidos. Estimativa educacional.</p>
+  </div>
+
+  <!-- Patrimônio necessário para renda alvo -->
+  <div class="inputs-section-label">Quanto patrimônio você precisa para cada meta de renda?</div>
+  <div class="dv-metas-grid" id="dv-metas-grid"></div>
+
+  <div class="fi-nota">
+    <strong>Premissas:</strong> DY constante ao longo do tempo (simplificação). Na prática o DY oscila com o preço da ação e a política de dividendos da empresa.
+    Dividendos atualmente isentos de IR para pessoa física no Brasil (Lei 9.249/95), mas a legislação pode mudar — use o campo de IR para simular diferentes cenários.
+    <strong>Não é recomendação de investimento.</strong>
+  </div>
+</div><!-- /tab-divs -->
+<!-- ══════════════════════════════════════════
+     TAB: COMPARADOR DE RENDA FIXA
+══════════════════════════════════════════ -->
+<div id="tab-crf" style="display:none;">
+  <div class="header" id="tab-crf-header">
+    <div class="header-eyebrow">Renda Fixa · Comparador Detalhado</div>
+    <h1>CDB, LCI, Tesouro —<br><em>quem ganha?</em></h1>
+    <p class="header-sub">Compare até 4 aplicações lado a lado. IR pelo prazo (tabela regressiva), isenção de LCI/LCA e inflação já considerados. Resultado líquido real.</p>
+  </div>
+
+  <div class="inputs-section-label">Parâmetros da Comparação</div>
+  <div class="inputs-bar">
+    <div class="input-group">
+      <label>Capital inicial (R$)</label>
+      <input type="number" id="crf-capital" value="50000" min="1000" step="5000" oninput="calcCRF()">
+      <span class="input-note">valor que você vai aplicar</span>
+    </div>
+    <div class="input-group">
+      <label>Prazo (meses)</label>
+      <input type="number" id="crf-prazo" value="24" min="1" max="360" step="6" oninput="calcCRF()">
+      <span class="input-note">período da aplicação</span>
+    </div>
+    <div class="input-group">
+      <label>CDI % a.a.</label>
+      <input type="number" id="crf-cdi" value="14.75" min="0" max="30" step="0.25" oninput="calcCRF()">
+      <span class="input-note">base para cálculos pós-fixados</span>
+    </div>
+    <div class="input-group">
+      <label>IPCA % a.a.</label>
+      <input type="number" id="crf-ipca" value="4.0" min="0" max="20" step="0.5" oninput="calcCRF()">
+      <span class="input-note">para calcular retorno real</span>
+    </div>
+  </div>
+
+  <div class="inputs-section-label">Opções para Comparar</div>
+  <div class="crf-options-grid" id="crf-options-grid"></div>
+  <div style="padding:8px 40px;">
+    <button class="pj-print-btn" onclick="addCRFOption()" style="background:var(--panel);color:var(--text);border-color:var(--border2);">+ Adicionar opção</button>
+  </div>
+
+  <!-- Tabela comparativa -->
+  <div class="inputs-section-label">Resultado Comparativo</div>
+  <div class="crf-table-wrap">
+    <table class="crf-table" id="crf-table">
+      <thead>
+        <tr>
+          <th>Investimento</th>
+          <th>Taxa efetiva</th>
+          <th>Bruto final</th>
+          <th>IR</th>
+          <th>Líquido</th>
+          <th>Ganho líquido</th>
+          <th>Retorno real</th>
+          <th>Melhor?</th>
+        </tr>
+      </thead>
+      <tbody id="crf-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Gráfico -->
+  <div class="meta-chart-section">
+    <div class="section-label" style="width:100%;max-width:900px;">Crescimento do patrimônio mês a mês</div>
+    <div style="height:220px;width:100%;max-width:900px;"><canvas id="crfChart"></canvas></div>
+  </div>
+
+  <div class="fi-nota">
+    <strong>IR Tabela Regressiva (CDB e Tesouro Direto):</strong> até 180 dias = 22,5% · 181–360 dias = 20% · 361–720 dias = 17,5% · acima de 720 dias = 15%.
+    LCI, LCA, CRI e CRA isentos de IR (pessoas físicas). Tesouro Direto segue a mesma tabela regressiva do CDB — não há come-cotas desde 2023.
+    Retorno real = líquido descontado pelo IPCA do período. <strong>Não é recomendação de investimento.</strong>
+  </div>
+</div><!-- /tab-crf -->
 <footer class="footer-legal">
   <div class="footer-legal-main">
     <div class="footer-legal-block">
@@ -3959,21 +4109,26 @@ let sazonalAtivo = false;
 const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const MESES_DESTAQUE = [6, 11]; // Julho (férias) e Dezembro (13°) — índices 0-based
 
-function buildSazonalGrid() {
+function buildSazonalGrid(force) {
   const bar = document.getElementById('sazonal-inputs-bar');
-  if (bar.children.length > 0) return; // já construído
+  if (bar.children.length > 0 && !force) return; // preserve existing values
   const base = parseFloat(document.getElementById('aporte').value) || 1000;
   bar.innerHTML = '';
   MESES.forEach((m, i) => {
     const wrap = document.createElement('div');
     wrap.className = 'input-group sazonal-month' + (MESES_DESTAQUE.includes(i) ? ' destaque' : '');
-    // Julho e Dezembro com valor dobrado como sugestão inicial
     const suggested = MESES_DESTAQUE.includes(i) ? base * 2 : base;
     wrap.innerHTML = `<label>${m}${MESES_DESTAQUE.includes(i) ? ' ★' : ''}</label>
       <input type="number" id="saz-${i}" value="${suggested}" min="0" step="100" oninput="updateSazonalStats();buildAll()">`;
     bar.appendChild(wrap);
   });
   updateSazonalStats();
+}
+
+function resetSazonal() {
+  document.getElementById('sazonal-inputs-bar').innerHTML = '';
+  buildSazonalGrid(true);
+  buildAll();
 }
 
 function updateSazonalStats() {
@@ -4034,17 +4189,20 @@ function getTotalInvested(inicial, months, sazonalArr) {
 
 document.getElementById('sazonalToggle').addEventListener('change', function() {
   sazonalAtivo = this.checked;
-  const grid = document.getElementById('sazonal-grid');
-  const label = document.getElementById('sazonalText');
+  const grid      = document.getElementById('sazonal-grid');
+  const label     = document.getElementById('sazonalText');
+  const aporteGrp = document.getElementById('aporte-fixo-group');
   if (sazonalAtivo) {
-    grid.style.display = '';
-    buildSazonalGrid();
-    label.textContent = 'Ativado · aportes personalizados por mês';
-    label.style.color = 'var(--yellow)';
+    buildSazonalGrid(false); // preserves values if already built; builds fresh on first use
+    grid.style.display      = '';
+    aporteGrp.style.display = 'none';   // hide fixed aporte — sazonal takes over
+    label.textContent  = 'Ativado · aportes personalizados por mês';
+    label.style.color  = 'var(--yellow)';
   } else {
-    grid.style.display = 'none';
-    label.textContent = 'Desativado · aporte fixo todo mês';
-    label.style.color = 'var(--muted)';
+    grid.style.display      = 'none';
+    aporteGrp.style.display = '';       // restore fixed aporte
+    label.textContent  = 'Desativado';
+    label.style.color  = 'var(--muted)';
   }
   buildAll();
 });
@@ -4508,151 +4666,6 @@ window.addEventListener('resize', onResize);
 </script>
 <div class="pj-autocomplete" id="pj-autocomplete"></div>
 
-<!-- ══════════════════════════════════════════
-     TAB: RENDA DE DIVIDENDOS
-══════════════════════════════════════════ -->
-<div id="tab-divs" style="display:none;">
-  <div class="header" id="tab-divs-header">
-    <div class="header-eyebrow">Planejamento · Renda de Dividendos</div>
-    <h1>Quanto sua carteira<br><em>paga por mês?</em></h1>
-    <p class="header-sub">Calcule a renda passiva da sua carteira atual e descubra quanto patrimônio você precisa para atingir uma meta de renda mensal via dividendos.</p>
-  </div>
 
-  <div class="inputs-section-label">Sua Carteira Atual</div>
-  <div class="inputs-bar">
-    <div class="input-group">
-      <label>Patrimônio investido (R$)</label>
-      <input type="number" id="dv-patrimonio" value="100000" min="0" step="5000" oninput="calcDivs()">
-      <span class="input-note">valor total aplicado hoje</span>
-    </div>
-    <div class="input-group">
-      <label>DY médio da carteira % a.a.</label>
-      <input type="number" id="dv-dy" value="8" min="0" max="30" step="0.5" oninput="calcDivs()">
-      <span class="input-note">dividend yield médio ponderado</span>
-    </div>
-    <div class="input-group">
-      <label>Aporte mensal (R$)</label>
-      <input type="number" id="dv-aporte" value="1000" min="0" step="100" oninput="calcDivs()">
-      <span class="input-note">quanto você investe por mês</span>
-    </div>
-    <div class="input-group">
-      <label>Crescimento do patrimônio % a.a.</label>
-      <input type="number" id="dv-crescimento" value="10" min="0" max="30" step="0.5" oninput="calcDivs()">
-      <span class="input-note">valorização esperada (preço + reinvestimento)</span>
-    </div>
-    <div class="input-group">
-      <label>IPCA % a.a.</label>
-      <input type="number" id="dv-ipca" value="4.0" min="0" max="20" step="0.5" oninput="calcDivs()">
-      <span class="input-note">para calcular poder de compra real</span>
-    </div>
-  </div>
-
-  <div class="inputs-section-label">Sua Meta de Renda Passiva</div>
-  <div class="inputs-bar">
-    <div class="input-group">
-      <label>Meta de renda mensal (R$)</label>
-      <input type="number" id="dv-meta" value="5000" min="0" step="500" oninput="calcDivs()">
-      <span class="input-note">quanto você quer receber por mês em dividendos</span>
-    </div>
-    <div class="input-group">
-      <label>IR sobre dividendos %</label>
-      <input type="number" id="dv-ir" value="0" min="0" max="30" step="2.5" oninput="calcDivs()">
-      <span class="input-note">0% = isenção atual (Lei 9.249/95) · altere se mudar a legislação</span>
-    </div>
-  </div>
-
-  <!-- Resultados principais -->
-  <div class="meta-results-grid" id="dv-results-grid" style="border-bottom:1px solid var(--border);"></div>
-
-  <!-- Gráfico projeção -->
-  <div class="meta-chart-section">
-    <div class="section-label" style="width:100%;max-width:820px;">Projeção de renda mensal ao longo do tempo</div>
-    <div class="meta-chart-wrap"><canvas id="divChart"></canvas></div>
-    <p class="chart-note" style="width:100%;max-width:820px;">* Projeção assume DY constante sobre patrimônio crescendo pelo crescimento informado mais aportes mensais. Dividendos não reinvestidos. Estimativa educacional.</p>
-  </div>
-
-  <!-- Patrimônio necessário para renda alvo -->
-  <div class="inputs-section-label">Quanto patrimônio você precisa para cada meta de renda?</div>
-  <div class="dv-metas-grid" id="dv-metas-grid"></div>
-
-  <div class="fi-nota">
-    <strong>Premissas:</strong> DY constante ao longo do tempo (simplificação). Na prática o DY oscila com o preço da ação e a política de dividendos da empresa.
-    Dividendos atualmente isentos de IR para pessoa física no Brasil (Lei 9.249/95), mas a legislação pode mudar — use o campo de IR para simular diferentes cenários.
-    <strong>Não é recomendação de investimento.</strong>
-  </div>
-</div><!-- /tab-divs -->
-
-<!-- ══════════════════════════════════════════
-     TAB: COMPARADOR DE RENDA FIXA
-══════════════════════════════════════════ -->
-<div id="tab-crf" style="display:none;">
-  <div class="header" id="tab-crf-header">
-    <div class="header-eyebrow">Renda Fixa · Comparador Detalhado</div>
-    <h1>CDB, LCI, Tesouro —<br><em>quem ganha?</em></h1>
-    <p class="header-sub">Compare até 4 aplicações lado a lado. IR pelo prazo (tabela regressiva), isenção de LCI/LCA e inflação já considerados. Resultado líquido real.</p>
-  </div>
-
-  <div class="inputs-section-label">Parâmetros da Comparação</div>
-  <div class="inputs-bar">
-    <div class="input-group">
-      <label>Capital inicial (R$)</label>
-      <input type="number" id="crf-capital" value="50000" min="1000" step="5000" oninput="calcCRF()">
-      <span class="input-note">valor que você vai aplicar</span>
-    </div>
-    <div class="input-group">
-      <label>Prazo (meses)</label>
-      <input type="number" id="crf-prazo" value="24" min="1" max="360" step="6" oninput="calcCRF()">
-      <span class="input-note">período da aplicação</span>
-    </div>
-    <div class="input-group">
-      <label>CDI % a.a.</label>
-      <input type="number" id="crf-cdi" value="14.75" min="0" max="30" step="0.25" oninput="calcCRF()">
-      <span class="input-note">base para cálculos pós-fixados</span>
-    </div>
-    <div class="input-group">
-      <label>IPCA % a.a.</label>
-      <input type="number" id="crf-ipca" value="4.0" min="0" max="20" step="0.5" oninput="calcCRF()">
-      <span class="input-note">para calcular retorno real</span>
-    </div>
-  </div>
-
-  <div class="inputs-section-label">Opções para Comparar</div>
-  <div class="crf-options-grid" id="crf-options-grid"></div>
-  <div style="padding:8px 40px;">
-    <button class="pj-print-btn" onclick="addCRFOption()" style="background:var(--panel);color:var(--text);border-color:var(--border2);">+ Adicionar opção</button>
-  </div>
-
-  <!-- Tabela comparativa -->
-  <div class="inputs-section-label">Resultado Comparativo</div>
-  <div class="crf-table-wrap">
-    <table class="crf-table" id="crf-table">
-      <thead>
-        <tr>
-          <th>Investimento</th>
-          <th>Taxa efetiva</th>
-          <th>Bruto final</th>
-          <th>IR</th>
-          <th>Líquido</th>
-          <th>Ganho líquido</th>
-          <th>Retorno real</th>
-          <th>Melhor?</th>
-        </tr>
-      </thead>
-      <tbody id="crf-tbody"></tbody>
-    </table>
-  </div>
-
-  <!-- Gráfico -->
-  <div class="meta-chart-section">
-    <div class="section-label" style="width:100%;max-width:900px;">Crescimento do patrimônio mês a mês</div>
-    <div style="height:220px;width:100%;max-width:900px;"><canvas id="crfChart"></canvas></div>
-  </div>
-
-  <div class="fi-nota">
-    <strong>IR Tabela Regressiva (CDB e Tesouro Direto):</strong> até 180 dias = 22,5% · 181–360 dias = 20% · 361–720 dias = 17,5% · acima de 720 dias = 15%.
-    LCI, LCA, CRI e CRA isentos de IR (pessoas físicas). Tesouro Direto segue a mesma tabela regressiva do CDB — não há come-cotas desde 2023.
-    Retorno real = líquido descontado pelo IPCA do período. <strong>Não é recomendação de investimento.</strong>
-  </div>
-</div><!-- /tab-crf -->
 </body>
 </html>
