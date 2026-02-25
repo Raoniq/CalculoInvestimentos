@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Patrimônio · Ações e renda fixa</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,900;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Raoni Queiroz · Simulador de Investimentos</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23111418'/><polyline points='4,24 10,16 16,20 22,10 28,14' stroke='%233dd68c' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,900;1,9..144,300&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════
@@ -21,6 +22,7 @@
   --violet:#a88bfa;--violet-faint:rgba(168,139,250,.08);
   --red:#f26065;--red-faint:rgba(242,96,101,.08);
   --teal:#2dd4bf;--teal-faint:rgba(45,212,191,.08);
+  --radius:12px;--radius-sm:8px;--shadow:0 4px 24px rgba(0,0,0,.32);--shadow-sm:0 2px 10px rgba(0,0,0,.22);
 }
 :root[data-theme="light"] {
   --bg:#f8f9fb;--panel:#f0f2f5;--card:#fff;--border:#dde1e8;--border2:#c8cdd7;
@@ -33,6 +35,7 @@
   --violet:#6d4fc7;--violet-faint:rgba(109,79,199,.08);
   --red:#c4383c;--red-faint:rgba(196,56,60,.08);
   --teal:#0e9488;--teal-faint:rgba(14,148,136,.08);
+  --radius:12px;--radius-sm:8px;--shadow:0 4px 24px rgba(0,0,0,.07);--shadow-sm:0 2px 10px rgba(0,0,0,.05);
 }
 
 /* ═══════════════════════════════════════════
@@ -40,7 +43,7 @@
 ═══════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:1.5;min-height:100vh;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased;}
 
 /* ═══════════════════════════════════════════
    PAGE NAV — HAMBURGER MENU
@@ -50,17 +53,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
   border-bottom:1px solid var(--border);background:var(--panel);
   padding:0 40px;height:52px;position:sticky;top:0;z-index:200;
 }
-.nav-left{display:flex;align-items:center;gap:14px;}
-.nav-brand{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--text);letter-spacing:-.2px;}
+.nav-left{display:flex;align-items:center;gap:10px;}
+.nav-brand{font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.3px;}
 .nav-brand span{color:var(--green);}
-.nav-active-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.nav-active-label{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.5px;font-weight:500;color:var(--muted);}
 
 /* Hamburger button */
 .hamburger-btn {
   background:var(--card);border:1px solid var(--border);color:var(--muted);
-  font-family:'DM Mono',monospace;font-size:11px;padding:6px 12px;
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:7px 14px;
   cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;
-  position:relative;
+  position:relative;border-radius:var(--radius-sm);
 }
 .hamburger-btn:hover{border-color:var(--border2);color:var(--text);}
 .hamburger-btn.open{border-color:var(--green);color:var(--green);}
@@ -74,32 +77,32 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .nav-dropdown {
   position:absolute;top:52px;left:0;
   background:var(--panel);border:1px solid var(--border);border-top:none;
-  min-width:260px;display:none;flex-direction:column;
-  box-shadow:0 8px 24px rgba(0,0,0,.12);
-  z-index:300;
+  min-width:280px;display:none;flex-direction:column;
+  box-shadow:var(--shadow);border-radius:0 0 var(--radius) var(--radius);
+  z-index:300;overflow:hidden;
 }
 .nav-dropdown.open{display:flex;}
 .nav-dropdown-item {
   display:flex;align-items:center;gap:12px;
   padding:14px 20px;border:none;background:transparent;
-  color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--muted);font-family:'Inter',sans-serif;font-size:12px;
   cursor:pointer;text-align:left;transition:all .15s;border-bottom:1px solid var(--border);
-  letter-spacing:.5px;
+  letter-spacing:0;
 }
 .nav-dropdown-item:last-child{border-bottom:none;}
 .nav-dropdown-item:hover{background:var(--card);color:var(--text);}
 .nav-dropdown-item.active{color:var(--green);background:var(--green-faint);}
 .nav-dropdown-item .nav-icon{font-size:14px;flex-shrink:0;}
 .nav-dropdown-item .nav-item-text{display:flex;flex-direction:column;gap:2px;}
-.nav-dropdown-item .nav-item-label{font-size:11px;}
-.nav-dropdown-item .nav-item-desc{font-size:9px;color:var(--muted);letter-spacing:.3px;}
+.nav-dropdown-item .nav-item-label{font-size:12px;font-weight:500;}
+.nav-dropdown-item .nav-item-desc{font-size:10px;color:var(--muted);letter-spacing:0;}
 .nav-dropdown-item.active .nav-item-desc{color:var(--green);opacity:.7;}
 
 .nav-right{display:flex;align-items:center;gap:10px;}
 .theme-btn {
   background:var(--card);border:1px solid var(--border);color:var(--muted);
-  font-family:'DM Mono',monospace;font-size:10px;padding:5px 12px;cursor:pointer;
-  letter-spacing:1px;display:flex;align-items:center;gap:6px;transition:all .2s;
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:6px 13px;cursor:pointer;
+  letter-spacing:0;display:flex;align-items:center;gap:6px;transition:all .2s;border-radius:var(--radius-sm);
 }
 .theme-btn:hover{border-color:var(--border2);color:var(--text);}
 
@@ -109,30 +112,30 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .header{padding:36px 40px 24px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
 .header::before{content:'';position:absolute;top:-40px;right:-40px;width:280px;height:280px;
   background:radial-gradient(circle,rgba(61,214,140,.05) 0%,transparent 70%);pointer-events:none;}
-.header-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:10px;}
+.header-eyebrow{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--green);margin-bottom:10px;}
 .header h1{font-family:'Fraunces',serif;font-size:clamp(24px,4vw,46px);font-weight:900;line-height:1.05;max-width:700px;}
 .header h1 em{font-style:italic;color:var(--green);}
-.header-sub{margin-top:8px;font-size:11px;color:var(--muted);max-width:600px;line-height:1.7;}
+.header-sub{font-family:'Inter',sans-serif;margin-top:10px;font-size:13px;color:var(--muted);max-width:600px;line-height:1.7;}
 
 /* ═══════════════════════════════════════════
    INPUTS
 ═══════════════════════════════════════════ */
-.inputs-section-label{width:100%;padding:5px 22px;font-size:8px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--border2);background:var(--panel);border-bottom:1px solid var(--border);border-top:1px solid var(--border);}
+.inputs-section-label{width:100%;padding:7px 24px;font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.4px;font-weight:600;
+  color:var(--muted);background:var(--panel);border-bottom:1px solid var(--border);border-top:1px solid var(--border);}
 .inputs-bar{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--border);}
 .input-group{display:flex;flex-direction:column;gap:5px;padding:14px 22px;border-right:1px solid var(--border);flex:1;min-width:120px;}
-.input-group label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.input-group label{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.5px;text-transform:uppercase;font-weight:600;color:var(--muted);}
 .input-group input[type=number]{background:transparent;border:none;color:var(--text);padding:4px 0;
   font-family:'Fraunces',serif;font-size:20px;font-weight:600;width:100%;outline:none;cursor:pointer;
   -moz-appearance:textfield;}
 .input-group input[type=number]::-webkit-inner-spin-button,
 .input-group input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .input-group input[type=number]:focus{color:var(--green);}
-.input-note{font-size:10px;color:var(--muted);line-height:1.4;}
+.input-note{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);line-height:1.5;}
 
 /* MODE PILLS */
-.mode-pill{font-size:8px;padding:2px 6px;border:1px solid var(--border);background:var(--card);
-  color:var(--muted);cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace;white-space:nowrap;}
+.mode-pill{font-family:'Inter',sans-serif;font-size:8px;font-weight:500;padding:3px 9px;border:1px solid var(--border);background:var(--card);
+  color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;border-radius:20px;}
 .mode-pill:hover{border-color:var(--border2);color:var(--text);}
 .mode-pill.active{background:var(--blue-faint);border-color:var(--blue);color:var(--blue);}
 .rate-result{color:var(--blue)!important;font-size:10px!important;}
@@ -146,7 +149,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 
 /* TOGGLE BAR */
 .div-toggle-bar{padding:12px 40px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:20px;flex-wrap:wrap;background:var(--panel);}
-.div-toggle-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);flex-shrink:0;}
+.div-toggle-label{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.5px;font-weight:600;text-transform:uppercase;color:var(--muted);flex-shrink:0;}
 .toggle-wrap{display:flex;align-items:center;gap:10px;}
 .toggle-switch{position:relative;width:44px;height:22px;cursor:pointer;flex-shrink:0;}
 .toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
@@ -154,9 +157,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .toggle-switch input:checked+.toggle-track{background:var(--green);}
 .toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s;pointer-events:none;}
 .toggle-switch input:checked~.toggle-thumb{transform:translateX(22px);}
-.toggle-label-text{font-size:11px;color:var(--muted);transition:color .2s;}
+.toggle-label-text{font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:var(--muted);transition:color .2s;}
 .toggle-label-text.on{color:var(--green);}
-.div-description{font-size:10px;color:var(--muted);margin-left:auto;border-left:1px solid var(--border);padding-left:16px;max-width:400px;line-height:1.5;}
+.div-description{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);margin-left:auto;border-left:1px solid var(--border);padding-left:16px;max-width:400px;line-height:1.6;}
 .div-description .tag-on{color:var(--green);}
 .div-description .tag-off{color:var(--orange);}
 
@@ -165,12 +168,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 ═══════════════════════════════════════════ */
 .main{display:flex;flex-direction:column;align-items:center;padding:24px 40px 0;border-bottom:1px solid var(--border);}
 .chart-area{width:100%;max-width:820px;padding:0;}
-.section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+.section-label{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;color:var(--muted);
   margin-bottom:18px;display:flex;align-items:center;gap:12px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
 .chart-wrap{position:relative;height:190px;width:100%;overflow:hidden;}
 .chart-wrap canvas{max-width:100%;}
-.chart-note{font-size:9px;color:var(--muted);margin-top:8px;font-style:italic;}
+.chart-note{font-family:'Inter',sans-serif;font-size:9px;color:var(--muted);margin-top:10px;line-height:1.7;}
 
 /* LEGEND */
 .legend-grid{display:flex;flex-wrap:wrap;gap:5px 18px;margin-top:18px;}
@@ -185,21 +188,21 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .ranking-header .section-label{margin-bottom:0;}
 .milestone-tabs{display:flex;gap:3px;flex-wrap:wrap;}
 .tab-btn{flex:1;min-width:28px;background:var(--card);border:1px solid var(--border);color:var(--muted);
-  font-family:'DM Mono',monospace;font-size:10px;padding:5px 3px;cursor:pointer;transition:all .2s;text-align:center;}
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:6px 4px;cursor:pointer;transition:all .2s;text-align:center;border-radius:var(--radius-sm);}
 .tab-btn.active{background:var(--green-faint);border-color:var(--green);color:var(--green);}
 .tab-btn:hover:not(.active){border-color:var(--border2);color:var(--text);}
 .ranking{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px;}
 
 /* RANK CARDS */
-.rank-card{background:var(--card);border:1px solid var(--border);padding:8px 10px;position:relative;transition:border-color .2s;}
-.rank-card:hover{border-color:var(--border2);}
+.rank-card{background:var(--card);border:1px solid var(--border);padding:10px 12px;position:relative;transition:all .2s;border-radius:var(--radius-sm);}
+.rank-card:hover{border-color:var(--border2);box-shadow:var(--shadow-sm);transform:translateY(-1px);}
 .rank-card.rank-1{border-color:rgba(61,214,140,.3);background:var(--green-faint);}
 .rank-card.rank-2{border-color:rgba(91,156,246,.2);}
 .rank-pos{position:absolute;top:5px;right:7px;font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:var(--border2);line-height:1;}
 .rank-card.rank-1 .rank-pos{color:rgba(61,214,140,.15);}
-.rank-name{font-size:10px;color:var(--text);margin-bottom:1px;display:flex;align-items:center;gap:5px;padding-right:22px;}
+.rank-name{font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px;display:flex;align-items:center;gap:5px;padding-right:22px;}
 .rank-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.rank-rate{font-size:9px;color:var(--muted);margin-bottom:4px;}
+.rank-rate{font-family:'Inter',sans-serif;font-size:9px;color:var(--muted);margin-bottom:4px;}
 .rank-fv{font-family:'Fraunces',serif;font-size:17px;font-weight:600;line-height:1;}
 .rank-fv small{font-size:10px;font-weight:300;margin-right:1px;}
 .rank-net{display:flex;flex-direction:column;gap:1px;margin-top:3px;padding-top:4px;border-top:1px solid var(--border);}
@@ -207,7 +210,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .rank-net-label{font-size:7px;color:var(--border2);letter-spacing:.5px;}
 .rank-detail{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;}
 .rank-stat{display:flex;flex-direction:column;gap:1px;}
-.rank-stat-label{font-size:7px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);}
+.rank-stat-label{font-family:'Inter',sans-serif;font-size:7px;letter-spacing:.5px;font-weight:600;text-transform:uppercase;color:var(--muted);}
 .rank-stat-val{font-size:9px;color:var(--text);}
 .rank-stat-val.pos{color:var(--green);}
 .rank-stat-val.warn{color:var(--yellow);}
@@ -217,15 +220,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
    CAVEATS
 ═══════════════════════════════════════════ */
 .caveats{padding:28px 40px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
-.caveat-card{padding:16px 18px;border:1px solid var(--border);background:var(--panel);}
-.caveat-badge{display:inline-flex;align-items:center;gap:5px;font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;padding:3px 7px;}
+.caveat-card{padding:18px 20px;border:1px solid var(--border);background:var(--panel);border-radius:var(--radius);transition:box-shadow .2s;}
+.caveat-badge{font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:5px;font-size:8px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;margin-bottom:8px;padding:3px 8px;border-radius:6px;}
 .caveat-badge.green{background:var(--green-faint);color:var(--green);border:1px solid rgba(61,214,140,.2);}
 .caveat-badge.yellow{background:var(--yellow-faint);color:var(--yellow);border:1px solid rgba(245,197,24,.2);}
 .caveat-badge.blue{background:var(--blue-faint);color:var(--blue);border:1px solid rgba(91,156,246,.2);}
 .caveat-badge.red{background:var(--red-faint);color:var(--red);border:1px solid rgba(242,96,101,.2);}
 .caveat-badge.teal{background:var(--teal-faint);color:var(--teal);border:1px solid rgba(45,212,191,.2);}
-.caveat-title{font-size:11px;font-weight:500;color:var(--text);margin-bottom:6px;}
-.caveat-body{font-size:10px;color:var(--muted);line-height:1.7;}
+.caveat-title{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.caveat-body{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);line-height:1.8;}
 
 /* ═══════════════════════════════════════════
    RESERVA DE EMERGÊNCIA
@@ -237,31 +240,31 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .res-inputs{padding:32px 40px;border-right:1px solid var(--border);}
 .res-charts{padding:32px 40px;}
 
-.res-section-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.res-section-title{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
 .res-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
 
 .res-input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
 .res-input-group{display:flex;flex-direction:column;gap:5px;}
-.res-input-group label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.res-input-group label{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.5px;font-weight:600;text-transform:uppercase;color:var(--muted);}
 .res-input-group input[type=number]{background:var(--card);border:1px solid var(--border);color:var(--text);
   font-family:'Fraunces',serif;font-size:20px;font-weight:600;padding:10px 14px;outline:none;width:100%;
-  -moz-appearance:textfield;transition:border-color .2s;}
+  -moz-appearance:textfield;transition:border-color .2s;border-radius:var(--radius-sm);}
 .res-input-group input[type=number]::-webkit-inner-spin-button,
 .res-input-group input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .res-input-group input[type=number]:focus{border-color:var(--blue);}
-.res-input-group .input-note{font-size:10px;color:var(--muted);line-height:1.4;}
+.res-input-group .input-note{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);line-height:1.5;}
 
 /* Filhos toggle */
-.filhos-toggle-row{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:12px 16px;background:var(--card);border:1px solid var(--border);}
+.filhos-toggle-row{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);}
 .filhos-toggle-label{font-size:11px;color:var(--text);flex:1;}
 .filhos-toggle-sub{font-size:9px;color:var(--muted);}
 
 /* Result box */
-.res-result-box{background:var(--card);border:1px solid var(--border);padding:20px;margin-top:20px;}
+.res-result-box{background:var(--card);border:1px solid var(--border);padding:20px;margin-top:20px;border-radius:var(--radius);}
 .res-result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
 .res-result-item{padding:12px 16px;border-right:1px solid var(--border);}
 .res-result-item:last-child{border-right:none;}
-.res-result-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.res-result-label{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.5px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
 .res-result-value{font-family:'Fraunces',serif;font-size:22px;font-weight:700;line-height:1.1;}
 .res-result-value.highlight{color:var(--blue);}
 .res-result-value.ok{color:var(--green);}
@@ -286,9 +289,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .expert-tips{padding:24px 40px;border-top:1px solid var(--border);background:var(--panel);}
 .expert-tips-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
 .expert-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
-.expert-card{padding:14px 16px;border:1px solid var(--border);background:var(--card);}
+.expert-card{padding:16px 18px;border:1px solid var(--border);background:var(--card);border-radius:var(--radius-sm);}
 .expert-name{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:4px;}
-.expert-text{font-size:10px;color:var(--muted);line-height:1.7;}
+.expert-text{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);line-height:1.8;}
 
 /* ═══════════════════════════════════════════
    CALCULADORA DE AÇÕES
@@ -343,7 +346,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .rb-profiles-bar{padding:0 40px;border-bottom:1px solid var(--border);}
 .rb-profile-header{display:grid;grid-template-columns:180px 1fr 1fr 1fr;gap:0;padding:8px 0 6px;border-bottom:1px solid var(--border);}
 .rb-ph-empty{}
-.rb-ph-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:0 12px;font-family:'DM Mono',monospace;}
+.rb-ph-label{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.3px;font-weight:600;text-transform:uppercase;padding:0 12px;}
 .rb-ph-label.cons{color:var(--blue);}
 .rb-ph-label.mod{color:var(--violet);}
 .rb-ph-label.arr{color:var(--green);}
@@ -374,7 +377,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 /* Diagnosis grid */
 .rb-diag-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--border);border-left:1px solid var(--border);margin:0 40px 24px;}
 .rb-diag-cell{padding:16px 18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
-.rb-diag-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.rb-diag-label{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.5px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
 .rb-diag-current{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--text);}
 .rb-diag-target{font-size:10px;color:var(--muted);margin-top:2px;}
 .rb-diag-delta{font-size:11px;font-weight:600;margin-top:8px;padding:4px 8px;display:inline-block;}
@@ -387,7 +390,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .rb-charts-row{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 40px 0;}
 .rb-donut-area{padding:24px;border-right:1px solid var(--border);}
 .rb-donut-area:last-child{border-right:none;}
-.rb-chart-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.rb-chart-title{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
 .rb-donut-wrap{position:relative;height:220px;width:100%;overflow:hidden;}
 .rb-donut-wrap canvas{max-width:100%;}
 
@@ -409,7 +412,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .fi-method-card{padding:16px 40px;border-right:1px solid var(--border);}
 .fi-method-card:last-child{border-right:none;}
 .fi-method-title{font-size:11px;font-weight:600;letter-spacing:.5px;margin-bottom:6px;}
-.fi-method-desc{font-size:10px;color:var(--muted);line-height:1.7;}
+.fi-method-desc{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);line-height:1.8;}
 .fi-method-desc code{font-family:'DM Mono',monospace;background:var(--card);padding:1px 5px;border:1px solid var(--border);border-radius:2px;font-size:9px;}
 
 /* FIRE meta cards */
@@ -417,16 +420,16 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .fi-meta-card{padding:24px 40px;border-right:1px solid var(--border);}
 .fi-meta-card:last-child{border-right:none;}
 .fi-meta-badge{display:inline-block;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border:1px solid;margin-bottom:14px;font-family:'DM Mono',monospace;}
-.fi-meta-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.fi-meta-label{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.5px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
 .fi-meta-val{font-family:'Fraunces',serif;font-size:36px;font-weight:900;line-height:1;margin-bottom:4px;}
-.fi-meta-sub{font-size:10px;color:var(--muted);margin-bottom:16px;}
+.fi-meta-sub{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);margin-bottom:16px;}
 .fi-meta-falta-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
 .fi-meta-falta{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--text);margin-bottom:14px;}
 
 /* Tempo cards inside meta card */
 .fi-tempos{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--border);padding-top:12px;}
-.fi-tempo-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--card);border:1px solid var(--border);}
-.fi-tempo-cenario{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.fi-tempo-row{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);}
+.fi-tempo-cenario{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.3px;font-weight:600;text-transform:uppercase;color:var(--muted);}
 .fi-tempo-val{font-family:'Fraunces',serif;font-size:14px;font-weight:600;}
 .fi-tempo-val.cons{color:var(--blue);}
 .fi-tempo-val.mod{color:var(--violet);}
@@ -434,7 +437,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .fi-tempo-val.inf{color:var(--orange);font-size:11px;}
 
 /* Nota metodológica */
-.fi-nota{padding:14px 40px;background:var(--panel);border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);line-height:1.7;}
+.fi-nota{font-family:'Inter',sans-serif;padding:16px 40px;background:var(--panel);border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);line-height:1.8;}
 
 /* Chart area */
 .fi-chart-area{padding:20px 40px;border-bottom:1px solid var(--border);}
@@ -602,8 +605,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 @media(max-width:768px){.crf-table-wrap{padding:0 12px 8px;}.crf-options-grid{grid-template-columns:1fr;}}
 
 .pj-print-bar{display:flex;align-items:center;gap:16px;padding:16px 28px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.pj-print-btn{background:var(--green-faint);color:var(--green);border:1px solid var(--green);padding:8px 18px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:background .2s;}
-.pj-print-btn:hover{background:var(--green);color:var(--bg);}
+.pj-print-btn{background:var(--green-faint);color:var(--green);border:1px solid var(--green);padding:9px 20px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;border-radius:var(--radius-sm);}
+.pj-print-btn:hover{background:var(--green);color:var(--bg);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
 .pj-print-hint{font-size:9px;color:var(--muted);}
 @media print{
   .page-nav,.nav-right,.theme-btn,.pj-print-bar,.div-toggle-bar,.inputs-bar,.inputs-section-label,.fi-nota,#tab-simulador,#tab-reserva,#tab-acoes,#tab-rebalance,#tab-fire,#tab-meta,#tab-divs,#tab-crf,footer{display:none!important;}
@@ -646,7 +649,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 
 .meta-milestones{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));border-bottom:1px solid var(--border);}
 .meta-milestone{padding:14px 18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
-.meta-ms-year{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.meta-ms-year{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.5px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
 .meta-ms-val{font-family:'Fraunces',serif;font-size:17px;font-weight:700;line-height:1;margin-bottom:2px;}
 .meta-ms-pct{font-size:9px;color:var(--muted);}
 .meta-ms-mark{font-size:8px;font-weight:700;letter-spacing:1px;color:var(--green);margin-top:3px;}
@@ -655,15 +658,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
    PREÇO JUSTO
 ═══════════════════════════════════════════ */
 .pj-methods-grid{display:grid;grid-template-columns:repeat(2,1fr);border-bottom:1px solid var(--border);}
-.pj-method-card{padding:24px 28px;border-right:1px solid var(--border);}
+.pj-method-card{padding:24px 28px;border-right:1px solid var(--border);border-radius:0;}
 .pj-method-card:last-child{border-right:none;}
 .pj-method-header{margin-bottom:10px;}
 .pj-method-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin-bottom:3px;}
 .pj-method-formula-tag{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.3px;padding:3px 7px;background:var(--panel);border:1px solid var(--border);display:inline-block;}
-.pj-method-desc{font-size:9px;color:var(--muted);line-height:1.7;margin:12px 0 16px;}
+.pj-method-desc{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);line-height:1.8;margin:12px 0 16px;}
 .pj-result-row{display:flex;gap:20px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--border);}
 .pj-result-block{display:flex;flex-direction:column;gap:3px;}
-.pj-result-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.pj-result-label{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.4px;font-weight:600;text-transform:uppercase;color:var(--muted);}
 .pj-result-val{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--text);}
 .pj-margem{font-family:'Fraunces',serif;font-size:18px;font-weight:600;}
 .pj-margem.positiva{color:var(--green);}
@@ -677,12 +680,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .pj-consenso-inner{display:flex;justify-content:center;}
 .pj-consenso-block{padding:20px 40px;border-right:1px solid var(--border);text-align:center;}
 .pj-consenso-block:last-child{border-right:none;}
-.pj-consenso-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.pj-consenso-label{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.4px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
 .pj-consenso-val{font-family:'Fraunces',serif;font-size:22px;font-weight:700;}
 
 .pj-indicators-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));border-bottom:1px solid var(--border);}
 .pj-indicator{padding:14px 20px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
-.pj-ind-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.pj-ind-label{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.4px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
 .pj-ind-val{font-family:'Fraunces',serif;font-size:20px;font-weight:700;line-height:1;margin-bottom:2px;}
 .pj-ind-ref{font-size:8px;color:var(--muted);}
 .pj-ind-ok{color:var(--green);}
@@ -699,7 +702,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 /* ═══════════════════════════════════════════
    BRAPI AUTOCOMPLETE
 ═══════════════════════════════════════════ */
-.pj-autocomplete{position:fixed;z-index:9999;background:var(--card);border:1px solid var(--border2);max-height:240px;overflow-y:auto;display:none;box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.pj-autocomplete{position:fixed;z-index:9999;background:var(--card);border:1px solid var(--border2);max-height:240px;overflow-y:auto;display:none;box-shadow:var(--shadow);border-radius:var(--radius-sm);}
 .pj-autocomplete.open{display:block;}
 .pj-ac-item{padding:8px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border);transition:background .15s;}
 .pj-ac-item:last-child{border-bottom:none;}
@@ -725,7 +728,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 ═══════════════════════════════════════════ */
 .dv-result-card{padding:20px 24px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
 .dv-result-card:last-child{border-right:none;}
-.dv-result-label{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.dv-result-label{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.4px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
 .dv-result-val{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--text);line-height:1;}
 .dv-result-sub{font-size:9px;color:var(--muted);margin-top:4px;}
 .dv-meta-card{padding:16px 20px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;}
@@ -742,7 +745,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 ═══════════════════════════════════════════ */
 .crf-option-card{padding:20px 24px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
 .crf-opt-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
-.crf-opt-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.crf-opt-label{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.4px;font-weight:600;text-transform:uppercase;color:var(--muted);}
 .crf-opt-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 4px;line-height:1;}
 .crf-opt-remove:hover{color:var(--orange);}
 .crf-opt-row{display:flex;flex-direction:column;gap:3px;}
@@ -758,6 +761,186 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .crf-table .rank-1{color:var(--green);font-weight:700;}
 .crf-table .rank-2{color:var(--yellow);}
 .crf-table .rank-3{color:var(--muted);}
+
+/* ═══════════════════════════════════════════
+   TOP ACCENT BAR
+═══════════════════════════════════════════ */
+.top-accent-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--green) 0%, var(--teal) 40%, var(--blue) 100%);
+  position: sticky;
+  top: 0;
+  z-index: 201;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   NAV UPGRADES
+═══════════════════════════════════════════ */
+.page-nav {
+  transition: box-shadow .25s, background .25s;
+}
+.page-nav.scrolled {
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm);
+}
+.nav-logomark { display:flex; align-items:center; flex-shrink:0; }
+.nav-brand-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.4px;
+}
+.nav-brand-name span { color: var(--green); margin: 0 1px; }
+.nav-separator {
+  width: 1px; height: 16px;
+  background: var(--border);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* Active nav item: left accent */
+.nav-dropdown-item.active {
+  color: var(--green);
+  background: var(--green-faint);
+  border-left: 3px solid var(--green);
+  padding-left: 17px;
+}
+.nav-dropdown-item { border-left: 3px solid transparent; }
+
+/* ═══════════════════════════════════════════
+   TAB TRANSITION ANIMATION
+═══════════════════════════════════════════ */
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.tab-enter {
+  animation: tabFadeIn .22s cubic-bezier(.25,.46,.45,.94) both;
+}
+
+/* ═══════════════════════════════════════════
+   NUMBER COUNTER ANIMATION
+═══════════════════════════════════════════ */
+@keyframes numPop {
+  0%   { transform: scale(.95); opacity: .6; }
+  60%  { transform: scale(1.02); }
+  100% { transform: scale(1);   opacity: 1; }
+}
+.num-updated {
+  animation: numPop .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER UPGRADE
+═══════════════════════════════════════════ */
+.header {
+  padding: 40px 40px 28px;
+  background: linear-gradient(135deg, var(--panel) 0%, var(--bg) 100%);
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 40px; right: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--green) 0%, transparent 60%);
+}
+
+/* ═══════════════════════════════════════════
+   RANKING GRID UPGRADE
+═══════════════════════════════════════════ */
+.ranking { gap: 8px; }
+.rank-card.rank-1 {
+  border-color: var(--green);
+  border-width: 1px;
+  background: linear-gradient(135deg, var(--green-faint) 0%, var(--card) 70%);
+}
+
+/* ═══════════════════════════════════════════
+   CAVEATS UPGRADE
+═══════════════════════════════════════════ */
+.caveats {
+  padding: 32px 40px;
+  background: linear-gradient(to bottom, var(--panel), var(--bg));
+  gap: 12px;
+}
+.caveat-card:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER UPGRADE
+═══════════════════════════════════════════ */
+.footer-legal {
+  border-top: none;
+  position: relative;
+}
+.footer-legal::before {
+  content: '';
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green), var(--teal), var(--blue));
+  opacity: .35;
+}
+.footer-legal-block h4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  letter-spacing: .5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.footer-legal-block p {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.footer-copy {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: var(--footer-text);
+}
+.footer-copy strong { color: var(--muted); }
+
+/* ═══════════════════════════════════════════
+   INPUT FOCUS RING (fintech style)
+═══════════════════════════════════════════ */
+.res-input-group input[type=number]:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px var(--green-faint);
+}
+
+/* ═══════════════════════════════════════════
+   RESULT VALUE HIGHLIGHT (pulse on update)
+═══════════════════════════════════════════ */
+.fi-meta-val, .meta-result-val, .res-result-value, .rank-fv {
+  transition: color .3s;
+}
+
+/* ═══════════════════════════════════════════
+   META CHART SECTION UPGRADE
+═══════════════════════════════════════════ */
+.meta-chart-section {
+  background: linear-gradient(to bottom, var(--panel), var(--bg));
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR (webkit — dark/light aware)
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
 </style>
 </head>
 <body>
@@ -765,6 +948,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 <!-- ══════════════════════════════════════════
      PAGE NAV — HAMBURGER
 ══════════════════════════════════════════ -->
+<div class="top-accent-bar"></div>
 <nav class="page-nav">
   <div class="nav-left">
     <div style="position:relative;">
@@ -776,56 +960,56 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
       </button>
       <div class="nav-dropdown" id="navDropdown">
         <button class="nav-dropdown-item active" id="menu-simulador" onclick="showTab('simulador')">
-          <span class="nav-icon">📈</span>
+          <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
           <div class="nav-item-text">
             <span class="nav-item-label">Simulador de Investimentos</span>
             <span class="nav-item-desc">Ações, Tesouro, CDB, LCI/LCA</span>
           </div>
         </button>
         <button class="nav-dropdown-item" id="menu-crf" onclick="showTab('crf')">
-          <span class="nav-icon">📊</span>
+          <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg></span>
           <div class="nav-item-text">
             <span class="nav-item-label">Comparador de Renda Fixa</span>
             <span class="nav-item-desc">CDB · LCI/LCA · Tesouro lado a lado</span>
           </div>
         </button>
         <button class="nav-dropdown-item" id="menu-reserva" onclick="showTab('reserva')">
-          <span class="nav-icon">🛡️</span>
+          <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
           <div class="nav-item-text">
             <span class="nav-item-label">Reserva de Emergência</span>
             <span class="nav-item-desc">Meta, prazo e progresso</span>
           </div>
         </button>
         <button class="nav-dropdown-item" id="menu-acoes" onclick="showTab('acoes')">
-          <span class="nav-icon">📊</span>
+          <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg></span>
           <div class="nav-item-text">
             <span class="nav-item-label">Calculadora de Ações</span>
             <span class="nav-item-desc">DY, cenários e imposto</span>
           </div>
         </button>
         <button class="nav-dropdown-item" id="menu-rebalance" onclick="showTab('rebalance')">
-          <span class="nav-icon">⚖️</span>
+          <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><path d="M3 9l4-4 5 4 5-4 4 4"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span>
           <div class="nav-item-text">
             <span class="nav-item-label">Rebalanceamento de Carteira</span>
             <span class="nav-item-desc">3 perfis · o que comprar agora</span>
           </div>
         </button>
         <button class="nav-dropdown-item" id="menu-meta" onclick="showTab('meta')">
-          <span class="nav-icon">🎯</span>
+          <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
           <div class="nav-item-text">
             <span class="nav-item-label">Meta Patrimonial</span>
             <span class="nav-item-desc">Quanto aportar para chegar lá</span>
           </div>
         </button>
         <button class="nav-dropdown-item" id="menu-preco" onclick="showTab('preco')">
-          <span class="nav-icon">📐</span>
+          <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
           <div class="nav-item-text">
             <span class="nav-item-label">Preço Justo</span>
             <span class="nav-item-desc">Bazin e Graham</span>
           </div>
         </button>
         <button class="nav-dropdown-item" id="menu-divs" onclick="showTab('divs')">
-          <span class="nav-icon">🌿</span>
+          <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10"/><path d="M12 12c0-5.52 4.48-10 10-10"/><line x1="2" y1="22" x2="12" y2="12"/></svg></span>
           <div class="nav-item-text">
             <span class="nav-item-label">Renda de Dividendos</span>
             <span class="nav-item-desc">Quanto sua carteira paga por mês</span>
@@ -833,7 +1017,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
         </button>
 
         <button class="nav-dropdown-item" id="menu-fire" onclick="showTab('fire')">
-          <span class="nav-icon">🏔️</span>
+          <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 22 22 22"/><line x1="12" y1="2" x2="12" y2="22"/></svg></span>
           <div class="nav-item-text">
             <span class="nav-item-label">Independência Financeira</span>
             <span class="nav-item-desc">Seu número FIRE · Curva da Liberdade</span>
@@ -841,6 +1025,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
         </button>
       </div>
     </div>
+    <div class="nav-logomark"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="28" height="28" rx="7" fill="var(--green)" fill-opacity="0.12"/>
+  <polyline points="5,20 10,13 15,16 20,8 23,11" stroke="var(--green)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></div>
+    <span class="nav-brand-name">RQ<span>·</span>Finanças</span>
+    <div class="nav-separator"></div>
     <span class="nav-active-label" id="navActiveLabel">Simulador de Investimentos</span>
   </div>
   <div class="nav-right">
@@ -994,6 +1184,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
       <div class="section-label">Crescimento do Patrimônio · valor bruto acumulado</div>
       <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
       <p class="chart-note">* Renda fixa: curvas mostram o valor bruto que rende juros compostos. IR incide apenas no resgate (sem come-cotas). "No bolso" no ranking desconta o IR automaticamente pelo prazo. Ações: gráfico em valor total (bruto); o IR no ranking é uma estimativa simplificada — alíquota fixa de 15% sobre o ganho de preço, sem considerar isenção de R$20k/mês nem compensação de perdas. Dividendos tratados como isentos (Lei 9.249/95). Retornos em termos nominais, sem ajuste pela inflação.</p>
+      <p class="chart-note" id="chart-context-note" style="display:none;color:var(--yellow);"></p>
       <div class="legend-grid" id="legendGrid"></div>
     </div>
     <div class="sidebar">
@@ -1022,7 +1213,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
     <div class="caveat-card">
       <div class="caveat-badge yellow">⚠ LCI/LCA</div>
       <div class="caveat-title">Bom hoje, incerto amanhã</div>
-      <div class="caveat-body">Prazo típico ~3 anos; impossível travar por 20 anos. Renova às taxas futuras. Mude IR para 7,5% para simular eventual tributação.</div>
+      <div class="caveat-body">Prazo típico ~3 anos; impossível travar por 20 anos. Renova às taxas futuras. Com Selic em 15%, LCI a 14% isentos é excepcionalmente atrativo — mas é improvável que renove nesses níveis por 15–20 anos. Mude IR para 7,5% para simular eventual tributação.</div>
     </div>
     <div class="caveat-card">
       <div class="caveat-badge teal">◈ CDB</div>
@@ -1030,9 +1221,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
       <div class="caveat-body">IR cai de 22,5% (≤180d) a 15% (720d+). Rende pela taxa bruta; IR incide só no resgate. Atenção ao limite FGC por CPF por instituição.</div>
     </div>
     <div class="caveat-card">
+      <div class="caveat-badge blue">◈ Ações · 3 cenários de preço</div>
+      <div class="caveat-title">Valorização de preço já incluída</div>
+      <div class="caveat-body">Cada cenário combina a valorização do preço (3% / 7% / 11% ao ano) com o DY configurado acima. O total return está explícito no ranking. Cenário Moderado 7% + DY 6% = ~13,4% a.a. — próximo de LCI 14%, por isso podem aparecer em posições similares quando a Selic está alta.</div>
+    </div>
+    <div class="caveat-card">
       <div class="caveat-badge blue">◈ Ações com Reinvestimento</div>
       <div class="caveat-title">Bola de neve via dividendos</div>
-      <div class="caveat-body">Dividendos compram mais cotas → mais dividendos → efeito exponencial. ITUB4, ABCB4 historicamente entregam total return 12–18% a.a. em bons ciclos.</div>
+      <div class="caveat-body">Dividendos compram mais cotas → mais dividendos → efeito exponencial. O retorno real depende muito de qual ciclo de mercado se realiza — os cenários conservador (3%), moderado (7%) e otimista (11%) representam diferentes possibilidades históricas para ações de dividendos.</div>
     </div>
     <div class="caveat-card">
       <div class="caveat-badge red">◈ Ações sem Reinvestimento</div>
@@ -2023,7 +2219,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
   <div class="header" id="tab-crf-header">
     <div class="header-eyebrow">Renda Fixa · Comparador Detalhado</div>
     <h1>CDB, LCI, Tesouro —<br><em>quem ganha?</em></h1>
-    <p class="header-sub">Compare até 4 aplicações lado a lado. IR pelo prazo (tabela regressiva), isenção de LCI/LCA e inflação já considerados. Resultado líquido real.</p>
+    <p class="header-sub">Compare até 6 aplicações lado a lado. IR pelo prazo (tabela regressiva), isenção de LCI/LCA e inflação já considerados. Resultado líquido real.</p>
   </div>
 
   <div class="inputs-section-label">Parâmetros da Comparação</div>
@@ -2052,8 +2248,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 
   <div class="inputs-section-label">Opções para Comparar</div>
   <div class="crf-options-grid" id="crf-options-grid"></div>
-  <div style="padding:8px 40px;">
-    <button class="pj-print-btn" onclick="addCRFOption()" style="background:var(--panel);color:var(--text);border-color:var(--border2);">+ Adicionar opção</button>
+  <div style="padding:8px 40px;display:flex;align-items:center;gap:12px;">
+    <button class="pj-print-btn" id="crf-add-btn" onclick="addCRFOption()" style="background:var(--panel);color:var(--text);border-color:var(--border2);">+ Adicionar opção</button>
+    <span class="input-note" id="crf-count-label"></span>
   </div>
 
   <!-- Tabela comparativa -->
@@ -2091,11 +2288,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 <footer class="footer-legal">
   <div class="footer-legal-main">
     <div class="footer-legal-block">
-      <h4>⚠ Isenção de Responsabilidade</h4>
+      <h4>Isenção de Responsabilidade</h4>
       <p>As simulações apresentadas neste site têm caráter exclusivamente educacional e informativo. Os resultados são estimativas baseadas em premissas matemáticas e não constituem recomendação de investimento, consultoria financeira ou garantia de rentabilidade. Rentabilidade passada não é garantia de rentabilidade futura. O autor não se responsabiliza por decisões financeiras tomadas com base nas informações aqui apresentadas. Consulte sempre um profissional certificado (CFP® / CNPI) antes de investir.</p>
     </div>
     <div class="footer-legal-block">
-      <h4>© Direitos Autorais e Propriedade Intelectual</h4>
+      <h4>Direitos Autorais</h4>
       <p>Todo o conteúdo deste site (incluindo código-fonte, design, interface, textos e lógica de cálculo) é de propriedade exclusiva de <strong>Raoni Queiroz</strong> e está protegido pela Lei nº 9.610/1998 (Lei de Direitos Autorais) e pela legislação de propriedade intelectual brasileira. É expressamente proibida a cópia, reprodução, distribuição ou uso comercial de qualquer parte deste material sem autorização prévia e por escrito. Violações estão sujeitas às penalidades civis e criminais previstas em lei.</p>
     </div>
   </div>
@@ -2106,6 +2303,35 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 </footer>
 
 <script>
+
+// ═══════════════════════════════════════════
+// SCROLL-AWARE NAV
+// ═══════════════════════════════════════════
+const navEl = document.querySelector('.page-nav');
+window.addEventListener('scroll', () => {
+  navEl.classList.toggle('scrolled', window.scrollY > 10);
+}, { passive: true });
+
+// ═══════════════════════════════════════════
+// NUMBER COUNTER ANIMATION
+// ═══════════════════════════════════════════
+function animateCounter(el, targetVal, duration, formatter) {
+  if (!el) return;
+  el.classList.remove('num-updated');
+  void el.offsetWidth;
+  el.classList.add('num-updated');
+  const start = performance.now();
+  const startVal = 0;
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+    const current = startVal + (targetVal - startVal) * ease;
+    el.textContent = formatter(current);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = formatter(targetVal);
+  }
+  requestAnimationFrame(step);
+}
 // ═══════════════════════════════════════════
 // ESTADO GLOBAL
 // ═══════════════════════════════════════════
@@ -2154,15 +2380,17 @@ document.addEventListener('click', e => {
 // TAB NAVIGATION
 // ═══════════════════════════════════════════
 function showTab(tab) {
-  document.getElementById('tab-simulador').style.display  = tab === 'simulador'  ? '' : 'none';
-  document.getElementById('tab-reserva').style.display    = tab === 'reserva'    ? '' : 'none';
-  document.getElementById('tab-acoes').style.display      = tab === 'acoes'      ? '' : 'none';
-  document.getElementById('tab-rebalance').style.display  = tab === 'rebalance'  ? '' : 'none';
-  document.getElementById('tab-fire').style.display       = tab === 'fire'       ? '' : 'none';
-  document.getElementById('tab-divs').style.display       = tab === 'divs'       ? '' : 'none';
-  document.getElementById('tab-crf').style.display        = tab === 'crf'        ? '' : 'none';
-  document.getElementById('tab-meta').style.display       = tab === 'meta'       ? '' : 'none';
-  document.getElementById('tab-preco').style.display      = tab === 'preco'      ? '' : 'none';
+  const allTabs = ['simulador','reserva','acoes','rebalance','fire','divs','crf','meta','preco'];
+  allTabs.forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    el.style.display = 'none';
+    el.classList.remove('tab-enter');
+  });
+  const activeEl = document.getElementById('tab-' + tab);
+  activeEl.style.display = '';
+  // Trigger reflow then add animation class
+  void activeEl.offsetWidth;
+  activeEl.classList.add('tab-enter');
 
   Object.keys(TABS).forEach(key => {
     document.getElementById('menu-'+key).classList.toggle('active', key === tab);
@@ -2520,7 +2748,21 @@ function buildRanking() {
     return { inv, fvGross, grossGain, netPocket, irLabel, rate };
   });
 
-  results.sort((a,b) => b.fvGross - a.fvGross);
+  // Dynamic context note: explain when LCI beats moderado stocks
+  const lciResult  = results.find(r => r.inv.type === 'lci');
+  const modResult  = results.find(r => r.inv.id === 'acoes_mod');
+  const noteEl     = document.getElementById('chart-context-note');
+  if (noteEl && lciResult && modResult) {
+    const lciWins = lciResult.fvGross > modResult.fvGross;
+    if (lciWins) {
+      const modTotal = ((1 + p.dy/100) * 1.07 - 1) * 100;
+      noteEl.style.display = '';
+      noteEl.textContent = `⚠ Contexto: LCI ${p.lciGross.toFixed(1)}% isento supera Ações Moderado neste cenário. Isso é matematicamente correto: ${p.lciGross.toFixed(1)}% líquido > ${modTotal.toFixed(1)}% total return das ações (7% preço + ${p.dy.toFixed(1)}% DY). Com Selic em ${p.selic}%, renda fixa está excepcionalmente atrativa — porém LCI renova a cada ~3 anos, não garante essa taxa por 20 anos.`;
+    } else {
+      noteEl.style.display = 'none';
+      noteEl.textContent = '';
+    }
+  }
 
   const list = document.getElementById('rankingList');
   list.innerHTML = '';
@@ -2534,9 +2776,10 @@ function buildRanking() {
     // Rate label: always show gross. Add net estimate for fixed income.
     let rateLabel;
     if (noReinv) {
-      rateLabel = `${r.rate.toFixed(1)}% preço (bruto) · DY em caixa`;
+      rateLabel = `${(r.inv.priceGrowth*100).toFixed(0)}% preço a.a. (bruto) · DY ${p.dy.toFixed(1)}% em caixa`;
     } else if (r.inv.type === 'stock') {
-      rateLabel = `${r.rate.toFixed(1)}% a.a. total return (bruto)`;
+      const totalReturn = ((1 + p.dy/100) * (1 + r.inv.priceGrowth) - 1) * 100;
+      rateLabel = `${(r.inv.priceGrowth*100).toFixed(0)}% preço + ${p.dy.toFixed(1)}% DY = ${totalReturn.toFixed(1)}% total (bruto)`;
     } else {
       const ir = irRate(r.inv, p);
       if (ir === 0) {
@@ -4415,6 +4658,17 @@ function renderCRFOptions() {
         oninput="crfOptions[${i}].valor=parseFloat(this.value)||0;calcCRF();" placeholder="${placeholder}">`;
     grid.appendChild(div);
   });
+  updateCRFAddBtn();
+}
+
+function updateCRFAddBtn() {
+  const btn   = document.getElementById('crf-add-btn');
+  const label = document.getElementById('crf-count-label');
+  const MAX   = 6;
+  if (!btn) return;
+  const atMax = crfOptions.length >= MAX;
+  btn.style.display   = atMax ? 'none' : '';
+  if (label) label.textContent = `${crfOptions.length} de ${MAX} opções`;
 }
 
 function addCRFOption() {
