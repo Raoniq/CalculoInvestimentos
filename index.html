@@ -86,7 +86,18 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 .nav-dropdown-item:last-child{border-bottom:none;}
 .nav-dropdown-item:hover{background:var(--card);color:var(--text);}
 .nav-dropdown-item.active{color:var(--green);background:var(--green-faint);}
-.nav-dropdown-item .nav-icon{font-size:14px;flex-shrink:0;}
+.nav-dropdown-item .nav-icon{font-size:14px;flex-shrink:0;transition:color .15s;}
+
+/* cores dos ícones do menu */
+#menu-simulador .nav-icon { color: var(--green); }
+#menu-crf       .nav-icon { color: var(--teal); }
+#menu-reserva   .nav-icon { color: var(--blue); }
+#menu-acoes     .nav-icon { color: var(--violet); }
+#menu-rebalance .nav-icon { color: var(--blue); }
+#menu-meta      .nav-icon { color: var(--green); }
+#menu-preco     .nav-icon { color: var(--yellow); }
+#menu-divs      .nav-icon { color: var(--green); }
+#menu-fire      .nav-icon { color: var(--orange); }
 .nav-dropdown-item .nav-item-text{display:flex;flex-direction:column;gap:2px;}
 .nav-dropdown-item .nav-item-label{font-size:12px;font-weight:500;}
 .nav-dropdown-item .nav-item-desc{font-size:10px;color:var(--muted);letter-spacing:0;}
