@@ -599,7 +599,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 .pj-sector-warning-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
 .pj-sector-warning-text{font-size:11px;color:var(--text);line-height:1.7;}
 .pj-sector-warning-text strong{color:var(--orange);}
-.pj-dpa-tip{font-size:10px;color:var(--muted);line-height:1.7;margin-top:8px;padding:10px 12px;background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--yellow);}
+.pj-dpa-info{position:relative;display:inline-flex;align-items:center;cursor:help;color:var(--blue);font-size:10px;margin-left:3px;font-style:normal;}
+.pj-dpa-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:0;width:260px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:10px;color:var(--text);line-height:1.6;box-shadow:var(--shadow);z-index:400;pointer-events:none;}
+.pj-dpa-info:hover .pj-dpa-tooltip,.pj-dpa-info:focus .pj-dpa-tooltip{display:block;}
+.pj-dpa-tooltip strong{color:var(--yellow);}
 .pj-dpa-tip strong{color:var(--text);}
 
 /* meta patrimonial */
@@ -1669,6 +1672,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
       <input type="number" id="rb-prot" value="0" min="0" step="100" oninput="calcRebalance()">
       <span class="input-note">R$ em ouro, dólar, BDR</span>
     </div>
+    <div class="input-group">
+      <label>Novo Aporte (R$)</label>
+      <input type="number" id="rb-novo-aporte" value="0" min="0" step="100" oninput="calcRebalance()">
+      <span class="input-note">quanto você vai investir agora — será direcionado sem vender nada</span>
+    </div>
     <div class="input-group" style="background:var(--green-faint);border:1px solid var(--green);padding:12px 16px;">
       <label style="color:var(--green);">Total da Carteira</label>
       <div id="rb-total" style="font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--green);">R$ 0</div>
@@ -1691,6 +1699,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
     <div class="rb-diag-grid" id="rb-diag-grid"></div>
 
     <!-- DONUT -->
+    <div id="rb-aporte-summary" style="display:none;padding:8px 40px 0;font-size:11px;color:var(--muted);"></div>
     <div class="rb-charts-row">
       <div class="rb-donut-area">
         <div class="rb-chart-title">SUA CARTEIRA ATUAL</div>
@@ -1888,6 +1897,15 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
     <strong>Sobre IR:</strong> dividendos de ações e FIIs são isentos de IR. O DY informado já é o valor líquido. Para a Renda Fixa comparativa, informe sempre a taxa já descontado o imposto.
   </div>
 
+  <div class="fi-nota" style="background:var(--yellow-faint);border-left:3px solid var(--yellow);color:var(--text);">
+    <strong style="color:var(--yellow);">⚠ A Regra dos 4% foi feita para os EUA — o Brasil é diferente</strong><br>
+    O Estudo Trinity (1998) baseou-se em portfólio 50% ações / 50% renda fixa <em>americana</em>, onde títulos rendiam 2–4% ao ano.
+    No Brasil, o Tesouro IPCA+ rende 6–8% <em>reais</em> ao ano. Isso inverte a lógica:<br>
+    <strong>• Carteiras concentradas em ações:</strong> historicamente fracassam em sustentar saques contínuos no Brasil devido à alta volatilidade e baixo dividend yield médio vs a renda fixa local.<br>
+    <strong>• Carteiras concentradas em Tesouro IPCA+:</strong> estudos brasileiros apontam taxas seguras de retirada próximas a <strong>5%</strong> — mais que os 4% americanos.<br>
+    <strong>Recomendação para FIRE BR:</strong> na fase de retirada, privilegie Tesouro IPCA+ de longo prazo como âncora (60–80% do portfólio). Use ações como complemento de crescimento, não como fonte principal de renda. Use o campo "Renda Fixa comparativa" abaixo para simular um portfólio orientado a RF.
+  </div>
+
   <!-- SEÇÃO 2: CURVA DA LIBERDADE -->
   <div class="inputs-section-label" style="margin-top:0;">Seção 2 · Curva da Liberdade · Quando os dividendos cobrem seus gastos?</div>
 
@@ -2042,17 +2060,26 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
       <input type="number" id="pj-vpa" value="31.78" min="0" step="0.01" oninput="calcPreco()">
       <span class="input-note">Valor Patrimonial por Ação</span>
     </div>
-    <div class="input-group" style="min-width:340px;">
+    <div class="input-group">
       <label>DPA · Dividendo Por Ação (R$)</label>
       <input type="number" id="pj-dpa" value="1.20" min="0" step="0.01" oninput="calcPreco()">
-      <span class="input-note">soma dos dividendos pagos por ação no último exercício fiscal já publicado (em R$, não em %)</span>
-      <div class="pj-dpa-tip">
-        <strong>Qual exercício usar?</strong> Empresas brasileiras entregam o balanço anual à CVM até março ou abril do ano seguinte.
-        Antes disso, o ano mais recente ainda não está auditado e publicado.
-        <br>Exemplo: em fevereiro de 2026, use o DPA de 2024 (não o de 2025, que ainda não foi publicado).
-        <br>Como conferir: acesse o site de RI da empresa, o <strong>Investidor10</strong> ou o <strong>Status Invest</strong> e veja qual é o último ano com dados completos de dividendos.
-        O DPA aparece como "Proventos por Ação" ou "Dividendos por Ação" no histórico anual.
-      </div>
+      <span class="input-note">soma dos dividendos do último exercício publicado (em R$, não em %) <span class="pj-dpa-info" tabindex="0">ℹ
+        <span class="pj-dpa-tooltip">
+          <strong>Qual exercício usar?</strong> Empresas entregam o balanço à CVM até mar/abr do ano seguinte — use sempre o último ano com dados completos.<br><br>
+          Ex: em fev/2026, use o DPA de 2024.<br><br>
+          Consulte o site de RI, <strong>Investidor10</strong> ou <strong>Status Invest</strong>.
+        </span>
+      </span></span>
+    </div>
+    <div class="input-group">
+      <label>Crescimento estimado g % a.a.</label>
+      <input type="number" id="pj-g" value="8" min="-20" max="50" step="0.5" oninput="calcPreco()">
+      <span class="input-note">crescimento esperado do LPA/dividendo. Usado no Graham Tropicalizado.</span>
+    </div>
+<div class="input-group">
+      <label>Selic / yield RF % a.a.</label>
+      <input type="number" id="pj-selic-ref" value="15" min="1" max="30" step="0.5" oninput="calcPreco()">
+      <span class="input-note">usado na fórmula Graham tropicalizada: quanto maior a Selic, mais rigorosa a avaliação</span>
     </div>
   </div>
 
@@ -2106,13 +2133,26 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
       </div>
     </div>
 
+    <div class="pj-method-card" id="pj-card-graham-br">
+      <div class="pj-method-header">
+        <div class="pj-method-title">🇧🇷 Graham Tropicalizado</div>
+        <div class="pj-method-formula-tag">[LPA × (8,5 + 2g) × 4,4] ÷ Selic</div>
+      </div>
+      <div class="pj-method-desc">Adaptação da fórmula de Graham para o Brasil. O fator 4,4 é o rendimento de títulos AAA americanos na época de Graham. Dividir pela Selic atual penaliza a ação quando os juros estão altos — exatamente o que acontece no Brasil.</div>
+      <div class="pj-result-row">
+        <div class="pj-result-block"><div class="pj-result-label">Preço justo</div><div class="pj-result-val" id="pj-graham-br-val">...</div></div>
+        <div class="pj-result-block"><div class="pj-result-label">Margem</div><div class="pj-margem" id="pj-graham-br-margem">...</div></div>
+        <div class="pj-result-block"><div class="pj-result-label">Veredito</div><div class="pj-veredicto" id="pj-graham-br-veredicto">...</div></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- CONSENSO -->
   <div class="pj-consenso-bar">
     <div class="pj-consenso-inner">
       <div class="pj-consenso-block">
-        <div class="pj-consenso-label">Média dos 2 métodos</div>
+        <div class="pj-consenso-label">Média dos métodos válidos</div>
         <div class="pj-consenso-val" id="pj-media">...</div>
       </div>
       <div class="pj-consenso-block">
@@ -2184,6 +2224,27 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
       <label>IPCA % a.a.</label>
       <input type="number" id="dv-ipca" value="4.0" min="0" max="20" step="0.5" oninput="calcDivs()">
       <span class="input-note">para calcular poder de compra real</span>
+    </div>
+  </div>
+
+  <div class="inputs-section-label">Yield on Cost · Rentabilidade Real do seu Dinheiro</div>
+  <div class="inputs-bar">
+    <div class="input-group">
+      <label>Preço médio de compra (R$)</label>
+      <input type="number" id="dv-preco-medio" value="0" min="0" step="0.01" oninput="calcDivs()">
+      <span class="input-note">custo médio de aquisição das suas cotas/ações</span>
+    </div>
+    <div class="input-group">
+      <label>Preço atual de mercado (R$)</label>
+      <input type="number" id="dv-preco-atual" value="0" min="0" step="0.01" oninput="calcDivs()">
+      <span class="input-note">cotação atual para comparar DY de mercado vs YOC</span>
+    </div>
+    <div class="input-group">
+      <label>Dividendo anual por cota (R$)</label>
+      <input type="number" id="dv-dpa-anual" value="0" min="0" step="0.01" oninput="calcDivs()">
+      <span class="input-note">soma dos proventos pagos no último ano</span>
+    </div>
+    <div id="dv-yoc-result" style="display:none;padding:14px 22px;border-right:1px solid var(--border);flex:2;min-width:240px;">
     </div>
   </div>
 
@@ -3523,6 +3584,17 @@ function calcRebalance() {
 
   buildRbDiag();
   buildRbDonuts();
+  // resumo do aporte
+  const novoAporte = parseFloat(document.getElementById('rb-novo-aporte').value) || 0;
+  const sumEl = document.getElementById('rb-aporte-summary');
+  if (sumEl) {
+    if (novoAporte > 0) {
+      sumEl.style.display = '';
+      sumEl.innerHTML = `<strong style="color:var(--green)">Estratégia:</strong> Os ${fmtBRL(novoAporte)} serão distribuídos apenas entre as classes abaixo do alvo, sem vender nenhum ativo — estratégia Constant-mix. Nenhum imposto é gerado.`;
+    } else {
+      sumEl.style.display = 'none';
+    }
+  }
 }
 
 function buildRbDiag() {
@@ -3546,16 +3618,31 @@ function buildRbDiag() {
     const diff       = targetPct - currentPct;
     const diffVal    = (diff / 100) * total;
 
+    const novoAporte = parseFloat(document.getElementById('rb-novo-aporte').value) || 0;
+    // constant-mix: direciona o aporte proporcionalmente ao desvio negativo (sem vender)
+    const totalNeg = rbCls.reduce((sum, c2) => {
+      const cp = (current[c2.id] / total) * 100;
+      const d  = tgt[c2.id] - cp;
+      return d > 0 ? sum + d : sum;
+    }, 0);
+    const aporteProporcional = totalNeg > 0 && diff > 0
+      ? (diff / totalNeg) * novoAporte
+      : 0;
+
     let deltaClass, deltaText, amountText;
     if (Math.abs(diff) < 1.5) {
       deltaClass = 'ok'; deltaText = '✓ Balanceado';
-      amountText = 'Diferença < 1,5%; sem necessidade de ação';
+      amountText = novoAporte > 0 ? 'Não precisa aportar aqui' : 'Diferença < 1,5%; sem ação necessária';
     } else if (diff > 0) {
-      deltaClass = 'buy'; deltaText = `+${diff.toFixed(1)}% a comprar`;
-      amountText = `Comprar ~${fmtBRL(diffVal)}`;
+      deltaClass = 'buy'; deltaText = `+${diff.toFixed(1)}% abaixo do alvo`;
+      if (novoAporte > 0) {
+        amountText = `Aportar ${fmtBRL(aporteProporcional)} aqui · faltam ainda ${fmtBRL(Math.max(diffVal - aporteProporcional, 0))} para zerar o gap`;
+      } else {
+        amountText = `Gap de ${fmtBRL(diffVal)} · informe um aporte acima para ver a sugestão`;
+      }
     } else {
       deltaClass = 'over'; deltaText = `${diff.toFixed(1)}% acima do alvo`;
-      amountText = `Alocar novos aportes em outras classes`;
+      amountText = `Não aportar aqui — direcione aportes para as classes abaixo do alvo`;
     }
 
     const cell = document.createElement('div');
@@ -4192,12 +4279,20 @@ function calcPreco() {
   const vpa        = parseFloat(document.getElementById('pj-vpa').value)         || 0;
   const dpa = parseFloat(document.getElementById('pj-dpa').value) || 0;
 
-  // Bazin: DPA (R$) ÷ 0,06  — usa dividendo real, não derivado do preço atual
+  const g        = parseFloat(document.getElementById('pj-g').value)         || 0;
+const selicRef = parseFloat(document.getElementById('pj-selic-ref').value) || 15;
+
+  // bazin
   const bazin = dpa > 0 ? dpa / 0.06 : 0;
 
-  // Graham: √(22,5 × LPA × VPA)
-  // graham só faz sentido com LPA e VPA positivos
+  // graham original: √(22,5 × LPA × VPA)
   const graham = (lpa > 0 && vpa > 0) ? Math.sqrt(22.5 * lpa * vpa) : 0;
+
+  // graham tropicalizado: [LPA × (8,5 + 2g) × 4,4] / Selic%
+  const grahamBr = (lpa > 0 && selicRef > 0)
+    ? (lpa * (8.5 + 2 * g) * 4.4) / selicRef
+    : 0;
+
 
   function margem(justo) {
     if (!justo || !preco) return { txt: 'N/A', cls: '' };
@@ -4232,11 +4327,13 @@ function calcPreco() {
     vel.textContent = v.txt; vel.className = `pj-veredicto ${v.cls}`;
   }
 
-  renderMethod('bazin',  bazin,  dpa <= 0);
-  renderMethod('graham', graham, lpa <= 0 || vpa <= 0);
+  renderMethod('bazin',     bazin,    dpa <= 0);
+  renderMethod('graham',    graham,   lpa <= 0 || vpa <= 0);
+  renderMethod('graham-br', grahamBr, lpa <= 0 || selicRef <= 0);
 
   // avisos de setor
   const warnings = [];
+
   const pvpCalc = vpa > 0 ? preco / vpa : 0;
   if (pvpCalc > 0 && pvpCalc < 0.7) warnings.push({ title: 'Possível banco ou financeira', msg: 'P/VP muito baixo (abaixo de 0,7) é comum em bancos e financeiras, onde a alavancagem distorce o patrimônio líquido. O modelo de Graham pode subestimar o valor real nesse setor.' });
   if (dpa <= 0) warnings.push({ title: 'Empresa sem dividendos', msg: 'Bazin não se aplica a empresas que não distribuem proventos. Comum em techs, startups e empresas farmacêuticas em expansão que reinvestem todo o lucro. Considere usar P/L e crescimento de receita como guia.' });
@@ -4254,7 +4351,7 @@ function calcPreco() {
   }
 
   // Consenso — detecta divergência quando métodos apontam em direções opostas
-  const validos = [bazin, graham].filter(v => v > 0);
+  const validos = [bazin, graham, grahamBr].filter(v => v > 0);
   const media = validos.length > 0 ? validos.reduce((a, b) => a + b, 0) / validos.length : 0;
 
   document.getElementById('pj-media').textContent = media > 0 ? `R$ ${media.toFixed(2)}` : 'N/A';
@@ -4270,6 +4367,7 @@ function calcPreco() {
   const cEl = document.getElementById('pj-consenso-geral');
   // Divergência: ambos válidos mas um acima e outro abaixo do preço atual,
   // e a diferença entre eles é maior que 30% do preço
+  // divergência: checa se Bazin e Graham original apontam em direções opostas
   const ambosValidos = bazin > 0 && graham > 0;
   const diverge = ambosValidos && Math.abs(bazin - graham) / preco > 0.3
     && ((bazin > preco && graham < preco) || (bazin < preco && graham > preco));
@@ -4496,12 +4594,15 @@ async function fetchQuoteForTicker(ticker) {
   badge.style.display = 'none';
 
   try {
-    const url = `${BRAPI_BASE}/quote/${encodeURIComponent(ticker.toUpperCase())}?token=${BRAPI_TOKEN}`;
-    const res  = await fetch(url);
+    const url = `${BRAPI_BASE}/quote/${encodeURIComponent(ticker.toUpperCase())}?token=${BRAPI_TOKEN}&fundamental=false`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const r    = data?.results?.[0];
-    if (!r?.regularMarketPrice) throw new Error('sem preço');
+    const r = data?.results?.[0];
+    if (!r?.regularMarketPrice) throw new Error('ticker não encontrado');
 
     document.getElementById('pj-preco').value = r.regularMarketPrice.toFixed(2);
     badge.style.display = '';
@@ -4510,8 +4611,9 @@ async function fetchQuoteForTicker(ticker) {
     pNote.textContent = `Cotação automática · ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
     calcPreco();
   } catch(e) {
-    note.textContent = `Ticker não encontrado ou erro na busca (${e.message}). Insira o preço manualmente.`;
-    note.className   = 'input-note pj-fetch-status err';
+    const msg = e.name === 'AbortError' ? 'timeout — a API demorou demais' : e.message;
+    note.innerHTML = `Não foi possível buscar (${msg}). <a href="https://brapi.dev/quote/${ticker.toUpperCase()}" target="_blank" rel="noopener" style="color:var(--blue);">Ver no Brapi ↗</a> · insira o preço manualmente.`;
+    note.className = 'input-note pj-fetch-status err';
     calcPreco();
   }
 }
@@ -4635,6 +4737,42 @@ document.getElementById('sazonalToggle').addEventListener('change', function() {
 let divChart = null;
 
 function calcDivs() {
+  // YOC
+  const precoMedio  = parseFloat(document.getElementById('dv-preco-medio').value)  || 0;
+  const precoAtual  = parseFloat(document.getElementById('dv-preco-atual').value)  || 0;
+  const dpaAnual    = parseFloat(document.getElementById('dv-dpa-anual').value)    || 0;
+  const yocEl       = document.getElementById('dv-yoc-result');
+  if (yocEl && precoMedio > 0 && dpaAnual > 0) {
+    const yoc  = (dpaAnual / precoMedio) * 100;
+    const dyMkt = precoAtual > 0 ? (dpaAnual / precoAtual) * 100 : null;
+    const diff  = dyMkt !== null ? yoc - dyMkt : null;
+    yocEl.style.display = '';
+    yocEl.innerHTML = `
+      <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;">Resultado YOC</div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">YIELD ON COST</div>
+          <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--green);">${yoc.toFixed(2)}%</div>
+          <div style="font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);">sobre o seu custo médio</div>
+        </div>
+        ${dyMkt !== null ? `<div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">DY DE MERCADO</div>
+          <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--blue);">${dyMkt.toFixed(2)}%</div>
+          <div style="font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);">sobre o preço atual</div>
+        </div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">DIFERENÇA</div>
+          <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:${diff >= 0 ? 'var(--green)' : 'var(--orange)'};">${diff >= 0 ? '+' : ''}${diff.toFixed(2)}pp</div>
+          <div style="font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);">${diff >= 0 ? 'você ganha mais que quem compra hoje' : 'quem compra hoje leva mais DY'}</div>
+        </div>` : ''}
+      </div>
+      <div style="font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);margin-top:8px;line-height:1.6;">
+        <strong>O que é YOC:</strong> mede o rendimento sobre o dinheiro que você <em>efetivamente pagou</em>. Um YOC de ${yoc.toFixed(1)}% significa que a cada 100 reais investidos no seu custo médio, você recebe R$&nbsp;${(dpaAnual/precoMedio*100/100*100).toFixed(2)} em dividendos por ano — independente do preço atual de mercado.
+      </div>`;
+  } else if (yocEl) {
+    yocEl.style.display = 'none';
+  }
+
   const patrimonio  = parseFloat(document.getElementById('dv-patrimonio').value)  || 0;
   const dy          = parseFloat(document.getElementById('dv-dy').value)           || 0;
   const aporte      = parseFloat(document.getElementById('dv-aporte').value)       || 0;
