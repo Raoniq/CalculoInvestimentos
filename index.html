@@ -2487,6 +2487,24 @@ function displayRate(inv, p) {
 // simulação
 
 // compõe pelo bruto; IR só no resgate
+
+// rastreia dividendos cumulativos na simulação com reinvestimento
+// dividendos são isentos mas, ao reinvestir, formam base de custo das novas cotas
+// ganho tributável = fvGross - totalInvested - cumDivs
+function simStockReinvestCumDivs(dyRate, priceGrowth, inicial, aporteParam, months) {
+  const rTotal = Math.pow((1 + dyRate) * (1 + priceGrowth), 1/12) - 1;
+  const rDY    = Math.pow(1 + dyRate, 1/12) - 1;
+  const isArr  = Array.isArray(aporteParam);
+  let bal = inicial, cumDivs = 0;
+  for (let m = 1; m <= months; m++) {
+    const ap = isArr ? aporteParam[(m-1) % 12] : aporteParam;
+    const divThisMonth = bal * rDY;
+    cumDivs += divThisMonth;
+    bal = bal * (1 + rTotal) + ap;
+  }
+  return { finalVal: bal, cumDivs };
+}
+
 function simFixed(annualRate, inicial, aporteParam, months) {
   const r = Math.pow(1 + annualRate, 1/12) - 1;
   const isArr = Array.isArray(aporteParam);
@@ -2618,43 +2636,49 @@ function randn(mean, std) {
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
 // simula um único caminho com parâmetros perturbados
-function simOnePath(inv, p, months, selicVar, ipcaVar, stockVar) {
-  const selicI  = clamp(selicVar, 0.5, 30) / 100;
-  const ipcaI   = clamp(ipcaVar,  0.5, 20) / 100;
-  const cdiI    = Math.max(selicI - 0.001, 0);
+// random walk: re-sorteia as variáveis a cada ano
+// baseRegime captura o ciclo macro da simulação (juros altos/baixos)
+// a cada ano: perturbação local independente + influência do regime
+function simOnePathRandomWalk(inv, p, months, baseRegime) {
+  const years = Math.ceil(months / 12);
+  const isArr = Array.isArray(p.aporte);
+  const dy    = p.dy / 100;
+  let bal = p.inicial, cashDivs = 0;
+  const out = [];
 
-  // taxa efetiva para RF
-  let rate;
-  if (inv.type === 'tesouro') {
-    rate = (1 + p.tesReal/100) * (1 + ipcaI) - 1;
-  } else if (inv.type === 'lci') {
-    rate = p.lciMode === 'pos' ? (p.lciRaw/100) * cdiI : p.lciGross/100;
-    rate = clamp(rate, 0, 0.40);
-  } else if (inv.type === 'cdb') {
-    rate = p.cdbMode === 'pos' ? (p.cdbRaw/100) * cdiI : p.cdbGross/100;
-    rate = clamp(rate, 0, 0.40);
-  } else {
-    // ações
-    const pg = clamp(inv.priceGrowth + stockVar, -0.20, 0.40);
-    const dy = p.dy / 100;
-    if (reinvestDivs) {
-      rate = (1 + dy) * (1 + pg) - 1;
+  for (let y = 0; y < years; y++) {
+    // sorteio anual — cada ano tem sua própria surpresa
+    const selicY  = clamp(randn(p.selic, 2.5) + baseRegime * 0.5, 0.5, 30) / 100;
+    const ipcaY   = clamp(randn(p.ipca,  1.5),                    0.5, 20) / 100;
+    const cdiY    = Math.max(selicY - 0.001, 0);
+    // ações: vol histórica do Ibovespa ~15% a.a.; juros altos pressionam
+    const stockShock = randn(0, 0.15) - baseRegime * 0.02;
+
+    let annualRate;
+    if (inv.type === 'tesouro') {
+      annualRate = (1 + p.tesReal/100) * (1 + ipcaY) - 1;
+    } else if (inv.type === 'lci') {
+      annualRate = clamp(p.lciMode === 'pos' ? (p.lciRaw/100) * cdiY : p.lciGross/100, 0, 0.40);
+    } else if (inv.type === 'cdb') {
+      annualRate = clamp(p.cdbMode === 'pos' ? (p.cdbRaw/100) * cdiY : p.cdbGross/100, 0, 0.40);
     } else {
-      // simStockNoReinvest simplificado
-      const rP = Math.pow(1 + pg, 1/12) - 1;
-      const rD = Math.pow(1 + dy, 1/12) - 1;
-      let stock = p.inicial, divs = 0;
-      const out = [];
-      for (let m = 1; m <= months; m++) {
-        divs  += stock * rD;
-        stock  = stock * (1 + rP) + p.aporte;
-        if (m % 12 === 0) out.push(stock + divs);
-      }
-      if (months % 12 !== 0) out.push(stock + divs);
-      return out;
+      const pg = clamp(inv.priceGrowth + stockShock, -0.40, 0.60);
+      annualRate = reinvestDivs ? (1 + dy) * (1 + pg) - 1 : pg;
+    }
+
+    const rMes = Math.pow(1 + annualRate, 1/12) - 1;
+    const rDY  = inv.type === 'stock' && !reinvestDivs ? Math.pow(1 + dy, 1/12) - 1 : 0;
+
+    for (let m = 0; m < 12; m++) {
+      const absMonth = y * 12 + m + 1;
+      if (absMonth > months) break;
+      const ap = isArr ? p.aporte[(absMonth - 1) % 12] : p.aporte;
+      if (rDY > 0) cashDivs += bal * rDY;
+      bal = bal * (1 + rMes) + ap;
+      if (absMonth % 12 === 0 || absMonth === months) out.push(bal + cashDivs);
     }
   }
-  return simFixed(rate, p.inicial, p.aporte, months);
+  return out;
 }
 
 // roda N simulações e retorna { p10, median, p90 } arrays (por ano)
@@ -2663,13 +2687,9 @@ function runMonteCarlo(inv, p, months, N) {
   const paths = [];
 
   for (let i = 0; i < N; i++) {
-    // correlação negativa simples: quando juros sobem, ações sofrem
-    const regimeFactor = randn(0, 1);
-    const selicVar = randn(p.selic, 2.5) + regimeFactor * 0.5;
-    const ipcaVar  = randn(p.ipca,  1.5);
-    const stockVar = randn(0, 0.05) - regimeFactor * 0.02; // juros altos → ações pressionadas
-
-    const path = simOnePath(inv, p, months, selicVar, ipcaVar, stockVar);
+    // regime macro da simulação: >0 = juros altos/recessão, <0 = expansão/bull market
+    const baseRegime = randn(0, 1);
+    const path = simOnePathRandomWalk(inv, p, months, baseRegime);
     paths.push(path);
   }
 
@@ -2826,19 +2846,19 @@ function buildRanking() {
 
     if (inv.type === 'stock') {
       if (!reinvestDivs) {
-        // separa preço (tributável) de DY (isento)
+        // sem reinvestimento: cotas crescem só por preço, DY vai pro caixa (isento)
         const stockOnlyData = simFixed(inv.priceGrowth, p.inicial, p.aporte, months);
         const stockFinal = stockOnlyData[stockOnlyData.length - 1];
         const priceGain  = Math.max(stockFinal - totalInvested, 0);
         netPocket = fvGross - ir * priceGain;
         irLabel = `IR 15% s/ ganho de preço (${fmtBRL(priceGain)}) · dividendos (caixa) isentos · estimativa simplificada`;
       } else {
-        
-        const priceOnlyData = simFixed(inv.priceGrowth, p.inicial, p.aporte, months);
-        const stockFinal    = priceOnlyData[priceOnlyData.length - 1];
-        const priceGain     = Math.max(stockFinal - totalInvested, 0);
+        // com reinvestimento: dividendos compram novas cotas → base de custo = totalInvested + cumDivs
+        // ganho tributável = fvGross - (totalInvested + cumDivs) → só a valorização de preço de TODAS as cotas
+        const { cumDivs } = simStockReinvestCumDivs(p.dy/100, inv.priceGrowth, p.inicial, p.aporte, months);
+        const priceGain   = Math.max(fvGross - totalInvested - cumDivs, 0);
         netPocket = fvGross - ir * priceGain;
-        irLabel = `IR 15% s/ ganho de preço (${fmtBRL(priceGain)}) · DY reinvestido isento · estimativa simplificada`;
+        irLabel = `IR 15% s/ ganho de preço de todas as cotas (${fmtBRL(priceGain)}) · DY isento · estimativa simplificada`;
       }
     } else {
       const taxableGain = Math.max(grossGain, 0);
@@ -4116,8 +4136,8 @@ function calcPreco() {
   const bazin = dpa > 0 ? dpa / 0.06 : 0;
 
   // Graham: √(22,5 × LPA × VPA)
-  const prod = 22.5 * lpa * vpa;
-  const graham = prod > 0 ? Math.sqrt(prod) : 0;
+  // graham só faz sentido com LPA e VPA positivos
+  const graham = (lpa > 0 && vpa > 0) ? Math.sqrt(22.5 * lpa * vpa) : 0;
 
   function margem(justo) {
     if (!justo || !preco) return { txt: 'N/A', cls: '' };
