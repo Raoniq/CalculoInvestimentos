@@ -170,7 +170,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 .section-label{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;color:var(--muted);
   margin-bottom:18px;display:flex;align-items:center;gap:12px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-.chart-wrap{position:relative;height:190px;width:100%;overflow:hidden;}
+.chart-wrap{position:relative;height:300px;width:100%;overflow:hidden;}
 .chart-wrap canvas{max-width:100%;}
 .chart-note{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);margin-top:10px;line-height:1.7;}
 
@@ -2743,7 +2743,9 @@ function buildChart() {
       datasets.push({
         label: inv.id + '_p10',
         data: mc.p10,
-        borderColor: 'transparent',
+        borderColor: color + '66',
+        borderWidth: 1,
+        borderDash: [3, 3],
         backgroundColor: 'transparent',
         pointRadius: 0, tension: 0.4, hidden,
         fill: false,
@@ -2752,10 +2754,12 @@ function buildChart() {
       datasets.push({
         label: inv.id + '_p90',
         data: mc.p90,
-        borderColor: 'transparent',
-        backgroundColor: color + '22', // ~13% opacidade
+        borderColor: color + '66',
+        borderWidth: 1,
+        borderDash: [3, 3],
+        backgroundColor: color + '55', // ~33% opacidade
         pointRadius: 0, tension: 0.4, hidden,
-        fill: { target: bandIdx, above: color + '22', below: 'transparent' },
+        fill: { target: bandIdx, above: color + '55', below: 'transparent' },
       });
     }
 
