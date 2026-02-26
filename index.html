@@ -170,7 +170,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 .section-label{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;color:var(--muted);
   margin-bottom:18px;display:flex;align-items:center;gap:12px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-.chart-wrap{position:relative;height:300px;width:100%;overflow:hidden;}
+.chart-wrap{position:relative;height:380px;width:100%;overflow:hidden;}
 .chart-wrap canvas{max-width:100%;}
 .chart-note{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);margin-top:10px;line-height:1.7;}
 
@@ -944,6 +944,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
   font-family: 'DM Mono', monospace;
 }
 .mc-spinner.running { display: inline; }
+    .chart-click-hint { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--violet); display: none; margin-left: 8px; cursor: pointer; text-decoration: underline; }
+    .chart-click-hint.visible { display: inline; }
+    .legend-item { cursor: pointer; }
+    .legend-item.focused { outline: 1px solid var(--violet); border-radius: 4px; padding: 1px 4px; }
 
 </style>
 </head>
@@ -1194,6 +1198,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
       Faixa de Incerteza · Monte Carlo
     </button>
     <span class="mc-spinner" id="mcSpinner">calculando 300 cenários…</span>
+    <span class="chart-click-hint" id="chartClickHint" onclick="clearChartFocus()">✕ Ver todos</span>
     <span class="mc-info" id="mcInfo" style="display:none;">
       Banda <strong>P10–P90</strong>: em 80% dos cenários históricos possíveis, o resultado ficaria nessa faixa.
       Parâmetros variados: Selic ±2,5% · IPCA ±1,5% · Ações ±5% a.a. · 300 simulações.
@@ -2422,7 +2427,7 @@ const INVESTMENTS = [
   { id:'lci', name:'LCI/LCA (configurável)', shortName:'LCI/LCA', type:'lci',
     color:'#f5c518', risk:'Baixo*', riskClass:'warn', note:'taxa e IR ajustáveis · renovação periódica · sem come-cotas' },
   { id:'cdb', name:'CDB (configurável)', shortName:'CDB', type:'cdb',
-    color:'#2dd4bf', risk:'Baixo', riskClass:'pos', note:'IR regressivo · rende bruto até resgate · FGC R$250k/inst.' },
+    color:'#f0923a', risk:'Baixo', riskClass:'pos', note:'IR regressivo · rende bruto até resgate · FGC R$250k/inst.' },
   { id:'acoes_cons', name:'Ações Conservador', shortName:'Ações Conserv.', type:'stock', priceGrowth:0.03,
     color:'#5b9cf6', risk:'Médio-Alto', riskClass:'risk', note:'DY + valoriz. 3%/ano (ciclo fraco)' },
   { id:'acoes_mod', name:'Ações Moderado (ITUB4)', shortName:'Ações Moder.', type:'stock', priceGrowth:0.07,
@@ -2624,6 +2629,7 @@ function setMode(instrument, mode) {
 
 // Monte Carlo
 let monteCarloActive = false;
+let chartFocusedInvId = null;
 
 // Box-Muller — normal(mean, std)
 function randn(mean, std) {
@@ -2732,18 +2738,18 @@ function buildChart() {
   INVESTMENTS.forEach(inv => {
     const data    = getSeriesData(inv, p, maxYears*12);
     const noReinv = inv.type==='stock' && !reinvestDivs;
-    const hidden  = hiddenSeries.has(inv.id);
+    const hidden  = hiddenSeries.has(inv.id) || (chartFocusedInvId !== null && chartFocusedInvId !== inv.id);
     const color   = inv.color;
 
     if (monteCarloActive && !hidden) {
       const mc = runMonteCarlo(inv, p, maxYears*12, N_SIM);
       const bandIdx = datasets.length; // índice do p10
 
-      // p10 — limite inferior (sem borda visível, só serve de âncora para o fill)
+      // p10 — limite inferior com borda tracejada
       datasets.push({
         label: inv.id + '_p10',
         data: mc.p10,
-        borderColor: color + '66',
+        borderColor: color + '99',
         borderWidth: 1,
         borderDash: [3, 3],
         backgroundColor: 'transparent',
@@ -2754,12 +2760,12 @@ function buildChart() {
       datasets.push({
         label: inv.id + '_p90',
         data: mc.p90,
-        borderColor: color + '66',
+        borderColor: color + '99',
         borderWidth: 1,
         borderDash: [3, 3],
-        backgroundColor: color + '55', // ~33% opacidade
+        backgroundColor: color + '44',
         pointRadius: 0, tension: 0.4, hidden,
-        fill: { target: bandIdx, above: color + '55', below: 'transparent' },
+        fill: { target: bandIdx, above: color + '44', below: 'transparent' },
       });
     }
 
@@ -2808,6 +2814,25 @@ function buildChart() {
       }
     }
   });
+
+  const canvasEl = document.getElementById('mainChart');
+  canvasEl.onclick = function(evt) {
+    const rect   = canvasEl.getBoundingClientRect();
+    const clickY = evt.clientY - rect.top;
+    const allEls = chart.getElementsAtEventForMode(evt, 'index', { intersect: false }, false);
+    if (!allEls.length) return;
+    const lineEls = allEls.filter(el => chart.data.datasets[el.datasetIndex].invId);
+    if (!lineEls.length) return;
+    let bestEl = null, bestDist = Infinity;
+    for (const el of lineEls) {
+      const pt = chart.getDatasetMeta(el.datasetIndex).data[el.index];
+      if (!pt) continue;
+      const dist = Math.abs(pt.y - clickY);
+      if (dist < bestDist) { bestDist = dist; bestEl = el; }
+    }
+    if (!bestEl) return;
+    applyChartFocus(chart.data.datasets[bestEl.datasetIndex].invId);
+  };
 }
 
 // legenda
@@ -2818,16 +2843,23 @@ function buildLegend() {
     const hidden = hiddenSeries.has(inv.id);
     const noReinv = inv.type==='stock'&&!reinvestDivs;
     const item = document.createElement('div');
-    item.className = 'legend-item'+(hidden?' dimmed':'');
+    item.className = 'legend-item'
+      + (hidden ? ' dimmed' : '')
+      + (chartFocusedInvId === inv.id ? ' focused' : '')
+      + ((chartFocusedInvId !== null && chartFocusedInvId !== inv.id && !hidden) ? ' dimmed' : '');
     const lineStyle = noReinv
       ? `background:repeating-linear-gradient(90deg,${inv.color} 0,${inv.color} 5px,transparent 5px,transparent 9px);`
       : `background:${inv.color};`;
     item.innerHTML = `<div class="legend-line" style="${lineStyle}"></div><span>${inv.shortName}${noReinv?' ↗ só preço':''}</span>`;
-    item.addEventListener('click',()=>{
+    // clique simples: isola/desfoca no gráfico (sem esconder do hiddenSeries)
+    // clique com Shift ou duplo clique: mostra/oculta como antes
+    item.addEventListener('dblclick', () => {
       if(hiddenSeries.has(inv.id)) hiddenSeries.delete(inv.id); else hiddenSeries.add(inv.id);
-      // clique manual → nenhum preset está ativo
       document.querySelectorAll('.focus-btn').forEach(b => b.classList.remove('active'));
       buildAll();
+    });
+    item.addEventListener('click', () => {
+      applyChartFocus(inv.id);
     });
     grid.appendChild(item);
   });
@@ -2967,6 +2999,9 @@ const FOCUS_PRESETS = {
 };
 
 function setFocus(preset) {
+  chartFocusedInvId = null;
+  const hint = document.getElementById('chartClickHint');
+  if (hint) hint.classList.remove('visible');
   const hidden = FOCUS_PRESETS[preset] || [];
   hiddenSeries = new Set(hidden);
   // atualiza botões ativos
@@ -2974,6 +3009,27 @@ function setFocus(preset) {
     btn.classList.toggle('active', btn.dataset.focus === preset);
   });
   buildAll();
+}
+
+function applyChartFocus(invId) {
+  const hint = document.getElementById('chartClickHint');
+  if (chartFocusedInvId === invId) {
+    chartFocusedInvId = null;
+    if (hint) hint.classList.remove('visible');
+  } else {
+    chartFocusedInvId = invId;
+    if (hint) hint.classList.add('visible');
+  }
+  buildChart();
+  buildLegend();
+}
+
+function clearChartFocus() {
+  chartFocusedInvId = null;
+  const hint = document.getElementById('chartClickHint');
+  if (hint) hint.classList.remove('visible');
+  buildChart();
+  buildLegend();
 }
 
 function buildAll() {
