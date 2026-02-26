@@ -405,7 +405,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 .fi-method-desc code{font-family:'DM Mono',monospace;background:var(--card);padding:1px 5px;border:1px solid var(--border);border-radius:2px;font-size:10px;}
 
 /* FIRE meta cards */
-.fi-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border);}
+.fi-meta-grid{display:grid;grid-template-columns:1fr;gap:0;border-bottom:1px solid var(--border);}
 .fi-meta-card{padding:24px 40px;border-right:1px solid var(--border);}
 .fi-meta-card:last-child{border-right:none;}
 .fi-meta-badge{display:inline-block;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border:1px solid;margin-bottom:14px;font-family:'DM Mono',monospace;}
@@ -436,7 +436,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 .fi-ctrl-note{font-size:10px;color:var(--muted);}
 .fi-crossing-badges{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;min-height:22px;}
 .fi-crossing-badge{font-family:'DM Mono',monospace;font-size:11px;padding:4px 12px;border:1px solid;}
-.fi-main-chart-wrap{position:relative;height:260px;width:100%;overflow:hidden;}
+.fi-main-chart-wrap{position:relative;height:320px;width:100%;max-width:820px;overflow:hidden;}
 .fi-main-chart-wrap canvas{max-width:100%;}
 
 /* Evolution table */
@@ -1473,6 +1473,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
     <!-- GRÁFICO — topo, largura total -->
     <div class="ac-chart-area">
       <div class="section-label" style="width:min(820px,100%);">Evolução Patrimonial · <span id="ac-ticker-label">PETR4</span> · <span id="ac-anos-label">20</span> anos</div>
+      <div class="mc-toggle-bar" style="padding:6px 0 8px;border-bottom:none;border-top:1px solid var(--border);margin-bottom:0;">
+        <button class="mc-btn" id="acMcBtn" onclick="toggleAcMC()">
+          <span class="mc-dot"></span>
+          Faixa de Incerteza · Monte Carlo
+        </button>
+        <span class="chart-click-hint" id="acChartHint" onclick="clearAcFocus()">✕ Ver todos</span>
+        <span class="mc-info" id="acMcInfo" style="display:none;">Banda P10–P90 · 300 cenários · valorização ±15% a.a.</span>
+      </div>
       <div class="ac-chart-wrap"><canvas id="acChart"></canvas></div>
       <div class="legend-grid" id="ac-legend" style="width:min(820px,100%);"></div>
     </div>
@@ -1857,14 +1865,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
         Mais conservador e adequado ao modelo brasileiro. O patrimônio é preservado para sempre.
       </div>
     </div>
-    <div class="fi-method-card">
-      <div class="fi-method-title" style="color:var(--blue);">📐 Regra dos 4% (Estudo Trinity)</div>
-      <div class="fi-method-desc">
-        Retira 4% do patrimônio por ano, inclui <strong>venda parcial de ativos</strong>.<br>
-        Fórmula: <code>Meta = Gasto anual ÷ 0,04 = Gasto × 300</code><br>
-        Modelo americano. Estatisticamente sustentável por 30 anos ou mais.
-      </div>
-    </div>
   </div>
 
   <div class="fi-meta-grid">
@@ -1877,33 +1877,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
       <div class="fi-meta-falta" id="fi-falta-dy">...</div>
       <div class="fi-tempos" id="fi-tempos-dy"></div>
     </div>
-    <div class="fi-meta-card" id="fi-card-4pct">
-      <div class="fi-meta-badge" style="color:var(--blue);border-color:var(--blue);background:var(--blue-faint);">Regra dos 4%</div>
-      <div class="fi-meta-label">Meta patrimonial</div>
-      <div class="fi-meta-val" id="fi-meta-4pct" style="color:var(--blue);">...</div>
-      <div class="fi-meta-sub" id="fi-meta-4pct-sub"></div>
-      <div class="fi-meta-falta-label">Falta acumular</div>
-      <div class="fi-meta-falta" id="fi-falta-4pct">...</div>
-      <div class="fi-tempos" id="fi-tempos-4pct"></div>
-    </div>
-  </div>
+  </div><!-- /fi-meta-grid -->
 
   <div class="fi-nota">
     <strong>Fase de acumulação vs fase de retirada:</strong>
     O portfólio cresce pelo <em>total return</em> (valorização de preço + DY reinvestido) durante a acumulação.
     Na aposentadoria pelo método do DY, você vive apenas dos dividendos sem vender ações, preservando o principal.
-    Pelo método dos 4%, você retira 4% ao ano do patrimônio, o que inclui venda gradual de ativos.
     Os três cenários (conservador, moderado, otimista) refletem taxas de valorização de preço de +3%, +7% e +11% ao ano.
     <strong>Sobre IR:</strong> dividendos de ações e FIIs são isentos de IR. O DY informado já é o valor líquido. Para a Renda Fixa comparativa, informe sempre a taxa já descontado o imposto.
-  </div>
-
-  <div class="fi-nota" style="background:var(--yellow-faint);border-left:3px solid var(--yellow);color:var(--text);">
-    <strong style="color:var(--yellow);">⚠ A Regra dos 4% foi feita para os EUA — o Brasil é diferente</strong><br>
-    O Estudo Trinity (1998) baseou-se em portfólio 50% ações / 50% renda fixa <em>americana</em>, onde títulos rendiam 2–4% ao ano.
-    No Brasil, o Tesouro IPCA+ rende 6–8% <em>reais</em> ao ano. Isso inverte a lógica:<br>
-    <strong>• Carteiras concentradas em ações:</strong> historicamente fracassam em sustentar saques contínuos no Brasil devido à alta volatilidade e baixo dividend yield médio vs a renda fixa local.<br>
-    <strong>• Carteiras concentradas em Tesouro IPCA+:</strong> estudos brasileiros apontam taxas seguras de retirada próximas a <strong>5%</strong> — mais que os 4% americanos.<br>
-    <strong>Recomendação para FIRE BR:</strong> na fase de retirada, privilegie Tesouro IPCA+ de longo prazo como âncora (60–80% do portfólio). Use ações como complemento de crescimento, não como fonte principal de renda. Use o campo "Renda Fixa comparativa" abaixo para simular um portfólio orientado a RF.
   </div>
 
   <!-- SEÇÃO 2: CURVA DA LIBERDADE -->
@@ -1918,6 +1899,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
       <span class="fi-ctrl-note">quando ativado, a linha de gastos cresce <span id="fi-inflacao-label">4%</span>/ano</span>
     </div>
     <div class="fi-crossing-badges" id="fi-crossing-badges"></div>
+    <div class="mc-toggle-bar" style="padding:6px 0 8px;border-bottom:none;border-top:1px solid var(--border);margin-bottom:0;max-width:820px;">
+      <button class="mc-btn" id="fireMcBtn" onclick="toggleFireMC()">
+        <span class="mc-dot"></span>
+        Faixa de Incerteza · Monte Carlo
+      </button>
+      <span class="chart-click-hint" id="fireChartHint" onclick="clearFireFocus()">✕ Ver todos</span>
+      <span class="mc-info" id="fireMcInfo" style="display:none;">Banda P10–P90 · 300 cenários · DY ±2% e crescimento ±15% a.a.</span>
+    </div>
     <div class="fi-main-chart-wrap"><canvas id="fireChart"></canvas></div>
     <div class="legend-grid" id="fi-legend"></div>
   </div>
@@ -3286,6 +3275,8 @@ function buildResLine(atual, poupar, meta, rMes, totalMeses) {
 
 // -- CALCULADORA DE AÇÕES --
 let acChart = null;
+let acMcActive = false;
+let acFocused  = null;  // label focada (string)
 
 const AC_SCENARIOS = [
   { id:'cons', label:'Conservador', priceGrowth:0.03, color:'#5b9cf6' },
@@ -3360,6 +3351,62 @@ function calcAcoes() {
   buildAcDivGrid(dy, inicial, aporte, anos, reinvest);
 }
 
+function toggleAcMC() {
+  acMcActive = !acMcActive;
+  document.getElementById('acMcBtn').classList.toggle('active', acMcActive);
+  document.getElementById('acMcInfo').style.display = acMcActive ? '' : 'none';
+  const p = getAcParams();
+  buildAcChart(p.dy, p.inicial, p.aporte, p.months, p.reinvest);
+}
+
+function clearAcFocus() {
+  acFocused = null;
+  document.getElementById('acChartHint').classList.remove('visible');
+  const p = getAcParams();
+  buildAcChart(p.dy, p.inicial, p.aporte, p.months, p.reinvest);
+}
+
+function getAcParams() {
+  return {
+    dy:      parseFloat(document.getElementById('ac-dy').value)      || 6,
+    inicial: parseFloat(document.getElementById('ac-inicial').value) || 10000,
+    aporte:  parseFloat(document.getElementById('ac-aporte').value)  || 1000,
+    months:  (parseInt(document.getElementById('ac-anos').value)     || 20) * 12,
+    reinvest: document.getElementById('ac-reinvest')?.checked ?? true,
+  };
+}
+
+// MC para ações: varia priceGrowth com vol histórica do Ibovespa
+function runAcMonteCarlo(baseGrowth, dy, inicial, aporte, months, N, reinvest) {
+  const years = months / 12;
+  const paths = [];
+  for (let i = 0; i < N; i++) {
+    const regime = randn(0, 1);
+    let bal = inicial, cashDivs = 0;
+    const out = [];
+    for (let y = 0; y < years; y++) {
+      const shock = randn(0, 0.15) - regime * 0.02;
+      const pg    = clamp(baseGrowth + shock, -0.40, 0.60);
+      const annualRate = reinvest ? (1 + dy/100) * (1 + pg) - 1 : pg;
+      const rMes = Math.pow(1 + annualRate, 1/12) - 1;
+      const rDY  = !reinvest ? Math.pow(1 + dy/100, 1/12) - 1 : 0;
+      for (let m = 0; m < 12; m++) {
+        if (rDY > 0) cashDivs += bal * rDY;
+        bal = bal * (1 + rMes) + aporte;
+      }
+      out.push(bal + cashDivs);
+    }
+    paths.push(out);
+  }
+  const p10 = [], p90 = [];
+  for (let yr = 0; yr < years; yr++) {
+    const vals = paths.map(p => p[yr]).sort((a,b) => a-b);
+    p10.push(vals[Math.floor(vals.length * 0.10)]);
+    p90.push(vals[Math.floor(vals.length * 0.90)]);
+  }
+  return { p10, p90 };
+}
+
 function buildAcChart(dy, inicial, aporte, months, reinvest) {
   const cs = getComputedStyle(document.documentElement);
   const cGrid=cs.getPropertyValue('--chart-grid').trim(), cTick=cs.getPropertyValue('--chart-tick').trim(),
@@ -3368,33 +3415,49 @@ function buildAcChart(dy, inicial, aporte, months, reinvest) {
 
   const labels = Array.from({length: months/12}, (_,i) => `${i+1}a`);
 
-  const datasets = AC_SCENARIOS.map(sc => {
+  const datasets = [];
+  AC_SCENARIOS.forEach(sc => {
     let data;
     if (reinvest) {
       const totalRate = (1 + dy/100) * (1 + sc.priceGrowth) - 1;
       data = simFixed(totalRate, inicial, aporte, months);
     } else {
-      // stock + cumulative divs month by month
       const rPrice = Math.pow(1 + sc.priceGrowth, 1/12) - 1;
       const rDY    = Math.pow(1 + dy/100, 1/12) - 1;
       const out = [];
       let stock = inicial, cashDivs = 0;
       for (let m = 1; m <= months; m++) {
         cashDivs += stock * rDY;
-        stock     = stock * (1+rPrice) + aporte;
+        stock = stock * (1+rPrice) + aporte;
         if (m % 12 === 0) out.push(Math.round(stock + cashDivs));
       }
       data = out;
     }
-    return {
+    const isFocused  = acFocused === null || acFocused === sc.label;
+    const isHidden   = acFocused !== null && acFocused !== sc.label;
+
+    // MC bands
+    if (acMcActive && isFocused) {
+      const mc = runAcMonteCarlo(sc.priceGrowth, dy, inicial, aporte, months, 300, reinvest);
+      const bandIdx = datasets.length;
+      datasets.push({ label: sc.label+'_p10', data: mc.p10, borderColor:'transparent', backgroundColor:'transparent', pointRadius:0, tension:0.4, hidden:isHidden, fill:false });
+      datasets.push({ label: sc.label+'_p90', data: mc.p90, borderColor:'transparent', backgroundColor: sc.color+'25', pointRadius:0, tension:0.4, hidden:isHidden, fill:{ target: bandIdx, above: sc.color+'25', below:'transparent' } });
+    }
+
+    datasets.push({
       label: sc.label,
+      scenarioLabel: sc.label,
       data,
       borderColor: sc.color,
       backgroundColor: sc.color+'15',
       borderWidth: sc.id==='otm' ? 2.5 : 2,
-      pointRadius: 2, pointHoverRadius: 5,
-      tension: 0.4, fill: sc.id==='cons'
-    };
+      pointRadius: isFocused ? 2 : 1,
+      pointHoverRadius: 5,
+      tension: 0.4,
+      fill: sc.id==='cons',
+      borderOpacity: isFocused ? 1 : 0.3,
+      hidden: isHidden,
+    });
   });
 
   // linha do capital investido
@@ -3437,13 +3500,51 @@ function buildAcChart(dy, inicial, aporte, months, reinvest) {
     }
   });
 
-  // legenda
+  // click-to-isolate no canvas
+  const acCanvasEl = document.getElementById('acChart');
+  acCanvasEl.onclick = function(evt) {
+    const rect  = acCanvasEl.getBoundingClientRect();
+    const clickY = evt.clientY - rect.top;
+    const allEls = acChart.getElementsAtEventForMode(evt, 'index', { intersect: false }, false);
+    if (!allEls.length) return;
+    const lineEls = allEls.filter(el => acChart.data.datasets[el.datasetIndex]?.scenarioLabel);
+    if (!lineEls.length) return;
+    let bestEl = null, bestDist = Infinity;
+    for (const el of lineEls) {
+      const pt = acChart.getDatasetMeta(el.datasetIndex).data[el.index];
+      if (!pt) continue;
+      const dist = Math.abs(pt.y - clickY);
+      if (dist < bestDist) { bestDist = dist; bestEl = el; }
+    }
+    if (!bestEl) return;
+    const lbl = acChart.data.datasets[bestEl.datasetIndex].scenarioLabel;
+    acFocused = (acFocused === lbl) ? null : lbl;
+    const hint = document.getElementById('acChartHint');
+    if (hint) hint.classList.toggle('visible', acFocused !== null);
+    const p = getAcParams();
+    buildAcChart(p.dy, p.inicial, p.aporte, p.months, p.reinvest);
+  };
+
+  // legenda com click-to-isolate
   const lgd = document.getElementById('ac-legend');
   lgd.innerHTML = '';
   [...AC_SCENARIOS].reverse().forEach(sc => {
     const item = document.createElement('div');
-    item.className = 'legend-item';
+    const focused = acFocused === sc.label;
+    item.className = 'legend-item' + (acFocused !== null && !focused ? ' dimmed' : '') + (focused ? ' focused' : '');
+    item.style.cursor = 'pointer';
     item.innerHTML = `<div class="legend-line" style="background:${sc.color}"></div><span>${sc.label}</span>`;
+    item.addEventListener('click', () => {
+      if (acFocused === sc.label) {
+        acFocused = null;
+        document.getElementById('acChartHint').classList.remove('visible');
+      } else {
+        acFocused = sc.label;
+        document.getElementById('acChartHint').classList.add('visible');
+      }
+      const p = getAcParams();
+      buildAcChart(p.dy, p.inicial, p.aporte, p.months, p.reinvest);
+    });
     lgd.appendChild(item);
   });
   const inv = document.createElement('div');
@@ -3710,7 +3811,9 @@ function buildRbDonuts() {
 }
 
 
-let fireChart = null;
+let fireChart     = null;
+let fireMcActive  = false;
+let fireFocused   = null;  // label focada
 
 // Acumulação scenarios: price growth rates (DY is user input, added on top)
 const FIRE_SCENARIOS = [
@@ -3740,10 +3843,8 @@ function calcFire() {
   const gastoAnual = gasto * 12;
 
   // ── FIRE targets ──────────────────────────────
-  // Method 1: By DY (perpetuity), live only on dividends
+  // DY (perpetuidade): vive só dos dividendos
   const metaDY   = gastoAnual / (dy / 100);
-  // regra dos 4% (estudo Trinity)
-  const meta4pct = gastoAnual / 0.04;
 
   // ── Time to reach each target (simulation) ────
   // Accumulation uses TOTAL return: price appreciation + DY reinvested
@@ -3767,7 +3868,6 @@ function calcFire() {
   }
 
   const timesDY   = timeToReach(metaDY);
-  const times4pct = timeToReach(meta4pct);
 
   // ── Update card DY ────────────────────────────
   document.getElementById('fi-meta-dy').textContent     = fmtBRL(metaDY);
@@ -3777,13 +3877,7 @@ function calcFire() {
   document.getElementById('fi-falta-dy').textContent = fmtBRL(faltaDY);
   renderTempos('fi-tempos-dy', timesDY);
 
-  // ── Update card 4% ────────────────────────────
-  document.getElementById('fi-meta-4pct').textContent     = fmtBRL(meta4pct);
-  document.getElementById('fi-meta-4pct-sub').textContent =
-    `Gasto anual R$ ${fmtBRL(gastoAnual).replace('R$ ','')} ÷ 4% (= × 300)`;
-  const falta4pct = Math.max(meta4pct - patrimonio, 0);
-  document.getElementById('fi-falta-4pct').textContent = fmtBRL(falta4pct);
-  renderTempos('fi-tempos-4pct', times4pct);
+
 
   // ── Build freedom curve chart ─────────────────
   buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl, aporteInflacao);
@@ -3815,6 +3909,52 @@ function renderTempos(containerId, times) {
         ${valText}
       </div>`;
   });
+}
+
+function toggleFireMC() {
+  fireMcActive = !fireMcActive;
+  document.getElementById('fireMcBtn').classList.toggle('active', fireMcActive);
+  document.getElementById('fireMcInfo').style.display = fireMcActive ? '' : 'none';
+  // re-executa com os valores atuais — calcFire() já passa os params corretos
+  calcFire();
+}
+
+function clearFireFocus() {
+  fireFocused = null;
+  document.getElementById('fireChartHint').classList.remove('visible');
+  calcFire();
+}
+
+// MC para FIRE: varia DY e crescimento de preço por ano (random walk)
+function runFireMC(patrimonio, aporte, dyBase, inflacao, months, baseGrowth, N, aporteInflacao) {
+  const years = months / 12;
+  const rInflMes = Math.pow(1 + inflacao/100, 1/12) - 1;
+  const paths = [];
+  for (let i = 0; i < N; i++) {
+    const regime = randn(0, 1);
+    let acum = patrimonio;
+    const out = [];
+    for (let y = 0; y < years; y++) {
+      const dyY  = clamp(randn(dyBase, 2.0), 1, 20) / 100;
+      const pgY  = clamp(baseGrowth + randn(0, 0.15) - regime * 0.02, -0.40, 0.60);
+      const rate = (1 + dyY) * (1 + pgY) - 1;
+      const rMes = Math.pow(1 + rate, 1/12) - 1;
+      for (let m = 0; m < 12; m++) {
+        const absM = y * 12 + m + 1;
+        const ap = aporteInflacao ? aporte * Math.pow(1 + rInflMes, absM) : aporte;
+        acum = acum * (1 + rMes) + ap;
+      }
+      out.push(acum * dyY / 12); // renda mensal
+    }
+    paths.push(out);
+  }
+  const p10 = [], p90 = [];
+  for (let yr = 0; yr < years; yr++) {
+    const vals = paths.map(p => p[yr]).sort((a,b) => a-b);
+    p10.push(vals[Math.floor(vals.length * 0.10)]);
+    p90.push(vals[Math.floor(vals.length * 0.90)]);
+  }
+  return { p10, p90 };
 }
 
 function buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl, aporteInflacao) {
@@ -3866,14 +4006,28 @@ function buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl, apo
       }
     }
 
+    const isFocused = fireFocused === null || fireFocused === sc.label;
+    const isHidden  = fireFocused !== null && fireFocused !== sc.label;
+
+    // MC bands
+    if (fireMcActive && isFocused) {
+      const mc = runFireMC(patrimonio, aporte, dy, inflacao, MAX_YEARS * 12, sc.priceGrowth, 300, aporteInflacao);
+      const bandIdx = scenarioDatasets.length;
+      scenarioDatasets.push({ label: sc.label+'_p10', data: mc.p10, borderColor:'transparent', backgroundColor:'transparent', pointRadius:0, tension:0.4, hidden:isHidden, fill:false });
+      scenarioDatasets.push({ label: sc.label+'_p90', data: mc.p90, borderColor:'transparent', backgroundColor: sc.color+'22', pointRadius:0, tension:0.4, hidden:isHidden, fill:{ target: bandIdx, above: sc.color+'22', below:'transparent' } });
+    }
+
     scenarioDatasets.push({
       label: `Renda ${sc.label}`,
+      scenarioLabel: sc.label,
       data: rendaData,
       borderColor: sc.color,
       backgroundColor: sc.color + '12',
       borderWidth: sc.id === 'arr' ? 2.5 : 2,
-      pointRadius: 2, pointHoverRadius: 5,
-      tension: 0.4, fill: false
+      pointRadius: isFocused ? 2 : 1,
+      pointHoverRadius: 5,
+      tension: 0.4, fill: false,
+      hidden: isHidden,
     });
 
     if (crossYear !== null) {
@@ -3932,7 +4086,12 @@ function buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl, apo
           bodyFont: { family: 'DM Mono', size: 11 }, padding: 12,
           callbacks: {
             title: items => `Ano ${items[0].dataIndex + 1}`,
-            label: item => `  ${item.dataset.label}: ${fmtBRL(item.raw)}/mês`
+            label: item => {
+              const lbl = item.dataset.label;
+              if (lbl && (lbl.endsWith('_p10') || lbl.endsWith('_p90'))) return null;
+              if (item.dataset.hidden) return null;
+              return `  ${lbl}: ${fmtBRL(item.raw)}/mês`;
+            }
           }
         }
       },
@@ -3950,13 +4109,45 @@ function buildFireChart(patrimonio, aporte, dy, inflacao, gasto, ajustaInfl, apo
     }
   });
 
-  // legenda
+  // click-to-isolate no canvas
+  const fireCanvasEl = document.getElementById('fireChart');
+  fireCanvasEl.onclick = function(evt) {
+    const rect  = fireCanvasEl.getBoundingClientRect();
+    const clickY = evt.clientY - rect.top;
+    const allEls = fireChart.getElementsAtEventForMode(evt, 'index', { intersect: false }, false);
+    if (!allEls.length) return;
+    const lineEls = allEls.filter(el => fireChart.data.datasets[el.datasetIndex]?.scenarioLabel);
+    if (!lineEls.length) return;
+    let bestEl = null, bestDist = Infinity;
+    for (const el of lineEls) {
+      const pt = fireChart.getDatasetMeta(el.datasetIndex).data[el.index];
+      if (!pt) continue;
+      const dist = Math.abs(pt.y - clickY);
+      if (dist < bestDist) { bestDist = dist; bestEl = el; }
+    }
+    if (!bestEl) return;
+    const lbl = fireChart.data.datasets[bestEl.datasetIndex].scenarioLabel;
+    fireFocused = (fireFocused === lbl) ? null : lbl;
+    const hint = document.getElementById('fireChartHint');
+    if (hint) hint.classList.toggle('visible', fireFocused !== null);
+    calcFire();
+  };
+
+  // legenda com click-to-isolate
   const lgd = document.getElementById('fi-legend');
   lgd.innerHTML = '';
   FIRE_SCENARIOS.forEach(sc => {
     const item = document.createElement('div');
-    item.className = 'legend-item';
+    const focused = fireFocused === sc.label;
+    item.className = 'legend-item' + (fireFocused !== null && !focused ? ' dimmed' : '') + (focused ? ' focused' : '');
+    item.style.cursor = 'pointer';
     item.innerHTML = `<div class="legend-line" style="background:${sc.color}"></div><span>Renda ${sc.label}</span>`;
+    item.addEventListener('click', () => {
+      fireFocused = (fireFocused === sc.label) ? null : sc.label;
+      const hint = document.getElementById('fireChartHint');
+      if (hint) hint.classList.toggle('visible', fireFocused !== null);
+      calcFire();
+    });
     lgd.appendChild(item);
   });
   const expItem = document.createElement('div');
